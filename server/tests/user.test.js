@@ -30,9 +30,9 @@ describe('## User APIs', () => {
         .send(user)
         .expect(httpStatus.OK)
         .then((res) => {
-          expect(res.body.username).to.equal(user.username);
-          expect(res.body.mobileNumber).to.equal(user.mobileNumber);
-          user = res.body;
+          expect(res.body.result.username).to.equal(user.username);
+          expect(res.body.result.mobileNumber).to.equal(user.mobileNumber);
+          user = res.body.result;
           done();
         })
         .catch(done);
@@ -45,8 +45,8 @@ describe('## User APIs', () => {
         .get(`/api/users/${user._id}`)
         .expect(httpStatus.OK)
         .then((res) => {
-          expect(res.body.username).to.equal(user.username);
-          expect(res.body.mobileNumber).to.equal(user.mobileNumber);
+          expect(res.body.result.username).to.equal(user.username);
+          expect(res.body.result.mobileNumber).to.equal(user.mobileNumber);
           done();
         })
         .catch(done);
@@ -57,7 +57,7 @@ describe('## User APIs', () => {
         .get('/api/users/56c787ccc67fc16ccc1a5e92')
         .expect(httpStatus.NOT_FOUND)
         .then((res) => {
-          expect(res.body.message).to.equal('Not Found');
+          expect(res.body.error.message).to.equal('Not Found');
           done();
         })
         .catch(done);
@@ -72,8 +72,8 @@ describe('## User APIs', () => {
         .send(user)
         .expect(httpStatus.OK)
         .then((res) => {
-          expect(res.body.username).to.equal('KK');
-          expect(res.body.mobileNumber).to.equal(user.mobileNumber);
+          expect(res.body.result.username).to.equal('KK');
+          expect(res.body.result.mobileNumber).to.equal(user.mobileNumber);
           done();
         })
         .catch(done);
@@ -86,7 +86,7 @@ describe('## User APIs', () => {
         .get('/api/users')
         .expect(httpStatus.OK)
         .then((res) => {
-          expect(res.body).to.be.an('array');
+          expect(res.body.result).to.be.an('array');
           done();
         })
         .catch(done);
@@ -99,8 +99,8 @@ describe('## User APIs', () => {
         .delete(`/api/users/${user._id}`)
         .expect(httpStatus.OK)
         .then((res) => {
-          expect(res.body.username).to.equal('KK');
-          expect(res.body.mobileNumber).to.equal(user.mobileNumber);
+          expect(res.body.result.username).to.equal('KK');
+          expect(res.body.result.mobileNumber).to.equal(user.mobileNumber);
           done();
         })
         .catch(done);

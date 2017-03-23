@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import httpStatus from 'http-status';
 import APIError from '../helpers/APIError';
+import APIResponse from '../helpers/APIResponse';
 import config from '../../config/config';
 
 // sample user, used for authentication
@@ -23,10 +24,10 @@ function login(req, res, next) {
     const token = jwt.sign({
       username: user.username
     }, config.jwtSecret);
-    return res.json({
+    return res.json(new APIResponse(true, {
       token,
       username: user.username
-    });
+    }));
   }
 
   const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED, true);
@@ -41,10 +42,10 @@ function login(req, res, next) {
  */
 function getRandomNumber(req, res) {
   // req.user is assigned by jwt middleware if valid token is provided
-  return res.json({
+  return res.json(new APIResponse(true, {
     user: req.user,
     num: Math.random() * 100
-  });
+  }));
 }
 
 export default { login, getRandomNumber };

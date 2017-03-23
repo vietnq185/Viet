@@ -25,7 +25,7 @@ describe('## Misc', () => {
         .get('/api/404')
         .expect(httpStatus.NOT_FOUND)
         .then((res) => {
-          expect(res.body.message).to.equal('Not Found');
+          expect(res.body.error.message).to.equal('Not Found');
           done();
         })
         .catch(done);
@@ -38,7 +38,7 @@ describe('## Misc', () => {
         .get('/api/users/56z787zzz67fc')
         .expect(httpStatus.INTERNAL_SERVER_ERROR)
         .then((res) => {
-          expect(res.body.message).to.equal('Internal Server Error');
+          expect(res.body.error.message).to.equal('Internal Server Error');
           done();
         })
         .catch(done);
@@ -52,7 +52,7 @@ describe('## Misc', () => {
         })
         .expect(httpStatus.BAD_REQUEST)
         .then((res) => {
-          expect(res.body.message).to.equal('"username" is required');
+          expect(res.body.error.message).to.equal('"username" is required');
           done();
         })
         .catch(done);

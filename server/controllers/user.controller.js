@@ -1,4 +1,5 @@
 import User from '../models/user.model';
+import APIResponse from '../helpers/APIResponse';
 
 /**
  * Load user and append to req.
@@ -17,7 +18,7 @@ function load(req, res, next, id) {
  * @returns {User}
  */
 function get(req, res) {
-  return res.json(req.user);
+  return res.json(new APIResponse(true, req.user));
 }
 
 /**
@@ -33,7 +34,7 @@ function create(req, res, next) {
   });
 
   user.save()
-    .then(savedUser => res.json(savedUser))
+    .then(savedUser => res.json(new APIResponse(true, savedUser)))
     .catch(e => next(e));
 }
 
@@ -49,7 +50,7 @@ function update(req, res, next) {
   user.mobileNumber = req.body.mobileNumber;
 
   user.save()
-    .then(savedUser => res.json(savedUser))
+    .then(savedUser => res.json(new APIResponse(true, savedUser)))
     .catch(e => next(e));
 }
 
@@ -62,7 +63,7 @@ function update(req, res, next) {
 function list(req, res, next) {
   const { limit = 50, skip = 0 } = req.query;
   User.list({ limit, skip })
-    .then(users => res.json(users))
+    .then(users => res.json(new APIResponse(true, users)))
     .catch(e => next(e));
 }
 
@@ -73,7 +74,7 @@ function list(req, res, next) {
 function remove(req, res, next) {
   const user = req.user;
   user.remove()
-    .then(deletedUser => res.json(deletedUser))
+    .then(deletedUser => res.json(new APIResponse(true, deletedUser)))
     .catch(e => next(e));
 }
 
