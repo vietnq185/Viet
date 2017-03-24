@@ -13,7 +13,7 @@ import winstonInstance from './winston';
 import routes from '../server/routes/index.route';
 import config from './config';
 import APIError from '../server/helpers/APIError';
-import APIResponse from '../server/helpers/APIResponse';
+import { APIErrorResponse } from '../server/helpers/APIResponse';
 
 const app = express();
 
@@ -79,7 +79,7 @@ if (config.env !== 'test') {
 
 // error handler, send stacktrace only during development
 app.use((err, req, res, next) => // eslint-disable-line no-unused-vars
-  res.status(err.status).json(new APIResponse(false, null, {
+  res.status(err.status).json(new APIErrorResponse({
     message: err.isPublic ? err.message : httpStatus[err.status],
     stack: config.env === 'development' ? err.stack : {}
   }))

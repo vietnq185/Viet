@@ -24,7 +24,7 @@ function login(req, res, next) {
     const token = jwt.sign({
       username: user.username
     }, config.jwtSecret);
-    return res.json(new APIResponse(true, {
+    return res.json(new APIResponse({
       token,
       username: user.username
     }));
@@ -42,7 +42,7 @@ function login(req, res, next) {
  */
 function getRandomNumber(req, res) {
   // req.user is assigned by jwt middleware if valid token is provided
-  return res.json(new APIResponse(true, {
+  return res.json(new APIResponse({
     user: req.user,
     num: Math.random() * 100
   }));
