@@ -22,6 +22,12 @@ export default (initialState = {}) => {
     if (typeof composeWithDevToolsExtension === 'function') {
       composeEnhancers = composeWithDevToolsExtension
     }
+    // Add redux logger in development
+    const logger = require('redux-logger').createLogger({
+      level: 'info',
+      collapsed: true
+    })
+    middleware.push(logger)
   }
 
   // ======================================================
