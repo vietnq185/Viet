@@ -33,7 +33,7 @@ describe('## Misc', () => {
   });
 
   describe('# Error Handling', () => {
-    it('should handle mongoose CastError - Cast to ObjectId failed', (done) => {
+    it('should handle postgres CastError - Cast to ObjectId failed', (done) => {
       request(app)
         .get('/api/users/56z787zzz67fc')
         .expect(httpStatus.INTERNAL_SERVER_ERROR)
@@ -48,7 +48,7 @@ describe('## Misc', () => {
       request(app)
         .post('/api/users')
         .send({
-          mobileNumber: '1234567890'
+          phone: '1234567890'
         })
         .expect(httpStatus.BAD_REQUEST)
         .then((res) => {

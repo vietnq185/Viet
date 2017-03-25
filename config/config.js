@@ -10,7 +10,7 @@ const envVarsSchema = Joi.object({
     .default('development'),
   PORT: Joi.number()
     .default(4040),
-  MONGOOSE_DEBUG: Joi.boolean()
+  POSTGRES_DEBUG: Joi.boolean()
     .when('NODE_ENV', {
       is: Joi.string().equal('development'),
       then: Joi.boolean().default(true),
@@ -18,10 +18,8 @@ const envVarsSchema = Joi.object({
     }),
   JWT_SECRET: Joi.string().required()
     .description('JWT Secret required to sign'),
-  MONGO_HOST: Joi.string().required()
-    .description('Mongo DB host url'),
-  MONGO_PORT: Joi.number()
-    .default(27017)
+  POSTGRES_CONNECTION: Joi.string().required()
+    .description('Postgres DB connection string')
 }).unknown()
   .required();
 
@@ -33,12 +31,9 @@ if (error) {
 const config = {
   env: envVars.NODE_ENV,
   port: envVars.PORT,
-  mongooseDebug: envVars.MONGOOSE_DEBUG,
+  postgresDebug: envVars.POSTGRES_DEBUG,
   jwtSecret: envVars.JWT_SECRET,
-  mongo: {
-    host: envVars.MONGO_HOST,
-    port: envVars.MONGO_PORT
-  }
+  postgres: envVars.POSTGRES_CONNECTION
 };
 
 export default config;

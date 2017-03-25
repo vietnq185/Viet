@@ -1,17 +1,18 @@
 import Promise from 'bluebird';
-import mongoose from 'mongoose';
 import httpStatus from 'http-status';
+import SQL from 'sql-template-strings';
+import db from '../../config/db';
 import APIError from '../helpers/APIError';
 
 /**
  * User Schema
  */
-const UserSchema = new mongoose.Schema({
+const UserSchema = {
   username: {
     type: String,
     required: true
   },
-  mobileNumber: {
+  phone: {
     type: String,
     required: true,
     match: [/^[1-9][0-9]{9}$/, 'The value of path {PATH} ({VALUE}) is not a valid mobile number.']
@@ -20,58 +21,64 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   }
-});
+};
 
 /**
- * Add your
- * - pre-save hooks
- * - validations
- * - virtuals
+ * Class User.
  */
+class User {
+  //
+  constructor(user = {}) {
+    this._table = 'Users';
+    this._schema = UserSchema;
+    this._user = user;
+  }
 
-/**
- * Methods
- */
-UserSchema.method({
-});
+  static getTable() {
+    return 'Users';
+  }
 
-/**
- * Statics
- */
-UserSchema.statics = {
+  //
+  save() {
+    //this._user;
+  }
+
   /**
    * Get user
-   * @param {ObjectId} id - The objectId of user.
-   * @returns {Promise<User, APIError>}
+   * @param {String} id - The Id of user.
+   * @returns {Promise<UserSchema, APIError>}
    */
-  get(id) {
-    return this.findById(id)
-      .exec()
-      .then((user) => {
-        if (user) {
-          return user;
-        }
-        const err = new APIError('No such user exists!', httpStatus.NOT_FOUND);
-        return Promise.reject(err);
-      });
-  },
+  static get(id) {
+    const query = `SELECT * FROM ${User.getTable()} WHERE _id='${id}'`;
+    return db.query(query).then((result) => { // eslint-disable-line
+      if (result && result.rows && result.rows.length > 0) {
+        return Promise.resolve(result.rows[0]);
+      }
+      const err = new APIError('No such user exists!', httpStatus.NOT_FOUND);
+      return Promise.reject(err);
+    }).catch(err => Promise.reject(err));
+  }
 
   /**
    * List users in descending order of 'createdAt' timestamp.
-   * @param {number} skip - Number of users to be skipped.
    * @param {number} limit - Limit number of users to be returned.
+   * @param {number} offset - Position to fetch data.
    * @returns {Promise<User[]>}
    */
-  list({ skip = 0, limit = 50 } = {}) {
-    return this.find()
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .exec();
+  static list({ limit = 50, offset = 0 } = {}) {
+    const query = `SELECT * FROM ${User.getTable()} LIMIT ${limit} OFFSET ${offset}`;
+    return db.query(query).then((result) => { // eslint-disable-line
+      if (result && result.rows && result.rows.length > 0) {
+        return Promise.resolve(result.rows);
+      }
+      const err = new APIError('No such user exists!', httpStatus.NOT_FOUND);
+      return Promise.reject(err);
+    }).catch(err => Promise.reject(err));
   }
-};
+  //
+}
 
 /**
  * @typedef User
  */
-export default mongoose.model('User', UserSchema);
+export default User;
