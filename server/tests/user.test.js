@@ -1,8 +1,10 @@
-import mongoose from 'mongoose';
 import request from 'supertest-as-promised';
 import httpStatus from 'http-status';
 import chai, { expect } from 'chai';
 import app from '../../index';
+
+// connect to postgres db
+require('../../config/db');
 
 chai.config.includeStack = true;
 
@@ -10,17 +12,13 @@ chai.config.includeStack = true;
  * root level hooks
  */
 after((done) => {
-  // required because https://github.com/Automattic/mongoose/issues/1251#issuecomment-65793092
-  mongoose.models = {};
-  mongoose.modelSchemas = {};
-  mongoose.connection.close();
   done();
 });
 
 describe('## User APIs', () => {
   let user = {
     username: 'KK123',
-    mobileNumber: '1234567890'
+    phone: '1234567890'
   };
 
   describe('# POST /api/users', () => {
@@ -31,7 +29,7 @@ describe('## User APIs', () => {
         .expect(httpStatus.OK)
         .then((res) => {
           expect(res.body.result.username).to.equal(user.username);
-          expect(res.body.result.mobileNumber).to.equal(user.mobileNumber);
+          expect(res.body.result.phone).to.equal(user.phone);
           user = res.body.result;
           done();
         })
@@ -46,7 +44,7 @@ describe('## User APIs', () => {
         .expect(httpStatus.OK)
         .then((res) => {
           expect(res.body.result.username).to.equal(user.username);
-          expect(res.body.result.mobileNumber).to.equal(user.mobileNumber);
+          expect(res.body.result.phone).to.equal(user.phone);
           done();
         })
         .catch(done);
@@ -73,7 +71,7 @@ describe('## User APIs', () => {
         .expect(httpStatus.OK)
         .then((res) => {
           expect(res.body.result.username).to.equal('KK');
-          expect(res.body.result.mobileNumber).to.equal(user.mobileNumber);
+          expect(res.body.result.phone).to.equal(user.phone);
           done();
         })
         .catch(done);
@@ -100,7 +98,7 @@ describe('## User APIs', () => {
         .expect(httpStatus.OK)
         .then((res) => {
           expect(res.body.result.username).to.equal('KK');
-          expect(res.body.result.mobileNumber).to.equal(user.mobileNumber);
+          expect(res.body.result.phone).to.equal(user.phone);
           done();
         })
         .catch(done);
