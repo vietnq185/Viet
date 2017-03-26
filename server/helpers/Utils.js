@@ -25,6 +25,15 @@ Utils.isNotEmptyArray = function (arr) {
 }
 
 /**
+* Check if is a not empty string.
+* @param {string} str
+* @return {boolean}
+*/
+Utils.isNotEmptyString = function (str) {
+  return (typeof str === 'string' && str.length > 0);
+}
+
+/**
 * Deep copy an object
 * @param {object} obj
 * @return {object}

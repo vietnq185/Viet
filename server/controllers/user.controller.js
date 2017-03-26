@@ -1,5 +1,6 @@
 import User from '../models/user.model';
 import APIResponse from '../helpers/APIResponse';
+import Utils from '../helpers/Utils';
 
 /**
  * Load user and append to req.
@@ -23,8 +24,12 @@ function get(req, res) {
 
 /**
  * Create new user
- * @property {string} req.body.username - The username of user.
- * @property {string} req.body.phone - The phone of user.
+ * @property {string} req.body.username
+ * @property {string} req.body.password
+ * @property {string} req.body.email
+ * @property {string} req.body.phone
+ * @property {string} req.body.firstName
+ * @property {string} req.body.lastName
  * @returns {User}
  */
 function create(req, res, next) {
