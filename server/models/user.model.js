@@ -1,8 +1,4 @@
-import Promise from 'bluebird';
-import httpStatus from 'http-status';
-
 import AppModel from './app.model';
-import APIError from '../helpers/APIError';
 
 /**
  * Class UserModel.
@@ -10,8 +6,16 @@ import APIError from '../helpers/APIError';
 class UserModel extends AppModel {
   //
   constructor() {
+    const table = 'users';
+    const primaryKey = '_id';
+    const schema = {
+      _id: {
+        type: 'varchar'
+      },
+    };
+
     // super(StringTableName, StringPrimaryKey, ObjectSchema);
-    super('Users', '_id');
+    super(table, primaryKey, schema);
   }
   //
 }

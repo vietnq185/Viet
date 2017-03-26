@@ -52,8 +52,7 @@ const buildQuery = (fromTable, objParams, findType = FIND.ALL) => {
   if (Utils.isNotEmptyArray(params.join)) {
     for (let i = 0; i < params.join.length; i++) {
       const join = params.join[i];
-      const joinType = (typeof join.type === 'string' && join.length > 0 ? join.type : 'INNER JOIN');
-      arrQuery.push(`${joinType} ${join.table} ON ${join.table}`);
+      arrQuery.push(`${join.type} JOIN ${join.table} ON ${join.on}`);
     }
   }
   // WHERE
@@ -73,15 +72,17 @@ const buildQuery = (fromTable, objParams, findType = FIND.ALL) => {
     arrQuery.push(`ORDER BY ${params.orderBy}`);
   }
   // LIMIT
-  if (typeof params.limit === 'number' && params.limit > 0) {
-    arrQuery.push(`LIMIT ${params.limit}`);
+  const limit = parseInt(params.limit, 10);
+  if (!isNaN(limit) && limit > 0) {
+    arrQuery.push(`LIMIT ${limit}`);
   }
   // OFFSET
-  if (typeof params.offset === 'number' && params.offset >= 0) {
-    arrQuery.push(`OFFSET ${params.offset}`);
+  const offset = parseInt(params.offset, 10);
+  if (!isNaN(offset) && offset >= 0) {
+    arrQuery.push(`OFFSET ${offset}`);
   }
   // return result
-  const sql = arrQuery.join(' ');
+  const sql = arrQuery.join(' ') + ';'; // eslint-disable-line
   debug('SQL Builder => build params: ', params);
   debug('SQL Builder => built query: ', sql);
   return sql;
@@ -97,7 +98,7 @@ class AppModel {
   constructor(table, primaryKey = '', schema = {}) {
     this._table = table;  // String, table name
     this._primaryKey = primaryKey; // String, Single field primary key
-    this._schema = schema;  // Object, for later usage
+    this._schema = schema;  // Object
 
     this._params = Utils.copy(defaultParams); // Object, hold credentials to build SQL command
   }
@@ -138,7 +139,7 @@ class AppModel {
     return this;
   }
 
-  join(table, on, type = 'INNER JOIN') {
+  join(table, on, type = 'INNER') {
     this._params.join.push({ table, on, type });
     return this;
   }
@@ -179,11 +180,12 @@ class AppModel {
    * user.reset().where(`"firstName"=${escape('%L', firstName)}`).find(id)
    */
   find(id = '') {
-    if (typeof this._primaryKey === 'string' && this._primaryKey.length > 0 && typeof id !== 'undefined') {
+    if (typeof this._primaryKey === 'string' && this._primaryKey.length > 0 && typeof this._schema === 'object' && typeof this._schema[this._primaryKey] !== 'undefined' && typeof id !== 'undefined') {
+      const fieldSchema = this._schema[this._primaryKey];
       if (typeof id === 'number') {
-        this._params.where.push(`${this._primaryKey} = ${id}`);
+        this._params.where.push(`${this._primaryKey}::${fieldSchema.type} = ${id}`);
       } else if (typeof id === 'string' && id.length > 0) {
-        this._params.where.push(`${this._primaryKey} = ${escape('%L', id)}`);
+        this._params.where.push(`${this._primaryKey}::${fieldSchema.type} = ${escape('%L', id)}`);
       }
     }
     const sql = buildQuery(this._table, this._params, FIND.ONE);
@@ -210,9 +212,7 @@ class AppModel {
     return this.execute(sql).then((result) => {  // eslint-disable-line
       const count = (result && result.rows && result.rows.length > 0 && typeof result.rows[0].TOTAL_RECORDS !== 'undefined' ? result.rows[0].TOTAL_RECORDS : 0);
       return Promise.resolve(count);
-    }).catch((err) => {
-      Promise.reject(err);
-    });
+    }).catch(err => Promise.reject(err));
   }
 
   /**
@@ -223,9 +223,9 @@ class AppModel {
    * @returns {Promise}
    * Example:
    * const user = new UserModel();
-   * user.reset().where(`"firstName"=${escape('%L', firstName)}`).getDataPairs(['_id', 'firstName'], ['_id', 'firstName', 'lastName'])
+   * user.reset().where(`"firstName"=${escape('%L', firstName)}`).getDataPair(['_id', 'firstName'], ['_id', 'firstName', 'lastName'])
    */
-  getDataPairs(arrKeyFields, arrResultFields = '*', strKeySeparator = '~:~') {
+  getDataPair(arrKeyFields, arrResultFields = '*', strKeySeparator = '~:~') {
     // convert one item of string to array
     if (!Utils.isNotEmptyArray(arrKeyFields)) {
       arrKeyFields = [arrKeyFields]; // eslint-disable-line
@@ -266,6 +266,106 @@ class AppModel {
     //
   }
 
+  /**
+   * Insert a record.
+   * @param {Object} objData // Data to insert
+   * @returns {Promise}
+   * Example:
+   * const user = new UserModel();
+   * user.insert({ _id: '4089688e-cdba-4ad1-8b84-d7c102982e50', firstName: 'NGOC', lastName: 'DAM', phone: '0909091101' })
+   */
+  insert(objData) {
+    var fields = []; // eslint-disable-line
+    var values = []; // eslint-disable-line
+    var pValues = []; // eslint-disable-line
+    var counter = 0; // eslint-disable-line
+    for (var key in objData) { // eslint-disable-line
+      if (objData.hasOwnProperty(key)) { // eslint-disable-line
+        fields.push(`"${key}"`);
+        const value = objData[key];
+        values.push(value);
+        counter++;  // eslint-disable-line
+        pValues.push('$' + counter);  // eslint-disable-line
+      }
+    }
+    const sql = `INSERT INTO ${this._table}(${fields.join(', ')}) VALUES(${pValues.join(', ')}) RETURNING *;`;
+    debug('INSERT COMMAND: ', sql);
+    return this.execute(sql, values).then((result) => {
+      if (result && result.rows && result.rows.length > 0) {
+        return Promise.resolve(result.rows[0]);
+      }
+      return Promise.resolve(null);
+    }).catch(err => Promise.reject(err));
+  }
+
+  /**
+   * Insert multiple records.
+   * @param {Object} objData // Data to update
+   * @returns {Promise}
+   * Example:
+   * const user = new UserModel();
+   * user.where(`"_id"='4089688e-cdba-4ad1-8b84-d7c102982e50'`).update({firstName: 'NGOC', lastName: 'DAM', phone: '0909091101' })
+   */
+  update(objData) {
+    var fields = []; // eslint-disable-line
+    var values = []; // eslint-disable-line
+    var pValues = []; // eslint-disable-line
+    var counter = 0; // eslint-disable-line
+    for (var key in objData) { // eslint-disable-line
+      if (objData.hasOwnProperty(key)) { // eslint-disable-line
+        counter++;  // eslint-disable-line
+        fields.push([`"${key}"`, `${counter}`].join(' = $')); // field = $counter
+        const value = objData[key];
+        values.push(value);
+      }
+    }
+    //
+    var arrQuery = []; // eslint-disable-line
+    arrQuery.push(`UPDATE ONLY ${this._table} AS t1`);
+    arrQuery.push(`SET ${fields.join(', ')}`);
+    // WHERE
+    if (Utils.isNotEmptyArray(this._params.where)) {
+      arrQuery.push(`WHERE (${this._params.where.join(') AND (')})`);
+    }
+    arrQuery.push('RETURNING *;');
+    //
+    const sql = arrQuery.join(' ');
+    debug('UPDATE COMMAND: ', sql);
+    //
+    return this.execute(sql, values).then((result) => {
+      if (result && result.rows && result.rows.length > 0) {
+        return Promise.resolve(result.rows);
+      }
+      return Promise.resolve(null);
+    }).catch(err => Promise.reject(err));
+  }
+
+  /**
+   * Delete data.
+   * @returns {Promise}
+   * Example:
+   * const user = new UserModel();
+   * user.where(`"_id"='4089688e-cdba-4ad1-8b84-d7c102982e50'`).delete()
+   */
+  delete() {
+    var arrQuery = []; // eslint-disable-line
+    arrQuery.push(`DELETE FROM ${this._table} AS t1`);
+    // WHERE
+    if (Utils.isNotEmptyArray(this._params.where)) {
+      arrQuery.push(`WHERE (${this._params.where.join(') AND (')})`);
+    }
+    arrQuery.push('RETURNING *;');
+    //
+    const sql = arrQuery.join(' ');
+    debug('DELETE COMMAND: ', sql);
+    //
+    return this.execute(sql).then((result) => {
+      if (result && result.rows && result.rows.length > 0) {
+        return Promise.resolve(result.rows);
+      }
+      return Promise.resolve(null);
+    }).catch(err => Promise.reject(err));
+  }
 
   //
 }

@@ -1,5 +1,6 @@
-
 /*eslint-disable*/
+
+const uuidV4 = require('uuid/v4');
 
 /**
  * Constructor
@@ -129,14 +130,11 @@ Utils.merge = function () {
 }
 
 /**
-* Generate random hash
+* Generate uuid V4
 * @return {string}
 */
-Utils.guid = function () {
-  function s4() {
-    return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-  }
-  return s4() + s4() + s4() + s4() + s4() + s4() + s4() + s4(); /*32 chars like hash*/
+Utils.uuid = function () {
+  return uuidV4();
 }
 
 /**
