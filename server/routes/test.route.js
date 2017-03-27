@@ -4,6 +4,7 @@ import express from 'express';
 
 import escape from 'pg-escape';
 import UserModel from '../models/user.model';
+import Utils from '../helpers/Utils';
 
 const router = express.Router(); // eslint-disable-line new-cap
 
@@ -35,7 +36,7 @@ router.get('/', (req, res, next) => {
     .findAll(values)
     .then(r => res.send(r)).catch(e => next(e));*/
 
-  // Test fincCoutn with JOIN
+  // Test findCount with JOIN
   /*const user = new UserModel();
   const values = ['%88%', 'Dung', 'user'];
   user.reset()
@@ -51,7 +52,7 @@ router.get('/', (req, res, next) => {
     .findCount(values)
     .then(r => res.send(r)).catch(e => next(e));*/
 
-  // Test fincCoutn without JOIN
+  // Test findCount without JOIN
   /*const user = new UserModel();
   const values = ['%88%', 'Dung'];
   user.reset()
@@ -77,8 +78,24 @@ router.get('/', (req, res, next) => {
     .getDataPair(values, keyFields, valuesFields)
     .then(r => res.send(r)).catch(e => next(e));*/
 
+  // insert one object
   /*const user = new UserModel();
   user.insert({ _id: ('4089688e-cdba-4ad1-8b84-d7' + parseInt(new Date().getTime() / 1000)), firstName: "--NGOC''injection", lastName: 'DAM', phone: '0909091101' })
+    .then(r => res.send(r))
+    .catch(e => next(e));*/
+
+  // Insert array of object
+  /*const user = new UserModel();
+  var data = [];
+  for (var i = 0; i < 10; i++) {
+    data.push({
+      _id: Utils.uuid(),
+      firstName: "--NGOC''injection",
+      lastName: 'DAM',
+      phone: '0909091101'
+    });
+  }
+  user.insert(data)
     .then(r => res.send(r))
     .catch(e => next(e));*/
 

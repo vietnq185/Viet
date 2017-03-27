@@ -298,7 +298,7 @@ class AppPostgresModel {
 
   /**
    * Insert a record.
-   * @param {Object} objData // Data to insert
+   * @param {Object|Array} data // Data to insert
    * @returns {Promise}
    * Example:
    * const user = new UserModel();
@@ -309,25 +309,39 @@ class AppPostgresModel {
    *    phone: '0909091101'
    * }).then(r => res.send(r)).catch(e => next(e));
    */
-  insert(objData) {
+  insert(data) {
+    var outputAsArray = true; // eslint-disable-line
+    if (Utils.isNotEmptyObject(data)) {
+      data = [data]; // eslint-disable-line
+      outputAsArray = false;
+    }
+    //
+    var vData = []; // eslint-disable-line
     var fields = []; // eslint-disable-line
     var values = []; // eslint-disable-line
-    var pValues = []; // eslint-disable-line
     var counter = 0; // eslint-disable-line
-    for (var key in objData) { // eslint-disable-line
-      if (objData.hasOwnProperty(key)) { // eslint-disable-line
-        fields.push(`"${key}"`);
-        const value = objData[key];
-        values.push(value);
-        counter++;  // eslint-disable-line
-        pValues.push('$' + counter);  // eslint-disable-line
+    for (var i = 0; i < data.length; i++) { // eslint-disable-line
+      var objData = data[i]; // eslint-disable-line
+      var pValues = []; // eslint-disable-line
+      for (var key in objData) { // eslint-disable-line
+        if (objData.hasOwnProperty(key)) { // eslint-disable-line
+          if (i === 0) {
+            fields.push(`"${key}"`);
+          }
+          const value = objData[key];
+          values.push(value);
+          counter++;  // eslint-disable-line
+          pValues.push('$' + counter);  // eslint-disable-line
+        }
       }
+      vData.push(`(${pValues.join(', ')})`);
     }
-    const sql = `INSERT INTO ${this._table}(${fields.join(', ')}) VALUES(${pValues.join(', ')}) RETURNING *;`;
+    //
+    const sql = `INSERT INTO ${this._table}(${fields.join(', ')}) VALUES ${vData.join(', ')} RETURNING *;`;
     debug('INSERT COMMAND: ', sql);
     return this.execute(sql, values).then((result) => {
       if (result && result.rows && result.rows.length > 0) {
-        return Promise.resolve(result.rows[0]);
+        return Promise.resolve(outputAsArray ? result.rows : result.rows[0]);
       }
       return Promise.resolve(null);
     }).catch(err => Promise.reject(err));
