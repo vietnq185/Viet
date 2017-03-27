@@ -11,43 +11,93 @@ const router = express.Router(); // eslint-disable-line new-cap
 router.get('/', (req, res, next) => {
   return res.send('OK');
 
-  const user = new UserModel();
-  const id = 'aa989120-9a71-411f-bf8e-01f3f40286b5';
-  const firstName = 'Dung';
 
-  // user.reset().where(`"firstName"=${escape('%L', firstName)}`).findCount().then(r => res.send(r)).catch(e => next(e));
-  // user.reset().where(`"firstName"=${escape('%L', firstName)}`).find(id).then(r => res.send(r)).catch(e => next(e));
-  // user.reset().where(`"firstName"=${escape('%L', firstName)}`).getDataPair(['_id', 'firstName'], ['_id', 'firstName', 'lastName']).then(r => res.send(r)).catch(e => next(e));
+  /*const user = new UserModel();
+  const values = ['%88%', 'Dung'];
+  user.reset()
+    .where('t1."firstName"=$2')
+    .where("t1._id::varchar LIKE $1")
+    .findOne(values)
+    .then(r => res.send(r)).catch(e => next(e));*/
 
-  /*user.reset()
-    .select('t1.*')
+  /*const user = new UserModel();
+  const values = ['%88%', 'Dung', 'user'];
+  user.reset()
+    .select('t2.title AS item_title, t1.*')
     .join('"items" AS t2', 't1._id = t2.user', 'LEFT OUTER')
-    // .where(`"firstName"=${escape('%L', firstName)}`)  // postgres treat column name as lower string, so put it into double qoute to keep format
-    .where("t1._id::varchar LIKE '%88%'") // currently, _id is uuid type; need to cast to varchar before use with LIKE operator: _id::varchar
-    .groupBy('t1._id, t1."firstName"')
-    .having('t1."role" = \'user\'')
+    .where('t1."firstName"=$2')
+    .where("t1._id::varchar LIKE $1")
+    .groupBy('t1._id, t1."firstName", t2.title')
+    .having('t1."role" = $3')
     .orderBy('t1."firstName"')
     .limit(10)
     .offset(1)
-    .findAll()
+    .findAll(values)
+    .then(r => res.send(r)).catch(e => next(e));*/
+
+  // Test fincCoutn with JOIN
+  /*const user = new UserModel();
+  const values = ['%88%', 'Dung', 'user'];
+  user.reset()
+    .select('t2.title AS item_title, t1.*')
+    .join('"items" AS t2', 't1._id = t2.user', 'LEFT OUTER')
+    .where('t1."firstName"=$2')
+    .where("t1._id::varchar LIKE $1")
+    .groupBy('t1._id, t1."firstName", t2.title')
+    .having('t1."role" = $3')
+    .orderBy('t1."firstName"')
+    .limit(10)
+    .offset(1)
+    .findCount(values)
+    .then(r => res.send(r)).catch(e => next(e));*/
+
+  // Test fincCoutn without JOIN
+  /*const user = new UserModel();
+  const values = ['%88%', 'Dung'];
+  user.reset()
+    .where('t1."firstName"=$2')
+    .where("t1._id::varchar LIKE $1")
+    .findCount(values)
+    .then(r => res.send(r)).catch(e => next(e));*/
+
+  /*const user = new UserModel();
+  const values = ['%88%', 'Dung', 'user'];
+  const keyFields = ['_id', 'dateCreated', 'item_title'];
+  const valuesFields = ['_id', 'username', 'firstName', 'lastName'];
+  user.reset()
+    .select('t2.title AS item_title, t1.*')
+    .join('"items" AS t2', 't1._id = t2.user', 'LEFT OUTER')
+    .where('t1."firstName"=$2')
+    .where("t1._id::varchar LIKE $1")
+    .groupBy('t1._id, t1."firstName", t2.title')
+    .having('t1."role" = $3')
+    .orderBy('t1."firstName"')
+    .limit(10)
+    .offset(1)
+    .getDataPair(values, keyFields, valuesFields)
+    .then(r => res.send(r)).catch(e => next(e));*/
+
+  /*const user = new UserModel();
+  user.insert({ _id: ('4089688e-cdba-4ad1-8b84-d7' + parseInt(new Date().getTime() / 1000)), firstName: "--NGOC''injection", lastName: 'DAM', phone: '0909091101' })
     .then(r => res.send(r))
     .catch(e => next(e));*/
 
-  /*user.insert({ _id: '4089688e-cdba-4ad1-8b84-d7c102982e53', firstName: "--NGOC''injection", lastName: 'DAM', phone: '0909091101' })
+  /*const user = new UserModel();
+  const updateData = { firstName: "--NGOC''injection updated" + new Date().getTime(), lastName: 'DAM updated', phone: '0909091101' };
+  const values = ['%NGOC%'];
+  user
+    .where('t1."firstName" LIKE $1')
+    .update(updateData, values)
     .then(r => res.send(r))
     .catch(e => next(e));*/
 
-  /*user
-    .where("\"firstName\"::varchar LIKE '%NGOCaaaaaaaaaaaaaaaaaaaa%'")
-    .update({ firstName: "--NGOC''injection updated" + new Date().getTime(), lastName: 'DAM updated', phone: '0909091101' })
+  /*const user = new UserModel();
+  const values = ['05648f66-b9cb-48ab-bd92-de5b59392dbd'];
+  user.where("_id=$1")
+    .delete(values)
     .then(r => res.send(r))
     .catch(e => next(e));*/
 
-  /*user
-    .where("_id='45848200-7b48-4ed6-8416-7a99778d48d2'")
-    .delete()
-    .then(r => res.send(r))
-    .catch(e => next(e));*/
 });
 
 export default router;
