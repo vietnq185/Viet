@@ -15,6 +15,8 @@ import config from './config';
 import APIError from '../server/helpers/APIError';
 import { APIErrorResponse } from '../server/helpers/APIResponse';
 
+const debug = require('debug')('rest-api:express');
+
 const app = express();
 
 if (config.env === 'development') {
@@ -38,7 +40,7 @@ app.use(cors());
 // enable detailed API logging in dev env
 if (config.env === 'development') {
   expressWinston.requestWhitelist.push('body');
-  expressWinston.responseWhitelist.push('body');
+  // expressWinston.responseWhitelist.push('body');
   app.use(expressWinston.logger({
     winstonInstance,
     meta: true, // optional: log meta data about request (defaults to true)
@@ -52,6 +54,7 @@ app.use('/api', routes);
 
 // if error is not an instanceOf APIError, convert it.
 app.use((err, req, res, next) => {
+  debug('********** ORIGINAL ERROR ********** ', err);
   if (err instanceof expressValidation.ValidationError) {
     // validation error contains errors which is an array of error each containing message[]
     const unifiedErrorMessage = err.errors.map(error => error.messages.join('. ')).join(' and ');

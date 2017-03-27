@@ -19,12 +19,12 @@ if (pool === null) {
   //
   pool.on('connect', (client) => {
     client.count = ++count;
-    debug('postgres conneted clients', client.count);
+    debug('postgres conneted clients: ', client.count);
   });
 
   //
   pool.on('error', (err, client) => {
-    debug('postgres idle client error', err.message, err.stack);
+    debug('postgres idle client error: ', err.message, err.stack);
   });
 }
 

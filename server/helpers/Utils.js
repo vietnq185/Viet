@@ -1,5 +1,6 @@
-
 /*eslint-disable*/
+
+const uuidV4 = require('uuid/v4');
 
 /**
  * Constructor
@@ -22,6 +23,15 @@ Utils.isNotEmptyObject = function (obj) {
 */
 Utils.isNotEmptyArray = function (arr) {
   return (typeof arr !== 'undefined' && arr !== null && arr.constructor === Array && arr.length > 0);
+}
+
+/**
+* Check if is a not empty string.
+* @param {string} str
+* @return {boolean}
+*/
+Utils.isNotEmptyString = function (str) {
+  return (typeof str === 'string' && str.length > 0);
 }
 
 /**
@@ -120,14 +130,11 @@ Utils.merge = function () {
 }
 
 /**
-* Generate random hash
+* Generate uuid V4
 * @return {string}
 */
-Utils.guid = function () {
-  function s4() {
-    return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-  }
-  return s4() + s4() + s4() + s4() + s4() + s4() + s4() + s4(); /*32 chars like hash*/
+Utils.uuid = function () {
+  return uuidV4();
 }
 
 /**
@@ -277,6 +284,57 @@ Utils.syncLoop = function (iterations, process, exit) {
   };
   loop.next();
   return loop;
+}
+
+/**
+   * Find all records and parse into key => value object.
+   * @param {Array} results // Array of object.
+   * @param {String|Array} arrKeyFields // a field or a list of fields
+   * @param {String|Array} arrResultFields // Optional. A list of fields or * (means all)
+   * @param {String} strKeySeparator // Optional. Separator beween key fields
+   * @returns {Promise}
+   */
+Utils.getDataPair = function (results, arrKeyFields, arrResultFields = '*', strKeySeparator = '~:~') {
+  try {
+    // convert one item of string to array
+    if (!Utils.isNotEmptyArray(arrKeyFields)) {
+      arrKeyFields = [arrKeyFields]; // eslint-disable-line
+    }
+    //
+    const getKey = (item, fields, separator) => {
+      var arr = []; // eslint-disable-line
+      for (let i = 0; i < fields.length; i++) { // eslint-disable-line
+        const fn = fields[i];
+        arr.push(typeof item[fn] !== 'undefined' ? item[fn] : '');
+      }
+      return arr.join(separator);
+    };
+    //
+    const getValue = (item, fields) => {
+      var obj = {}; // eslint-disable-line
+      for (let i = 0; i < fields.length; i++) { // eslint-disable-line
+        const fn = fields[i];
+        obj[fn] = (typeof item[fn] !== 'undefined' ? item[fn] : null);
+      }
+      return obj;
+    };
+    //
+    var objResults = {}; // eslint-disable-line
+    for (var i = 0; i < results.length; i++) { // eslint-disable-line
+      const item = results[i];
+      //
+      const key = getKey(item, arrKeyFields, strKeySeparator);
+      //
+      const value = Utils.isNotEmptyArray(arrResultFields) ? getValue(item, arrResultFields) : item; // eslint-disable-line
+      //
+      objResults[key] = value; // eslint-disable-line
+      //
+    }
+    return objResults;
+    //
+  } catch (ex) {
+    return ex;
+  }
 }
 
 export default Utils;

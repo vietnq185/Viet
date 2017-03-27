@@ -5,7 +5,11 @@ export default {
   createUser: {
     body: {
       username: Joi.string().required(),
-      phone: Joi.string().regex(/^[1-9][0-9]{9}$/).required()
+      password: Joi.string().min(8).max(50).required(),
+      email: Joi.string().required(),
+      phone: Joi.string().required(),
+      firstName: Joi.string().required(),
+      lastName: Joi.string().required(),
     }
   },
 
@@ -13,10 +17,9 @@ export default {
   updateUser: {
     body: {
       username: Joi.string().required(),
-      phone: Joi.string().regex(/^[1-9][0-9]{9}$/).required()
     },
     params: {
-      userId: Joi.string().hex().required()
+      userId: Joi.string().guid().required()
     }
   },
 
