@@ -1,6 +1,6 @@
 import httpStatus from 'http-status';
 
-import User from '../models/user.model';
+import UserModel from '../models/user.model';
 import APIResponse from '../helpers/APIResponse';
 import APIError from '../helpers/APIError';
 import Utils from '../helpers/Utils';
@@ -21,7 +21,7 @@ const getReturnData = (userData) => {
  * Load user and append to req.
  */
 function load(req, res, next, id) {
-  new User().find(id)
+  new UserModel().where('t1._id=$1').findOne([id])
     .then((user) => {
       // not found
       if (user === null) {
@@ -37,7 +37,7 @@ function load(req, res, next, id) {
 
 /**
  * Get user
- * @returns {User}
+ * @returns {UserModel}
  */
 function get(req, res) {
   return res.json(new APIResponse(getReturnData(req.user)));
@@ -51,10 +51,10 @@ function get(req, res) {
  * @property {string} req.body.phone
  * @property {string} req.body.firstName
  * @property {string} req.body.lastName
- * @returns {User}
+ * @returns {UserModel}
  */
 function create(req, res, next) {
-  new User().insert({
+  new UserModel().insert({
     _id: Utils.uuid(),
     username: req.body.username,
     password: req.body.password,
@@ -73,7 +73,7 @@ function create(req, res, next) {
  * @property {string} req.body.phone // optional
  * @property {string} req.body.firstName // optional
  * @property {string} req.body.lastName // optional
- * @returns {User}
+ * @returns {UserModel}
  */
 function update(req, res, next) {
   const userData = req.user;
@@ -87,7 +87,7 @@ function update(req, res, next) {
     }
   }
   //
-  new User().where(`_id='${userData._id}'`).update(userData)
+  new UserModel().where('t1._id=$1').update(userData, [userData._id])
     .then(savedUser => res.json(new APIResponse(savedUser !== null ? getReturnData(savedUser[0]) : savedUser))) // eslint-disable-line
     .catch(e => next(e));
 }
@@ -96,11 +96,11 @@ function update(req, res, next) {
  * Get user list.
  * @property {number} req.query.limit - Limit number of users to be returned.
  * @property {number} req.query.offset - Position to fetch data.
- * @returns {User[]}
+ * @returns {UserModel[]}
  */
 function list(req, res, next) {
   const { limit = 50, offset = 0 } = req.query;
-  new User().select('t1."_id", t1."firstName", t1."lastName", t1."email", t1."phone", t1."metadata", t1."status"')
+  new UserModel().select('t1."_id", t1."firstName", t1."lastName", t1."email", t1."phone", t1."metadata", t1."status"')
     .limit(limit).offset(offset)
     .findAll()
     .then(users => res.json(new APIResponse(users)))
@@ -109,11 +109,11 @@ function list(req, res, next) {
 
 /**
  * Delete user.
- * @returns {User}
+ * @returns {UserModel}
  */
 function remove(req, res, next) {
   const userData = req.user;
-  new User().where(`_id='${userData._id}'`).delete()
+  new UserModel().where('_id=$1').delete([userData._id])
     .then(deletedUser => res.json(new APIResponse(deletedUser !== null ? getReturnData(deletedUser[0]) : deletedUser))) // eslint-disable-line
     .catch(e => next(e));
 }
