@@ -5,13 +5,15 @@ import APIResponse from '../helpers/APIResponse';
 import APIError from '../helpers/APIError';
 import Utils from '../helpers/Utils';
 
+const debug = require('debug')('rest-api:user.controller'); // eslint-disable-line
+
 const getReturnData = (userData) => {
-  const fields = ['_id', 'username', 'password', 'email', 'phone', 'firstName', 'lastName'];
-  var obj = {}; // eslint-disable-line
-  for (var i = 0; i < fields.length; i++) { // eslint-disable-line
-    const fn = fields[i];
-    if (typeof userData[fn] !== 'undefined') {
-      obj[fn] = userData[fn];
+  const excludeFields = ['salt', 'hashedPassword'];
+  var obj = Utils.copy(userData); // eslint-disable-line
+  for (var i = 0; i < excludeFields.length; i++) { // eslint-disable-line
+    const fn = excludeFields[i];
+    if (typeof obj[fn] !== 'undefined') {
+      delete obj[fn];
     }
   }
   return obj;
@@ -45,29 +47,59 @@ function get(req, res) {
 
 /**
  * Create new user
- * @property {string} req.body.username
- * @property {string} req.body.password
  * @property {string} req.body.email
+ * @property {string} req.body.password
  * @property {string} req.body.phone
  * @property {string} req.body.firstName
  * @property {string} req.body.lastName
  * @returns {UserModel}
  */
 function create(req, res, next) {
-  new UserModel().insert({
-    _id: Utils.uuid(),
-    username: req.body.username,
-    password: req.body.password,
-    email: req.body.email,
-    phone: req.body.phone,
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
+  //
+  const id = Utils.uuid();
+  const email = req.body.email;
+  const username = req.body.username || id;
+  // validate email
+  const validateEmail = new UserModel().where('t1.email=$1').findCount([email]).then((cnt) => {
+    const err = new APIError('REGISTERED_EMAIL', httpStatus.CONFLICT, true);
+    return (cnt === 0 ? Promise.resolve() : Promise.reject(err));
+  });
+  // validate username
+  const validateUsername = new UserModel().where('t1.username=$1').findCount([username]).then((cnt) => {
+    const err = new APIError('REGISTERED_USER', httpStatus.CONFLICT, true);
+    return (cnt === 0 ? Promise.resolve() : Promise.reject(err));
+  });
+  //
+  const promises = [validateEmail, validateUsername];
+  Promise.all(promises).then(() => { // eslint-disable-line
+    // create data
+    const salt = Utils.getSalt();
+    var data = { // eslint-disable-line
+      _id: id,
+      username,
+      email,
+      phone: req.body.phone,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      salt,
+      hashedPassword: Utils.encrypt(req.body.password, salt),
+      provider: 'local',
+      dateCreated: new Date().getTime(),
+    };
+    if (Utils.isNotEmptyObject(req.body.metadata || {})) {
+      data.metadata = req.body.metadata;
+    }
+    if (Utils.isNotEmptyArray(req.body.status || [])) {
+      data.status = req.body.status;
+    }
+    // insert
+    return new UserModel().insert(data);
   }).then(savedUser => res.json(new APIResponse(savedUser !== null ? getReturnData(savedUser) : savedUser))).catch(e => next(e)); // eslint-disable-line
+  //
 }
 
 /**
  * Update existing user
- * @property {string} req.body.username
  * @property {string} req.body.password // optional
  * @property {string} req.body.email // optional
  * @property {string} req.body.phone // optional
@@ -77,7 +109,7 @@ function create(req, res, next) {
  */
 function update(req, res, next) {
   const userData = req.user;
-  userData.username = req.body.username;
+  userData.email = req.body.email;
   //
   const optionalParams = ['password', 'email', 'phone', 'firstName', 'lastName'];
   for (let i = 0; i < optionalParams.length; i++) { // eslint-disable-line

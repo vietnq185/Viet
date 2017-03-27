@@ -1,11 +1,31 @@
 /*eslint-disable*/
 
+const crypto = require('crypto');
 const uuidV4 = require('uuid/v4');
 
 /**
  * Constructor
  */
 var Utils = function () { };
+
+/**
+* Create random string.
+* @return {string}
+*/
+Utils.getSalt = function () {
+  return crypto.randomBytes(16).toString('base64');
+}
+
+/**
+* Encrypt a string with specific salt.
+* @param {string} password
+* @param {string} salt
+* @return {string}
+*/
+Utils.encrypt = function (password, salt) {
+  const saltBuffer = new Buffer(salt, 'base64');
+  return crypto.pbkdf2Sync(password || '', saltBuffer, 10000, 64).toString('base64');
+}
 
 /**
 * Check if is a not empty object.

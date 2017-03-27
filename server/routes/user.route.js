@@ -19,12 +19,12 @@ router.route('/:userId')
   .get(userCtrl.get)
 
   /** PUT /api/users/:userId - Update user */
-  .put(/*expressJwt({ secret: config.jwtSecret }), */validate(paramValidation.updateUser), userCtrl.update)
+  .put(validate(paramValidation.updateUser), userCtrl.update)
 
   /** DELETE /api/users/:userId - Delete user */
   .delete(userCtrl.remove);
 
 /** Load user when API with userId route parameter is hit */
-router.param('userId', userCtrl.load);
+router.param('userId', expressJwt({ secret: config.jwtSecret }), userCtrl.load);
 
 export default router;

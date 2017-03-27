@@ -3,15 +3,10 @@ import httpStatus from 'http-status';
 import APIError from '../helpers/APIError';
 import APIResponse from '../helpers/APIResponse';
 import config from '../../config/config';
-
-// sample user, used for authentication
-const user = {
-  username: 'react',
-  password: 'express'
-};
+import UserModel from '../models/user.model';
 
 /**
- * Returns jwt token if valid username and password is provided
+ * Returns jwt token if valid email and password is provided
  * @param req
  * @param res
  * @param next
