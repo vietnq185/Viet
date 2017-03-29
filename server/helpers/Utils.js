@@ -1,5 +1,7 @@
 /*eslint-disable*/
 
+import constants from '../../config/constants';
+
 const crypto = require('crypto');
 const uuidV4 = require('uuid/v4');
 
@@ -7,6 +9,16 @@ const uuidV4 = require('uuid/v4');
  * Constructor
  */
 var Utils = function () { };
+
+/**
+* Check if error is defined in constants.
+* @param {string} str
+* @return {boolean}
+*/
+Utils.isAppError = function (str) {
+  const arr = Object.values(constants.errors);
+  return (arr.indexOf(str) !== -1);
+}
 
 /**
 * Create random string.
