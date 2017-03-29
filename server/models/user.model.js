@@ -20,6 +20,9 @@ class UserModel extends AppModel {
   }
 
   static extractData(userData) {
+    if (!Utils.isNotEmptyObject(userData)) {
+      return userData;
+    }
     const excludeFields = ['salt', 'hashedPassword'];
     var obj = Utils.copy(userData); // eslint-disable-line
     for (var i = 0; i < excludeFields.length; i++) { // eslint-disable-line
