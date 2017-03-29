@@ -255,7 +255,7 @@ class AppPostgresModel {
     const sql = (Utils.isNotEmptyArray(this._params.join) ? sqlWithJoin : resultSql);
     debug('COUNT COMMAND: ', sql);
     return this.execute(sql, values).then((result) => {  // eslint-disable-line
-      const count = (result && result.rows && result.rows.length > 0 && typeof result.rows[0].TOTAL_RECORDS !== 'undefined' ? result.rows[0].TOTAL_RECORDS : 0);
+      const count = (result && result.rows && result.rows.length > 0 && typeof result.rows[0].TOTAL_RECORDS !== 'undefined' ? parseInt(result.rows[0].TOTAL_RECORDS, 10) : 0);
       return Promise.resolve(count);
     }).catch(err => Promise.reject(err));
   }
