@@ -9,22 +9,22 @@ const router = express.Router(); // eslint-disable-line new-cap
 
 router.route('/')
   /** GET /api/users - Get list of users */
-  .get(authCtrl.verifyToken, userCtrl.list)
+  .get(authCtrl.verifyAccessToken, userCtrl.list)
 
   /** POST /api/users - Create new user */
   .post(validate(paramValidation.createUser), userCtrl.create);
 
 router.route('/:userId')
   /** GET /api/users/:userId - Get user */
-  .get(authCtrl.verifyToken, userCtrl.get)
+  .get(authCtrl.verifyAccessToken, userCtrl.get)
 
   /** PUT /api/users/:userId - Update user */
-  .put(validate(paramValidation.updateUser), authCtrl.verifyToken, userCtrl.update)
+  .put(validate(paramValidation.updateUser), authCtrl.verifyAccessToken, userCtrl.update)
 
   /** DELETE /api/users/:userId - Delete user */
-  .delete(authCtrl.verifyToken, userCtrl.remove);
+  .delete(authCtrl.verifyAccessToken, userCtrl.remove);
 
 /** Load user when API with userId route parameter is hit */
-router.param('userId', userCtrl.load);  // router.param accepts only tow params, so that do no put authCtrl.verifyToken here
+router.param('userId', userCtrl.load);  // router.param accepts only tow params, so that do no put authCtrl.verifyAccessToken here
 
 export default router;

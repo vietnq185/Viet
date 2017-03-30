@@ -2,6 +2,10 @@
 
 import constants from '../../config/constants';
 
+const sha3 = require('crypto-js/sha3');
+const aes = require('crypto-js/aes');
+const enc = require('crypto-js/enc-utf8');
+
 const crypto = require('crypto');
 const uuidV4 = require('uuid/v4');
 
@@ -19,6 +23,22 @@ Utils.isAppError = function (str) {
   const arr = Object.values(constants.errors);
   return (arr.indexOf(str) !== -1);
 }
+
+Utils.sha3Encrypt = (str) => {
+  const SHA3_OPTS = { outputLength: 256 };
+  return sha3(str, SHA3_OPTS).toString();
+};
+
+Utils.aesEncrypt = (str, secret) => aes.encrypt(str, Utils.sha3Encrypt(secret)).toString(); // eslint-disable-line
+
+Utils.aesDecrypt = (encryptedStr, secret) => { // eslint-disable-line
+  const bytes = aes.decrypt(encryptedStr, Utils.sha3Encrypt(secret));
+  try {
+    return bytes.toString(enc.Utf8);
+  } catch (e) {
+    return '';
+  }
+};
 
 /**
 * Create random string.
