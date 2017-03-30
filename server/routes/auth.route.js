@@ -10,9 +10,13 @@ const router = express.Router(); // eslint-disable-line new-cap
 router.route('/login')
   .post(validate(paramValidation.login), authCtrl.login);
 
+/** GET /api/auth/token - Send refresh token to renew access token */
+router.route('/token')
+  .get(authCtrl.verifyRefreshToken, authCtrl.renewAccessToken);
+
 /** GET /api/auth/random-number - Protected route,
  * needs token returned by the above as header. Authorization: Bearer {token} */
 router.route('/random-number')
-  .get(authCtrl.verifyToken, authCtrl.getRandomNumber);
+  .get(authCtrl.verifyAccessToken, authCtrl.getRandomNumber);
 
 export default router;
