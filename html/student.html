@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>A-SLS</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="styles/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="styles/main.css" rel="stylesheet">
+    <link href="styles/col-mixin.css" rel="stylesheet">
+    <link href="styles/programme.css" rel="stylesheet">
+    <link href="styles/student.css" rel="stylesheet">
+
+
+    <!-- Custom Fonts -->
+    <link href="styles/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
+</head>
+
+<body>
+    <div id="wrapper">
+        <!-- Navigation -->
+        <div class="student-header dk-white">
+          <nav class="navbar navbar-default dk-navbar" role="navigation">
+              <!-- Brand and toggle get grouped for better mobile display -->
+              <div class="navbar-header">
+                  <!-- button for mobile display. show menu-->
+                  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-ex1-collapse" aria-expanded="false">
+                      <span class="sr-only">Toggle navigation</span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                  </button>
+                  <a class="navbar-brand" href="home">A-SLS</a>
+              </div>
+              <!-- Top Menu Items -->
+              <div class="collapse navbar-collapse navbar-ex1-collapse navbar-right dk-white">
+                  <ul class="nav navbar-nav side-nav">
+                      <li>
+                          <a href="about"><span class="side-nav-item dk-white">Home</span></a>
+                      </li>
+                      <li>
+                          <a href="programme"> <span class="side-nav-item dk-white">Our Programme</span></a>
+                      </li>
+                      <li>
+                          <a href="student"> <span class="side-nav-item dk-yellow">For Student</span></a>
+                      </li>
+                      <li>
+                          <a href="parent"> <span class="side-nav-item dk-white">For Parent</span></a>
+                      </li>
+                      <!-- <li>
+                          <a href="contact"> <span class="side-nav-item dk-white">Contact</span></a>
+                      </li> -->
+                      <li>
+                          <a href="#" data-toggle="modal" data-target="#loginModal"> <span class="side-nav-item dk-white">Sign Up</span></a>
+                      </li>
+                      <li class="signin">
+                          <a href="https://app.a-smartlearning.com/en/sml/login" class="text-signin"> <span class="side-nav-item dk-white">Sign In</span></a>
+                      </li>
+                  </ul>
+              </div>
+              <!-- /.navbar-collapse -->
+          </nav>
+          <div class="content-wraper text-center">
+            <h1 class="student-title">
+              Your Smart Learning Journey
+            </h1>
+            <hr class="dk-gb-white programme-hr"/>
+            <div>
+              <h3 class="student-sub-title">
+                A-SLS knows what you need and will plan a Learning Package which is specially for you.
+              </h3>
+            </div>
+            <p class="student-next-text fw9">
+              LEARN HOW YOUR JOURNEY COULD BE
+            </p>
+            <a nohref id="scrollFrom" onclick="moveFromTo()">
+              <img class="mouse-scroll" src="images/mouse-scroll.png"/>
+            </a>
+          </div>
+        </div>
+        <div id="student-wrapper">
+          <div class="student-section1 text-center">
+            <p class="student-section1-text dk-blue-text" id="scrollTo">
+              We do not believe <span class="student-section1-text fw">"The More, The Better"</span>.
+            </p>
+            <p class="student-section1-discription">
+              What a student needs is the <span class="fw9">right</span> worksheets to practice on, but <span class="fw9">more</span> worksheets.
+            </p>
+            <!-- <p class="student-section1-discription">
+              A-SLS knows what you need and will plan a Learning Package that is <span class="fw9">only for you</span>.
+            </p> -->
+            <!-- <p class="student-section1-discription">
+              Be ready to start this uniquely, extraordinarily exciting experience with KaKa-Smart.
+            </p>
+            <p class="student-section1-discription">
+              This is KaKa-Smart, your loving and loyal companion, on your Smart Learning Journey.
+            </p> -->
+            <div class="student-section1-footer">
+              <p class="student-section1-footer-text dk-blue-text">
+                Study with Us to Achieve Your Best Potential
+              </p>
+            </div>
+            <button class="btn dk-btn dk-bg-blue dk-white" onclick="moveToJourney()">
+              See how your smart learning journey look like
+            </button>
+            <!-- /.container-fluid -->
+          </div>
+          <!--/.page-section1-->
+          <!-- page-section2-->
+          <div class="student-section2 text-center">
+            <h3 class="dk-blue-text student-section2-text-header">
+              Your Smart Learning Journey
+            </h3>
+            <img class="rocket" src="images/rocket.png" alt="Rocket">
+            <div class="text-left">
+              <div class="planet1">
+                <div class="planet">
+                  <img src="images/planet1.png" alt="planet1">
+                </div>
+                <div class="planet-text text-left">
+                  <div class="map-description">
+                    <p class="planet-text-sub1 native fw9">ENJOY</p>
+                    <p class="planet-text-sub2 native dk-blue-text">Fun Features to Support<br /> Question Taking</p>
+                    <a class="map-learnmore dk-red-text" data-toggle="popover" data-trigger="focus" tabindex="0" data-placement="bottom" data-html="true" data-content='<span>"Hint"</span>, <span>"50/50"</span> and <span>"What others choose the most"</span> are some interesting features to assist you when you take the questions. You can also post a question to ask the teacher if you find it really challenging and have no clue of the answer.'>learn more <i class="fa fa-fw fa-angle-right"></i></a>
+                  </div>
+                </div>
+              </div>
+              <!--/.plane-->
+              <div class="planet2">
+                <div class="planet">
+                  <img src="images/planet2.png" alt="planet2">
+                </div>
+                <div class="planet-text text-left">
+                  <div class="map-description">
+                    <p class="planet-text-sub1 native fw9">REVISE IN</p>
+                    <p class="planet-text-sub2 native dk-blue-text">Mistakes Bank</p>
+                    <a class="map-learnmore dk-red-text" data-toggle="popover" data-trigger="focus" tabindex="0" data-placement="bottom" data-html="true" data-content='The questions that you answered wrongly will be collected in this <span>"Mistakes Bank"</span> as a reference for your revision.'>learn more <i class="fa fa-fw fa-angle-right"></i></a>
+                  </div>
+                </div>
+              </div>
+              <!--/.plane-->
+              <div class="planet3">
+                <div class="planet">
+                  <img src="images/planet3.png" alt="planet3">
+                </div>
+                <div class="planet-text text-left">
+                  <div class="map-description">
+                    <p class="planet-text-sub1 native fw9">VIEW YOUR</p>
+                    <p class="planet-text-sub2 native dk-blue-text">Results and Analysis Report</p>
+                    <a class="map-learnmore dk-red-text" data-toggle="popover" data-trigger="focus" tabindex="0" data-placement="bottom" data-html="true" data-content="Individual scores and the percentage of correct answers for every question are reported and shown in all worksheets.">learn more <i class="fa fa-fw fa-angle-right"></i></a>
+                  </div>
+                </div>
+              </div>
+              <!--/.plane-->
+              <div class="planet4">
+                <div class="planet">
+                  <img src="images/planet4.png" alt="planet4">
+                </div>
+                <div class="planet-text text-left">
+                  <div class="map-description">
+                    <p class="planet-text-sub1 native fw9">RECEIVE</p>
+                    <p class="planet-text-sub2 native dk-blue-text">Instant Marking and Feedback</p>
+                    <a class="map-learnmore dk-red-text" data-toggle="popover" data-trigger="focus" tabindex="0" data-placement="bottom" data-html="true" data-content="You will receive instant marking and feedback for MCQ questions and teacher's marking on structured questions. The result of each worksheet is analyzed and factored in the next worksheet generated by the system.">learn more <i class="fa fa-fw fa-angle-right"></i></a>
+                  </div>
+                </div>
+              </div>
+              <!--/.plane-->
+              <div class="planet5">
+                <div class="planet">
+                  <img src="images/planet5.png" alt="planet5">
+                </div>
+                <div class="planet-text text-left">
+                  <div class="map-description">
+                    <p class="planet-text-sub1 native fw9">STAY ON</p>
+                    <p class="planet-text-sub2 native dk-blue-text">High Quality Practice</p>
+                    <a class="map-learnmore dk-red-text" data-toggle="popover" data-trigger="focus" tabindex="0" data-placement="bottom" data-html="true" data-content="We provide thousands of high quality practice questions for all topics in the latest school syllabus (2017) and Mock/Prelim Exams that are arranged in various difficulty levels, and assign to you based on your academic ability and readiness.">learn more <i class="fa fa-fw fa-angle-right"></i></a>
+                  </div>
+                </div>
+              </div>
+              <!--/.plane-->
+              <div class="planet6">
+                <div class="planet">
+                  <img src="images/planet6.png" alt="planet6">
+                </div>
+                <div class="planet-text text-left">
+                  <div class="map-description">
+                    <p class="planet-text-sub1 native fw9">ASSIGNED AN</p>
+                    <p class="planet-text-sub2 native dk-blue-text">Individualised Learning Plan</p>
+                    <a class="map-learnmore dk-red-text" data-toggle="popover" data-trigger="focus" tabindex="0" data-placement="bottom" data-html="true" data-content="A-SLS plans a Personalised Learning Road Map of Test and Practice Papers that is targeted to help you build on your strengths and address your areas for improvement.">learn more <i class="fa fa-fw fa-angle-right"></i></a>
+                  </div>
+                </div>
+              </div>
+              <!--/.plane-->
+              <div class="planet7">
+                <div class="planet">
+                  <img src="images/planet7.png" alt="planet7">
+                </div>
+                <div class="planet-text text-left">
+                  <div class="map-description">
+                    <p class="planet-text-sub1 native fw9">START WITH</p>
+                    <p class="planet-text-sub2 native dk-blue-text">Smart, Dynamic and Continuous Diagnosis</p>
+                    <a class="map-learnmore dk-red-text" data-toggle="popover" data-trigger="focus" tabindex="0" data-placement="bottom" data-html="true" data-content="A-SLS identifies your academic strengths and areas for improvement through dynamic diagnosis on each worksheet you complete.">learn more <i class="fa fa-fw fa-angle-right"></i></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!--/.planet-group-->
+            <div class="student-section2-footer-container">
+              <p class="student-section2-footer dk-blue-text">Enjoy this fun-filled, effective and efficient<br /> learning journey</p>
+              <div>
+              <a href="https://app.a-smartlearning.com/en/sml/login?mode=register">
+                <button class="btn dk-btn dk-bg-blue dk-white">
+                  CREATE STUDENT ACCOUNT
+                </button>
+              </a>
+              <!-- <button class="btn dk-btn dk-bg-green dk-white">
+                TELL YOUR FRIENDS
+              </button> -->
+            </div>
+            </div>
+          </div>
+          <!--/.page-section2-->
+          <!--Page-footer-->
+          <div class="page-footer text-left">
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-md-6 col-xs-12 col-md-push-6 footer-follow">
+                  <!-- <span>
+                    Follow us on
+                    <i class="fa fa-fw fa-facebook dk-blue" aria-hidden="true"></i>
+                    <i class="fa fa-fw fa-twitter dk-blue1" aria-hidden="true"></i>
+                    <i class="fa fa-fw fa-linkedin-square dk-blue2" aria-hidden="true"></i>
+                  </span> -->
+                </div>
+                <div class="col-md-6 col-xs-12 col-md-pull-6 footer-action">
+                  <div class="footer-group-item">
+                    <div class="footer-item"><a href="about-us">About us</a></div>
+                    <div class="footer-item"><a href="contact">Contact us</a></div>
+                    <div class="footer-item"><a href="#">Terms of Service</a></div>
+                    <div class="footer-item"><a href="privacy">Privacy</a></div>
+                  </div>
+                  <div class="footer-copyright">
+                    <span>2016 <i class="fa fa-fw fa-copyright"></i> Copyright by A-SLS. All rights Reserved.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /#page-wrapper -->
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document" style="max-width: 500px">
+        <div class="modal-content" style="border-radius: 0;border: none;">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title text-center" id="myModalLabel">Sign Up</h4>
+          </div>
+          <div class="modal-body text-center">
+            <a href="https://app.a-smartlearning.com/en/sml/login?mode=register">
+              <button class="btn dk-btn dk-bg-green" style="color: white">
+                I AM A STUDENT
+              </button>
+            </a>
+            <a href="parent?m=su">
+              <button class="btn dk-btn dk-bg-blue" style="color: white">
+                I AM A PARENT
+              </button>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="scripts/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="scripts/bootstrap.min.js"></script>
+
+    <script>
+
+        $(document).ready(function() {
+          $('[data-toggle="tooltip"]').tooltip();
+          $('[data-toggle="popover"]').popover();
+        })
+
+        var moveToJourney = function() {
+          $('html, body').animate({
+            scrollTop: $(".student-section2-text-header").offset().top
+          }, 500);
+        }
+
+        var moveFromTo = function() {
+          $('html, body').animate({
+            scrollTop: $("#scrollTo").offset().top
+          }, 500);
+        }
+
+    </script>
+</body>
+
+</html>

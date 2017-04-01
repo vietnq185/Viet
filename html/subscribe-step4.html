@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Subscription Step 4</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="styles/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="styles/main.css" rel="stylesheet">
+    <link href="styles/col-mixin.css" rel="stylesheet">
+    <link href="styles/subscribe.css" rel="stylesheet">
+
+
+    <!-- Custom Fonts -->
+    <link href="styles/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
+    
+    <script src="scripts/jquery.js"></script>
+    <script src="scripts/bootstrap.min.js"></script>
+    <script src="scripts/subscribe.js"></script>
+</head>
+
+<body>
+  <div id="wrapper">
+    	<div class="subscribe-header">
+    		<nav class="navbar navbar-default dk-navbar" role="navigation">
+	          <!-- Brand and toggle get grouped for better mobile display -->
+	          <div class="navbar-header">
+	              <!-- button for mobile display. show menu-->
+	              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-ex1-collapse" aria-expanded="false">
+	                  <span class="sr-only">Toggle navigation</span>
+	                  <span class="icon-bar"></span>
+	                  <span class="icon-bar"></span>
+	                  <span class="icon-bar"></span>
+	              </button>
+	              <a class="navbar-brand" href="home">A-SLS</a>
+	          </div>
+	          <!-- Top Menu Items -->
+	          <div class="collapse navbar-collapse navbar-ex1-collapse navbar-right">
+	              <ul class="nav navbar-nav side-nav">
+	                  <li>
+	                      <a href="about"><span class="side-nav-item">Home</span></a>
+	                  </li>
+	                  <li>
+	                      <a href="programme"> <span class="side-nav-item">Our Programme</span></a>
+	                  </li>
+	                  <li>
+	                      <a href="student"> <span class="side-nav-item">For Student</span></a>
+	                  </li>
+	                  <li>
+	                      <a href="parent"> <span class="side-nav-item">For Parent</span></a>
+	                  </li>
+	                  <!-- <li>
+	                      <a href="contact"> <span class="side-nav-item">Contact</span></a>
+	                  </li> -->
+	                  <li>
+	                      <a href="#" data-toggle="modal" data-target="#loginModal"> <span class="side-nav-item">Free Trial</span></a>
+	                  </li>
+	                  <li class="signin">
+	                      <a href="https://app.a-smartlearning.com/en/sml/login" class="text-signin"> <span class="side-nav-item">Sign In</span></a>
+	                  </li>
+	              </ul>
+	          </div>
+	          <!-- /.navbar-collapse -->
+	      </nav>
+    	</div>
+    	
+    	<div class="subscribe-wrapper">
+    		<div class="breadcrumb">
+    			<a href="Home" class="passed">Home</a> <i class="fa fa-chevron-right"></i> 
+    			<a href="Home" class="active">Subscribe</a> 
+    		</div> 
+    		<div class="subscribe-content-container">
+    			<h3>Complete your subscription in just a few steps</h3>
+    			<div class="subscribe-content">
+    				<div class="subscribe-steps-nav">
+    					<ul>
+    						<li class="list-inline passed">
+    							<span class="num-step-container"><span class="num-step">1</span></span>
+    							<span class="step-title hidden-xs">
+    								ACCOUNT
+    								<span class="step-title-desc">quangviet185@gmail.com</span>
+    							</span>
+    						</li>
+    						<li class="list-inline passed">
+    							<span class="num-step-container"><span class="num-step">2</span></span>
+    							<span class="step-title hidden-xs">
+    								PALN
+    								<span class="step-title-desc">Math & Science</span>
+    							</span>
+    						</li>
+    						<li class="list-inline passed">
+    							<span class="num-step-container"><span class="num-step">3</span></span>
+    							<span class="step-title hidden-xs">
+    								PAYMENT
+    								<span class="step-title-desc">Credit/Debit Card</span>
+    							</span>
+    						</li>
+    						<li class="list-inline active">
+    							<span class="num-step-container"><span class="num-step">4</span></span>
+    							<span class="step-title hidden-xs">
+    								STUDENT
+    								<span class="step-title-desc">Assign plan to a student</span>
+    							</span>
+    						</li>
+    					</ul>
+    				</div>
+    				<div class="subscription-assign-student-container">
+	    				<div class="alert alert-success">
+							<p>Congrats! You have successfully subscribed to a plan. Now please create a <strong>Student Account</strong> for your child to start enjoyning it.</p>
+							<br/><p>You can also do it later by accessing to <a href="">My Subscrition</a> page</p>					  
+						</div>
+	    				<div class="subscription-assign-student">
+	    					<div class="row">
+	    						<div class="col-xs-12">
+	    							<h2>Student Account</h2>
+	    						</div>
+	    					</div>
+	    					<hr/>
+	    					<div class="subscription-assign-student-form">
+		    					<p>Please Sign Up for a student account by entering the information below</p>
+		    					<p>Already have a student account? <a href="">Link account now</a></p>
+		    					<form action="" method="post">
+		    						<div class="row">
+   										<div class="col-sm-6 col-xs-12">
+   											<div class="form-group">
+							                  <label for="contact-name">First Name*</label>
+							                  <input class="form-control" name="fname" id="fname" required="" type="text">
+							                </div>
+   										</div>
+   										<div class="col-sm-6 col-xs-12">
+   											<div class="form-group">
+							                  <label for="contact-name">Last Name*</label>
+							                  <input class="form-control" name="lname" id="lname" required="" type="text">
+							                </div>
+   										</div>
+   										<div class="col-sm-6 col-xs-12">
+   											<div class="form-group">
+							                  <label for="contact-name">Email address*</label>
+							                  <input class="form-control" name="email" id="email" required="" type="text">
+							                </div>
+   										</div>
+   										<div class="col-sm-6 col-xs-12">
+   											<div class="form-group">
+							                  <label for="contact-name">School</label>
+							                  <input class="form-control" name="school" id="school" type="text">
+							                </div>
+   										</div>
+   										<div class="col-sm-6 col-xs-12">
+   											<div class="form-group">
+							                  <label for="contact-name">Level</label>
+							                  <select class="form-control" name="level" id="level">
+							                  	<option value="P1">P1</option>
+							                  	<option value="P2">P2</option>
+							                  	<option value="P3">P3</option>
+							                  </select>
+							                </div>
+   										</div>
+   										<div class="col-sm-6 col-xs-12">
+   											<div class="form-group">
+							                  <label for="contact-name">Year of Birth</label>
+							                  <select class="form-control" name="year_of_birth" id="year_of_birth" required="">
+							                  	<option value="2017">2017</option>
+							                  	<option value="2018">2018</option>
+							                  	<option value="2019">2019</option>
+							                  	<option value="2020">2020</option>
+							                  </select>
+							                </div>
+   										</div>
+   										<div class="col-sm-6 col-xs-12">
+   											<div class="form-group">
+							                  <label for="contact-name">Password*</label>
+							                  <input class="form-control" name="password" id="password" type="password">
+							                </div>
+   										</div>
+   										<div class="col-sm-6 col-xs-12">
+   											<div class="form-group">
+							                  <label for="contact-name">Confirm Password</label>
+							                  <input class="form-control" name="confirm_password" id="confirm_password" type="password">
+							                </div>
+   										</div>
+   										<div class="col-xs-12">
+	   										<div class="form-group">
+							                  <button type="button" class="btn dk-bg-blue dk-white">Complete Assignment</button>
+							                </div>
+						               </div>
+   									</div>
+		    					</form>
+	    					</div>
+	    				</div>
+	    			</div>
+    			</div>
+    		</div>
+    	</div>
+    	
+    	<!--Page-footer-->
+	    <div class="page-footer text-left">
+	      <div class="container-fluid">
+	        <div class="row">
+	          <div class="col-md-6 col-xs-12 col-md-push-6 footer-follow">
+	            <!-- <span>
+	              Follow us on
+	              <i class="fa fa-fw fa-facebook dk-blue" aria-hidden="true"></i>
+	              <i class="fa fa-fw fa-twitter dk-blue1" aria-hidden="true"></i>
+	              <i class="fa fa-fw fa-linkedin-square dk-blue2" aria-hidden="true"></i>
+	            </span> -->
+	          </div>
+	          <div class="col-md-6 col-xs-12 col-md-pull-6 footer-action">
+	            <div class="footer-group-item">
+	              <div class="footer-item"><a href="#">About us</a></div>
+	              <div class="footer-item"><a href="contact">Contact us</a></div>
+	              <div class="footer-item"><a href="#">Terms of Service</a></div>
+	              <div class="footer-item"><a href="privacy">Privacy</a></div>
+	            </div>
+	            <div class="footer-copyright">
+	              <span>2016 <i class="fa fa-fw fa-copyright"></i> Copyright by A-SLS. All rights Reserved.</span>
+	            </div>
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+	    
+   </div>
+</body>
+
+</html>

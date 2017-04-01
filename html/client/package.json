@@ -1,0 +1,40 @@
+{
+  "name": "inspi-site",
+  "version": "1.0.0",
+  "description": "Official Inspi Corp. page",
+  "main": "index.js",
+  "dependencies": {
+    "bower": "1.5.3",
+    "compression": "1.6.0",
+    "ejs": "2.3.4",
+    "express": "4.13.3",
+    "lodash": "3.10.1",
+    "path": "0.12.7",
+    "serve-favicon": "2.3.0"
+  },
+  "devDependencies": {
+    "grunt-autoprefixer": "^3.0.3",
+    "grunt-concurrent": "^2.0.3",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-compass": "^1.0.4",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-express-server": "^0.5.1",
+    "grunt-include-source": "^0.7.0",
+    "grunt-open": "^0.2.3",
+    "grunt-wiredep": "^2.0.0",
+    "jshint-stylish": "^2.0.1",
+    "load-grunt-tasks": "^3.3.0",
+    "time-grunt": "^1.2.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "bower install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://dzuncoi@bitbucket.org/inspicorp_lightning/lightning-inspi-site.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/inspicorp_lightning/lightning-inspi-site#readme"
+}

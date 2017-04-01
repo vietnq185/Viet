@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Subscription Step 3</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="styles/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="styles/main.css" rel="stylesheet">
+    <link href="styles/col-mixin.css" rel="stylesheet">
+    <link href="styles/subscribe.css" rel="stylesheet">
+
+
+    <!-- Custom Fonts -->
+    <link href="styles/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
+    
+    <script src="scripts/jquery.js"></script>
+    <script src="scripts/bootstrap.min.js"></script>
+    <script src="scripts/subscribe.js"></script>
+</head>
+
+<body>
+  <div id="wrapper">
+    	<div class="subscribe-header">
+    		<nav class="navbar navbar-default dk-navbar" role="navigation">
+	          <!-- Brand and toggle get grouped for better mobile display -->
+	          <div class="navbar-header">
+	              <!-- button for mobile display. show menu-->
+	              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-ex1-collapse" aria-expanded="false">
+	                  <span class="sr-only">Toggle navigation</span>
+	                  <span class="icon-bar"></span>
+	                  <span class="icon-bar"></span>
+	                  <span class="icon-bar"></span>
+	              </button>
+	              <a class="navbar-brand" href="home">A-SLS</a>
+	          </div>
+	          <!-- Top Menu Items -->
+	          <div class="collapse navbar-collapse navbar-ex1-collapse navbar-right">
+	              <ul class="nav navbar-nav side-nav">
+	                  <li>
+	                      <a href="about"><span class="side-nav-item">Home</span></a>
+	                  </li>
+	                  <li>
+	                      <a href="programme"> <span class="side-nav-item">Our Programme</span></a>
+	                  </li>
+	                  <li>
+	                      <a href="student"> <span class="side-nav-item">For Student</span></a>
+	                  </li>
+	                  <li>
+	                      <a href="parent"> <span class="side-nav-item">For Parent</span></a>
+	                  </li>
+	                  <!-- <li>
+	                      <a href="contact"> <span class="side-nav-item">Contact</span></a>
+	                  </li> -->
+	                  <li>
+	                      <a href="#" data-toggle="modal" data-target="#loginModal"> <span class="side-nav-item">Free Trial</span></a>
+	                  </li>
+	                  <li class="signin">
+	                      <a href="https://app.a-smartlearning.com/en/sml/login" class="text-signin"> <span class="side-nav-item">Sign In</span></a>
+	                  </li>
+	              </ul>
+	          </div>
+	          <!-- /.navbar-collapse -->
+	      </nav>
+    	</div>
+    	
+    	<div class="subscribe-wrapper">
+    		<div class="breadcrumb">
+    			<a href="Home" class="passed">Home</a> <i class="fa fa-chevron-right"></i> 
+    			<a href="Home" class="active">Subscribe</a> 
+    		</div> 
+    		<div class="subscribe-content-container">
+    			<h3>Complete your subscription in just a few steps</h3>
+    			<div class="subscribe-content">
+    				<div class="subscribe-steps-nav">
+    					<ul>
+    						<li class="list-inline passed">
+    							<span class="num-step-container"><span class="num-step">1</span></span>
+    							<span class="step-title hidden-xs">
+    								ACCOUNT
+    								<span class="step-title-desc">quangviet185@gmail.com</span>
+    							</span>
+    						</li>
+    						<li class="list-inline passed">
+    							<span class="num-step-container"><span class="num-step">2</span></span>
+    							<span class="step-title hidden-xs">
+    								PALN
+    								<span class="step-title-desc">Math & Science</span>
+    							</span>
+    						</li>
+    						<li class="list-inline active">
+    							<span class="num-step-container"><span class="num-step">3</span></span>
+    							<span class="step-title hidden-xs">
+    								PAYMENT
+    								<span class="step-title-desc">Complete your payment</span>
+    							</span>
+    						</li>
+    						<li class="list-inline">
+    							<span class="num-step-container"><span class="num-step">4</span></span>
+    							<span class="step-title hidden-xs">
+    								STUDENT
+    								<span class="step-title-desc">Assign plan to a student</span>
+    							</span>
+    						</li>
+    					</ul>
+    				</div>
+    				<div class="subscription-complete-payment">
+    					<div class="row">
+    						<div class="col-sm-9 col-xs-12">
+    							<h2>Select your payment method</h2>
+    						</div>
+    						<div class="col-sm-3 col-xs-12 text-right">
+    							 <a href="" class="change-plan">Change plan</a>
+    						</div>
+    					</div>
+    					<hr/>
+    					<div class="payment-method">
+    						<div class="cc-container">
+	    						<div>Your credit card will not be charged until the 14 days trial period expires. If you cancel the subscription before the trial expired, your card will not be charged</div>
+	    						<div>After your trial period you will be charged <strong>$48 per month:</strong></div><br/>
+    						</div>
+    						<div class="bank-container" style="display: none;">
+    							<h3>After your trial period you will be charged <strong>$400 per year:</strong></h3>
+    						</div>
+    						<div class="payment-method-form">
+    							<form action="" method="post">
+    								<ul class="list-inline">
+    									<li>
+    										<input type="radio" name="payment_method" id="cc" value="cc" checked="checked" />
+    										<label for="cc"><i class="fa fa-credit-card" aria-hidden="true"></i>Credit/Debit Card</label>
+    									</li>
+    									<li>
+    										<input type="radio" name="payment_method" id="bank" value="bank" />
+    										<label for="bank"><i class="fa fa-money" aria-hidden="true"></i>Bank Transfer</label>
+    									</li>
+    								</ul>
+    								<div class="cc-container">
+    									<ul class="list-inline">
+	    									<li>
+	    										<input type="radio" name="card_id" id="card_id_1" value="1" />
+	    										<label for="card_id_1"><span>VISA</span> ****4242 02/2020</label>
+	    									</li>
+	    									<li>
+	    										<input type="radio" name="card_id" id="card_id_2" value="2" />
+	    										<label for="card_id_2"><span>Master Card</span> ****4242 02/2020</label>
+	    									</li>
+	    									<li>
+	    										<input type="radio" name="card_id" id="card_id_3" value="new" checked="checked" />
+	    										<label for="card_id_3">Add new card</label>
+	    									</li>
+	    								</ul>
+	    								<div class="cc-details">
+	    									<div class="row">
+	    										<div class="col-sm-6 col-xs-12">
+	    											<div class="form-group">
+									                  <label for="contact-name">Card Number</label>
+									                  <input class="form-control" name="card_number" id="card_number" required="" type="text">
+									                </div>
+	    										</div>
+	    										<div class="col-sm-6 col-xs-12">
+	    											<div class="form-group">
+									                  <label for="contact-name">Name</label>
+									                  <input class="form-control" name="name" id="name" required="" type="text">
+									                </div>
+	    										</div>
+	    									</div>
+	    									<div class="row">
+	    										<div class="col-sm-4 col-xs-12">
+	    											<div class="form-group">
+									                  <label for="contact-name">Expiry Month</label>
+									                  <select class="form-control" name="exp_month" id="exp_month" required="">
+									                  	<option value="01">01</option>
+									                  	<option value="02">02</option>
+									                  	<option value="03">03</option>
+									                  	<option value="04">04</option>
+									                  	<option value="05">05</option>
+									                  	<option value="06">06</option>
+									                  	<option value="07">07</option>
+									                  	<option value="08">08</option>
+									                  	<option value="09">09</option>
+									                  	<option value="10">10</option>
+									                  	<option value="11">11</option>
+									                  	<option value="12">12</option>
+									                  </select>
+									                </div>
+	    										</div>
+	    										<div class="col-sm-4 col-xs-12">
+	    											<div class="form-group">
+									                  <label for="contact-name">Expiry Year</label>
+									                   <select class="form-control" name="exp_year" id="exp_year" required="">
+									                  	<option value="2017">2017</option>
+									                  	<option value="2018">2018</option>
+									                  	<option value="2019">2019</option>
+									                  	<option value="2020">2020</option>
+									                  </select>
+									                </div>
+	    										</div>
+	    										<div class="col-sm-4 col-xs-12">
+	    											<div class="form-group">
+									                  <label for="contact-name">CVV</label>
+									                  <input class="form-control" name="cvv" id="cvv" required="" type="text">
+									                </div>
+	    										</div>
+	    									</div>
+	    								</div>
+    								</div>
+    								<div class="bank-container" style="display: none;">
+    									<p>If you select "Bank Transfer" you can only start the trial period after your account is activated by us. We will call you to confirm the information and we will provide you further instruction via your email address as well.</p>
+    									<p>For instant information, please contact us via +65 7432 3421<br/>You will skip step 4 if you select this payment method</p>
+    								</div>
+    								<br/>
+    								<div class="form-group">
+					                  <button type="button" class="btn dk-bg-blue dk-white btnCompleteSubscription">Complete Subscription</button>
+					                  <span class="secure-server"><i class="fa fa-lock "></i> Secure Server</span>
+					                </div>
+    							</form>
+    							
+    							<!-- Modal -->
+								<div id="modalPaymentFailed" class="modal fade" role="dialog">
+								  <div class="modal-dialog">
+								
+								    <!-- Modal content-->
+								    <div class="modal-content">
+								      <div class="modal-body text-center">
+								      	<div><img src="images/icon-failed.png"></div>
+								      	<h1>FAILED!</h1>
+								      	<p>Sorry, an error has occured.<br/>Please check your payment detail and try again. Thank you!</p>
+								        <div><button class="btn dk-bg-green dk-white btn-close-modal" type="button" data-dismiss="modal">Try Again</button></div>
+								      </div>
+								    </div>
+								
+								  </div>
+								</div>
+								
+    						</div>
+    					</div>
+    				</div>
+    			</div>
+    		</div>
+    	</div>
+    	
+    	<!--Page-footer-->
+	    <div class="page-footer text-left">
+	      <div class="container-fluid">
+	        <div class="row">
+	          <div class="col-md-6 col-xs-12 col-md-push-6 footer-follow">
+	            <!-- <span>
+	              Follow us on
+	              <i class="fa fa-fw fa-facebook dk-blue" aria-hidden="true"></i>
+	              <i class="fa fa-fw fa-twitter dk-blue1" aria-hidden="true"></i>
+	              <i class="fa fa-fw fa-linkedin-square dk-blue2" aria-hidden="true"></i>
+	            </span> -->
+	          </div>
+	          <div class="col-md-6 col-xs-12 col-md-pull-6 footer-action">
+	            <div class="footer-group-item">
+	              <div class="footer-item"><a href="#">About us</a></div>
+	              <div class="footer-item"><a href="contact">Contact us</a></div>
+	              <div class="footer-item"><a href="#">Terms of Service</a></div>
+	              <div class="footer-item"><a href="privacy">Privacy</a></div>
+	            </div>
+	            <div class="footer-copyright">
+	              <span>2016 <i class="fa fa-fw fa-copyright"></i> Copyright by A-SLS. All rights Reserved.</span>
+	            </div>
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+	    
+   </div>
+</body>
+
+</html>

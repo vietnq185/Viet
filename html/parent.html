@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>A-SLS</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="styles/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="styles/main.css" rel="stylesheet">
+    <link href="styles/col-mixin.css" rel="stylesheet">
+    <link href="styles/programme.css" rel="stylesheet">
+    <link href="styles/parent.css" rel="stylesheet">
+
+
+    <!-- Custom Fonts -->
+    <link href="styles/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
+</head>
+
+<body>
+    <div id="wrapper">
+        <!-- Navigation -->
+        <div class="parent-header dk-white">
+          <nav class="navbar navbar-default dk-navbar" role="navigation">
+              <!-- Brand and toggle get grouped for better mobile display -->
+              <div class="navbar-header">
+                  <!-- button for mobile display. show menu-->
+                  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-ex1-collapse" aria-expanded="false">
+                      <span class="sr-only">Toggle navigation</span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                  </button>
+                  <a class="navbar-brand" href="home">A-SLS</a>
+              </div>
+              <!-- Top Menu Items -->
+              <div class="collapse navbar-collapse navbar-ex1-collapse navbar-right dk-white">
+                  <ul class="nav navbar-nav side-nav">
+                      <li>
+                          <a href="about"><span class="side-nav-item dk-white">Home</span></a>
+                      </li>
+                      <li>
+                          <a href="programme"> <span class="side-nav-item dk-white">Our Programme</span></a>
+                      </li>
+                      <li>
+                          <a href="student"> <span class="side-nav-item dk-white">For Student</span></a>
+                      </li>
+                      <li>
+                          <a href="parent"> <span class="side-nav-item dk-yellow">For Parent</span></a>
+                      </li>
+                      <!-- <li>
+                          <a href="contact"> <span class="side-nav-item dk-white">Contact</span></a>
+                      </li> -->
+                      <li>
+                          <a href="#" data-toggle="modal" data-target="#loginModal"> <span class="side-nav-item dk-white">Sign Up</span></a>
+                      </li>
+                      <li class="signin">
+                          <a href="https://app.a-smartlearning.com/en/sml/login" class="text-signin"> <span class="side-nav-item dk-white">Sign In</span></a>
+                      </li>
+                  </ul>
+              </div>
+              <!-- /.navbar-collapse -->
+          </nav>
+          <div class="content-wraper text-center">
+            <h1 class="parent-title">
+              Study with Your Child
+            </h1>
+            <div>
+              <p class="parent-sub-title fw9">
+                A Smart Application on iOS and Android that helps you to
+              </p>
+              <p class="parent-sub-title">
+                <span class="dk-yellow">Understand</span> your child's academic strengths and areas for improvement
+              </p>
+              <p class="parent-sub-title">
+                <span class="dk-yellow">Receive</span> instant updates and reports
+              </p>
+              <p class="parent-sub-title">
+                <span class="dk-yellow">Study with your child</span> to understand the challenges he/she faces
+              </p>
+              <p class="parent-sub-title">
+                <span class="dk-yellow">Get</span> help and advice from teachers
+              </p>
+            </div>
+            <div class="mt2">
+              <a href="https://itunes.apple.com/us/app/a-sls/id1128693154?ls=1&mt=8">
+                <div class="store">
+                  <div class="store-item">
+                    <img src="images/apple.png" alt="Apple Store">
+                  </div>
+                  <div class="store-item store-item-text">
+                    <p style="color: white">
+                      Apple Store
+                    </p>
+                  </div>
+                </div>
+              </a>
+              <a href="https://play.google.com/store/apps/details?id=com.inspicorp.sls_android">
+                <div class="store ml1">
+                  <div class="store-item">
+                    <img src="images/google.png" alt="Google Store">
+                  </div>
+                  <div class="store-item store-item-text">
+                    <p style="color: white">
+                      Google Store
+                    </p>
+                  </div>
+                </div>
+              </a>
+            </div>
+            <p class="parent-next-text fw9">
+              LEARN MORE ABOUT THE FEATURES
+            </p>
+            <a nohref id="scrollFrom" onclick="moveFromTo()">
+              <img class="mouse-scroll" src="images/mouse-scroll.png"/>
+            </a>
+          </div>
+        </div>
+        <div id="parent-wrapper">
+          <div class="parent-section1 text-center">
+            <h3 class="dk-blue-text parent-section1-text-header" id="scrollTo">
+              Parent Mobile Application
+            </h3>
+            <div class="text-left">
+              <div class="container-fluid" style="max-width: 650px">
+                <div class="row parent-section1-item">
+                  <div class="col-md-4 col-xs-12 text-center">
+                    <img class="pull-right parent-item-icon" src="images/parent-item1.png" alt="Mobile-app">
+                  </div>
+                  <div class="col-md-8 col-xs-12 text-left">
+                    <div class="parent-section1-item2">
+                      <p class="parent-section1-sub1">Mobile App for Parents</p>
+                      <p class="parent-section1-sub2">Parents can <span class="dk-blue" style="cursor: pointer" data-toggle="modal" data-target="#parentModal">download</span> the mobile app on both iOS and Android devices <span class="dk-blue">for free</span> and add your child's account to receive instant report of your child's learning progress</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!--./item-->
+              <div class="container-fluid" style="max-width: 650px">
+                <div class="row parent-section1-item">
+                  <div class="col-md-8 col-xs-12 text-right">
+                    <div class="parent-section1-item2">
+                      <p class="parent-section1-sub1">Live View on Device</p>
+                      <p class="parent-section1-sub2">Parents can choose to "Follow" your child's performance and view your child's status and activities online.</p>
+                    </div>
+                  </div>
+                  <div class="col-md-4 col-xs-12 text-center">
+                    <img class="parent-item-icon pull-left" src="images/parent-item2.png" alt="Mobile-app">
+                  </div>
+                </div>
+              </div>
+              <!--./item-->
+              <div class="container-fluid" style="max-width: 650px">
+                <div class="row parent-section1-item">
+                  <div class="col-md-4 col-xs-12 text-center">
+                    <img class="pull-right parent-item-icon" src="images/parent-item4.png" alt="Mobile-app">
+                  </div>
+                  <div class="col-md-8 col-xs-12 text-left">
+                    <div class="parent-section1-item2">
+                      <p class="parent-section1-sub1">Timely Report of Performance</p>
+                      <p class="parent-section1-sub2">Parents can closely monitor your child's performance by receiving instant "Daily/Weely/Monthly" report of results and analysis.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!--./item-->
+              <div class="container-fluid" style="max-width: 650px">
+                <div class="row parent-section1-item">
+                  <div class="col-md-8 col-xs-12 text-right">
+                    <div class="parent-section1-item2">
+                      <p class="parent-section1-sub1">Study with Your Child</p>
+                      <p class="parent-section1-sub2">Understanding your child's areas for improvement by viewing his/her "Mistakes made".
+                      Empathising with your child by trying the questions that your child did wrongly and showing him/her the correct answers</p>
+                    </div>
+                  </div>
+                  <div class="col-md-4 col-xs-12 text-center">
+                    <img class="parent-item-icon pull-left" src="images/parent-item3.png" alt="Mobile-app">
+                  </div>
+                </div>
+              </div>
+              <!--./item-->
+              <div class="container-fluid" style="max-width: 650px">
+                <div class="row parent-section1-item">
+                  <div class="col-md-4 col-xs-12 text-center">
+                    <img class="pull-right parent-item-icon" src="images/parent-item5.png" alt="Mobile-app">
+                  </div>
+                  <div class="col-md-8 col-xs-12 text-left">
+                    <div class="parent-section1-item2">
+                      <p class="parent-section1-sub1">Bonding with Your Child</p>
+                      <p class="parent-section1-sub2">By closely monitoring your child and understanding the challenges he/she encounters, you will be able to bond with your child and share the joy of his/her learning journey.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!--/.planet-group-->
+            <div class="parent-section1-footer">
+              <p class="parent-section1-footer-text dk-blue-text">Be There for Your Child on His/Her Learning Journey</p>
+              <div>
+              <button class="btn dk-btn dk-bg-blue dk-white" data-toggle="modal" data-target="#parentModal">
+                CREATE PARENT ACCOUNT
+              </button>
+              <!-- <button class="btn dk-btn dk-bg-green dk-white">
+                TELL YOUR FRIENDS
+              </button> -->
+            </div>
+            </div>
+          </div>
+          <!--/.page-section1-->
+          <!--Page-footer-->
+          <div class="page-footer text-left">
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-md-6 col-xs-12 col-md-push-6 footer-follow">
+                  <!-- <span>
+                    Follow us on
+                    <i class="fa fa-fw fa-facebook dk-blue" aria-hidden="true"></i>
+                    <i class="fa fa-fw fa-twitter dk-blue1" aria-hidden="true"></i>
+                    <i class="fa fa-fw fa-linkedin-square dk-blue2" aria-hidden="true"></i>
+                  </span> -->
+                </div>
+                <div class="col-md-6 col-xs-12 col-md-pull-6 footer-action">
+                  <div class="footer-group-item">
+                    <div class="footer-item"><a href="about-us">About us</a></div>
+                    <div class="footer-item"><a href="contact">Contact us</a></div>
+                    <div class="footer-item"><a href="#">Terms of Service</a></div>
+                    <div class="footer-item"><a href="privacy">Privacy</a></div>
+                  </div>
+                  <div class="footer-copyright">
+                    <span>2016 <i class="fa fa-fw fa-copyright"></i> Copyright by A-SLS. All rights Reserved.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /#page-wrapper -->
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document" style="max-width: 500px">
+        <div class="modal-content" style="border-radius: 0;border: none;">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title text-center" id="myModalLabel">Sign Up</h4>
+          </div>
+          <div class="modal-body text-center">
+            <a href="https://app.a-smartlearning.com/en/sml/login?mode=register">
+              <button class="btn dk-btn dk-bg-green" style="color: white">
+                I AM A STUDENT
+              </button>
+            </a>
+            <a href="parent?m=su">
+              <button class="btn dk-btn dk-bg-blue" style="color: white">
+                I AM A PARENT
+              </button>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="parentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document" style="max-width: 500px">
+        <div class="modal-content" style="border-radius: 0;border: none;">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title text-center" style="font-size: 16px" id="myModalLabel">Download iOS or Android app, then enjoy the learning journey with your child</h4>
+          </div>
+          <div class="modal-body text-center">
+            <div class="store">
+              <a href="https://itunes.apple.com/us/app/a-sls/id1128693154?ls=1&mt=8" target="_blank">
+                <div class="store-item">
+                  <img style="width: 50px" src="images/app_store.png" alt="Apple Store">
+                </div>
+                <div class="store-item store-item-text">
+                  <p>
+                    Apple Store
+                  </p>
+                </div>
+              </a>
+            </div>
+            <div class="store ml1">
+              <a href="https://play.google.com/store/apps/details?id=com.inspicorp.sls_android" target="_blank">
+                <div class="store-item">
+                  <img style="width: 50px" src="images/google_play.png" alt="Google Store">
+                </div>
+                <div class="store-item store-item-text">
+                  <p>
+                    Google Store
+                  </p>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="scripts/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="scripts/bootstrap.min.js"></script>
+
+    <script>
+
+    function getAllUrlParams(url) {
+
+      // get query string from url (optional) or window
+      var queryString = url ? url.split('?')[1] : window.location.search.slice(1);
+
+      // we'll store the parameters here
+      var obj = {};
+
+      // if query string exists
+      if (queryString) {
+
+        // stuff after # is not part of query string, so get rid of it
+        queryString = queryString.split('#')[0];
+
+        // split our query string into its component parts
+        var arr = queryString.split('&');
+
+        for (var i=0; i<arr.length; i++) {
+          // separate the keys and the values
+          var a = arr[i].split('=');
+
+          // in case params look like: list[]=thing1&list[]=thing2
+          var paramNum = undefined;
+          var paramName = a[0].replace(/\[\d*\]/, function(v) {
+            paramNum = v.slice(1,-1);
+            return '';
+          });
+
+          // set parameter value (use 'true' if empty)
+          var paramValue = typeof(a[1])==='undefined' ? true : a[1];
+
+          // (optional) keep case consistent
+          paramName = paramName.toLowerCase();
+          paramValue = paramValue.toLowerCase();
+
+          // if parameter name already exists
+          if (obj[paramName]) {
+            // convert value to array (if still string)
+            if (typeof obj[paramName] === 'string') {
+              obj[paramName] = [obj[paramName]];
+            }
+            // if no array index number specified...
+            if (typeof paramNum === 'undefined') {
+              // put the value on the end of the array
+              obj[paramName].push(paramValue);
+            }
+            // if array index number specified...
+            else {
+              // put the value at that index number
+              obj[paramName][paramNum] = paramValue;
+            }
+          }
+          // if param name doesn't exist yet, set it
+          else {
+            obj[paramName] = paramValue;
+          }
+        }
+      }
+
+      return obj;
+    }
+
+    $(document).ready(function() {
+      var urlObj = getAllUrlParams();
+      if (urlObj.m && urlObj.m == "su") {
+        $('#parentModal').modal()
+      }
+    })
+
+    var moveFromTo = function() {
+      $('html, body').animate({
+        scrollTop: $("#scrollTo").offset().top
+      }, 500);
+    }
+
+    </script>
+
+
+</body>
+
+</html>

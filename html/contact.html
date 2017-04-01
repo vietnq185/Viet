@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>A-SLS</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="styles/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="styles/main.css" rel="stylesheet">
+    <link href="styles/contact.css" rel="stylesheet">
+    <link href="styles/col-mixin.css" rel="stylesheet">
+
+
+    <!-- Custom Fonts -->
+    <link href="styles/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
+</head>
+
+<body>
+    <div id="wrapper">
+        <!-- Navigation -->
+        <div class="contact-header dk-white">
+          <nav class="navbar navbar-default dk-navbar" role="navigation">
+              <!-- Brand and toggle get grouped for better mobile display -->
+              <div class="navbar-header">
+                  <!-- button for mobile display. show menu-->
+                  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-ex1-collapse" aria-expanded="false">
+                      <span class="sr-only">Toggle navigation</span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                  </button>
+                  <a class="navbar-brand" href="home">A-SLS</a>
+              </div>
+              <!-- Top Menu Items -->
+              <div class="collapse navbar-collapse navbar-ex1-collapse navbar-right dk-white">
+                  <ul class="nav navbar-nav side-nav">
+                      <li>
+                          <a href="home"><span class="side-nav-item dk-white">Home</span></a>
+                      </li>
+                      <li>
+                          <a href="programme"> <span class="side-nav-item dk-white">Our Programme</span></a>
+                      </li>
+                      <li>
+                          <a href="student"> <span class="side-nav-item dk-white">For Student</span></a>
+                      </li>
+                      <li>
+                          <a href="parent"> <span class="side-nav-item dk-white">For Parent</span></a>
+                      </li>
+                      <!-- <li>
+                          <a href="contact"> <span class="side-nav-item dk-yellow">Contact</span></a>
+                      </li> -->
+                      <li>
+                          <a href="#" data-toggle="modal" data-target="#loginModal"> <span class="side-nav-item dk-white">Sign Up</span></a>
+                      </li>
+                      <li class="signin">
+                          <a href="https://app.a-smartlearning.com/en/sml/login" class="text-signin"> <span class="side-nav-item dk-white">Sign In</span></a>
+                      </li>
+                  </ul>
+              </div>
+              <!-- /.navbar-collapse -->
+          </nav>
+          <div class="img-holder">
+            <h1>CONTACT US</h1>
+          </div>
+        </div>
+
+        <div id="page-wrapper">
+
+          <div class="container" style="max-width: 700px; margin-bottom: 20px;">
+            <div class="contact-container">
+              <h3>Contact Form</h3>
+              <form id="contact-form">
+                <div class="form-group">
+                  <label for="contact-name">Your Name</label>
+                  <input type="text" class="form-control" id="contact-name" required="">
+                </div>
+                <div class="form-group">
+                  <label for="contact-email">Email address</label>
+                  <input type="email" class="form-control" id="contact-email" required="">
+                </div>
+                <div class="form-group">
+                  <label for="contact-msg">Your Message</label>
+                  <textarea id="contact-msg" type="text" rows="4" class="form-control" required=""></textarea>
+                </div>
+                <button type="submit" class="btn dk-btn dk-bg-blue dk-white" style="margin: 0 0 10px 0">
+                  <span>Submit</span>
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!--Page-footer-->
+          <div class="page-footer text-left">
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-md-6 col-xs-12 col-md-push-6 footer-follow">
+                  <!-- <span>
+                    Follow us on
+                    <i class="fa fa-fw fa-facebook dk-blue" aria-hidden="true"></i>
+                    <i class="fa fa-fw fa-twitter dk-blue1" aria-hidden="true"></i>
+                    <i class="fa fa-fw fa-linkedin-square dk-blue2" aria-hidden="true"></i>
+                  </span> -->
+                </div>
+                <div class="col-md-6 col-xs-12 col-md-pull-6 footer-action">
+                  <div class="footer-group-item">
+                    <div class="footer-item"><a href="about-us">About us</a></div>
+                    <div class="footer-item"><a href="contact">Contact us</a></div>
+                    <div class="footer-item"><a href="#">Terms of Service</a></div>
+                    <div class="footer-item"><a href="privacy">Privacy</a></div>
+                  </div>
+                  <div class="footer-copyright">
+                    <span>2016 <i class="fa fa-fw fa-copyright"></i> Copyright by A-SLS. All rights Reserved.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /#page-wrapper -->
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- jQuery -->
+    <script src="scripts/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="scripts/bootstrap.min.js"></script>
+
+    <script>
+
+    function escapeHtml(text) {
+      var map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      };
+      text = text.replace(/[&<>"']/g, function(key) { return map[key]; });
+      text = text.replace(/(?:\r\n|\r|\n)/g, '<br />');
+      return text;
+    }
+
+      $("#contact-form").submit(function(e) {
+        e.preventDefault();
+        var email = $("#contact-email").val(),
+            name = $("#contact-name").val(),
+            msg = $("#contact-msg").val();
+        var contact = {};
+        contact.subject = "CONTACT FROM " + email;
+        contact.text = "Email: " + email + "\nName: " + name + "\nMessage: " + msg;
+        contact.html = escapeHtml(contact.text);
+        //console.log(contact);
+        var btn = $("button[type='submit']");
+        btn.empty();
+        btn.append("<img src='https://cdn.zenquiz.net/static/Assets/loading-animation.gif'/>");
+        $("#contact-form").find('.status').remove();
+        $.ajax({
+          method: 'POST',
+          url: 'https://sls-api.zenquiz.net/v1/email/send',
+          data: contact
+        }).done(function(data) {
+          btn.empty();
+          btn.append("<span>Submit</span>");
+          $("#contact-form").append("<p class='status text-success'>Your message has been sent!</p>")
+        }).fail(function(data) {
+          btn.empty();
+          btn.append("<span>Submit</span>");
+          $("#contact-form").append("<p class='status text-danger'>Cannot sent your message. Please try again later!</p>")
+        }).always(function() {
+          $("#contact-email").val("");
+          $("#contact-name").val("");
+          $("#contact-msg").val("");
+        })
+      })
+    </script>
+
+</body>
+
+</html>

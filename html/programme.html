@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>A-SLS</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="styles/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="styles/main.css" rel="stylesheet">
+    <link href="styles/col-mixin.css" rel="stylesheet">
+    <link href="styles/programme.css" rel="stylesheet">
+
+
+    <!-- Custom Fonts -->
+    <link href="styles/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
+</head>
+
+<body>
+    <div id="wrapper">
+        <!-- Navigation -->
+        <div class="programme-header dk-white">
+          <nav class="navbar navbar-default dk-navbar" role="navigation">
+              <!-- Brand and toggle get grouped for better mobile display -->
+              <div class="navbar-header">
+                  <!-- button for mobile display. show menu-->
+                  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-ex1-collapse" aria-expanded="false">
+                      <span class="sr-only">Toggle navigation</span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                  </button>
+                  <a class="navbar-brand" href="home">A-SLS</a>
+              </div>
+              <!-- Top Menu Items -->
+              <div class="collapse navbar-collapse navbar-ex1-collapse navbar-right dk-white">
+                  <ul class="nav navbar-nav side-nav">
+                      <li>
+                          <a href="about"><span class="side-nav-item dk-white">Home</span></a>
+                      </li>
+                      <li>
+                          <a href="programme"> <span class="side-nav-item dk-yellow">Our Programme</span></a>
+                      </li>
+                      <li>
+                          <a href="student"> <span class="side-nav-item dk-white">For Student</span></a>
+                      </li>
+                      <li>
+                          <a href="parent"> <span class="side-nav-item dk-white">For Parent</span></a>
+                      </li>
+                      <!-- <li>
+                          <a href="contact"> <span class="side-nav-item dk-white">Contact</span></a>
+                      </li> -->
+                      <li>
+                          <a href="#" data-toggle="modal" data-target="#loginModal"> <span class="side-nav-item dk-white">Sign Up</span></a>
+                      </li>
+                      <li class="signin">
+                          <a href="https://app.a-smartlearning.com/en/sml/login" class="text-signin"> <span class="side-nav-item dk-white">Sign In</span></a>
+                      </li>
+                  </ul>
+              </div>
+              <!-- /.navbar-collapse -->
+          </nav>
+          <div class="content-wraper text-center">
+            <h1 class="programme-title">
+              Our Programme
+            </h1>
+            <hr class="dk-gb-white programme-hr"/>
+            <div>
+              <h3 class="programme-sub-title">
+                Sharpen Your Saw for PSLE
+              </h3>
+            </div>
+            <div class="programme-btn">
+              <button class="btn dk-btn dk-bg-blue" data-toggle="modal" data-target="#loginModal">
+                START A FREE TRIAL
+              </button>
+            </div>
+            <a nohref id="scrollFrom" onclick="moveFromTo()">
+              <img class="mouse-scroll" src="images/mouse-scroll.png"/>
+            </a>
+          </div>
+        </div>
+        <div id="programme-wrapper">
+          <div class="programme-section1 text-left">
+            <div class="container-fluid">
+                <!-- Page Section1 -->
+                <div class="row programme-container" id="scrollTo">
+                  <div class="container-fluid">
+                    <div class="col-md-6">
+                      <div class="row">
+                        <div class="col-md-2">
+                          <img src="images/caculator.svg" alt="Caculator"/>
+                        </div>
+                        <div class="col-md-10 text-map">
+                          <p class="discription-tittle">PSLE MATHEMATICS</p>
+                          <p class="discription-sub">Preparation</p>
+                        </div>
+                      </div>
+                      <div class="discription-group-item">
+                        <p class="discription-item mb">
+                          Singapore MOE Latest Syllabus
+                        </p>
+                        <p class="discription-item mb">
+                          <span class="dk-blue">78</span>
+                          Concepts in Mathematics Concept System
+                        </p>
+                        <p class="discription-item mb">
+                          Big Questions Bank in the 78 Concepts
+                        </p>
+                        <p class="discription-item mb">
+                          Each Concept has Questions of Various Difficulty Levels and Diverse Heuristic Methods
+                        </p>
+                        <p class="discription-item">
+                          Subscribable for Primary 5 & 6 Students
+                        </p>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="row">
+                        <div class="col-md-2">
+                          <img src="images/microscope.svg" alt="MicroScope"/>
+                        </div>
+                        <div class="col-md-10 text-map">
+                          <p class="discription-tittle">PSLE SCIENCE</p>
+                          <p class="discription-sub">Preparation</p>
+                        </div>
+                      </div>
+                      <div class="discription-group-item">
+                        <p class="discription-item mb">
+                          Singapore MOE Latest Syllabus
+                        </p>
+                        <p class="discription-item mb">
+                          <span class="dk-blue">71</span>
+                          Concepts in Sience Concept System
+                        </p>
+                        <p class="discription-item mb">
+                          Big Questions Bank in the 71 Concepts
+                        </p>
+                        <p class="discription-item mb">
+                          Each Concept has Questions of Various Higher-order Thinking and
+                          Skills and Processes
+                        </p>
+                        <p class="discription-item">
+                          Subscribable for Primary 5 & 6 Students
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+          </div>
+          <!--/.page-section1-->
+          <!-- page-section2-->
+          <div class="programme-section2 text-center">
+            <h3 class="dk-blue-text section2-text-header">
+              Our Free Features
+            </h3>
+            <div class="row text-left">
+              <div class="col-md-6">
+                <div>
+                  <img class="product-icon" src="images/conceptmap.png" alt="ConceptMap">
+                  <span class="dk-blue-text programme-product">Concept Map</span>
+                </div>
+                <p class="programme-description">
+                  Our Concept Map highlights the individual student's strengths and areas for improvement in all concepts and sub-concepts in both PSLE Mathematics and Science
+                </p>
+              </div>
+              <div class="col-md-6">
+                <div>
+                  <img class="product-icon" src="images/estimation.png" alt="Estimation">
+                  <span class="dk-blue-text programme-product">Academic Ability Estimation</span>
+                </div>
+                <p class="programme-description">
+                  Our algorithm dynamically identifies every single practice that a student attempts and estimates his/her academic ability based on his/her latest performance
+                </p>
+              </div>
+            </div>
+            <div class="row text-left">
+              <div class="col-md-6">
+                <div>
+                  <img class="product-icon" src="images/worksheet.png" alt="WorkSheet">
+                  <span class="dk-blue-text programme-product">Individualised Worksheet</span>
+                </div>
+                <p class="programme-description">
+                  Every worksheet assigned to the student is individualised and generated by the algorithm based on the result of his/her latest academic ability estimation
+                </p>
+              </div>
+              <div class="col-md-6">
+                <div>
+                  <img class="product-icon" src="images/report.png" alt="Report">
+                  <span class="dk-blue-text programme-product">Visual Reports</span>
+                </div>
+                <p class="programme-description">
+                  Timely and accurate reports displayed in the form of bar graphs and texts are sent to the student and parent
+                </p>
+              </div>
+            </div>
+          </div>
+          <!--/.page-section2-->
+          <!-- page-section3-->
+          <div class="programme-section3 text-center dk-bg-gray">
+            <div>
+              <h3 class="dk-blue1 tree-trial">
+                Join our learning group today!
+              </h3>
+              <button class="btn dk-btn dk-bg-blue dk-white" data-toggle="modal" data-target="#loginModal">
+                START A FREE TRIAL
+              </button>
+            </div>
+            <div class="section3-paging">
+              <div class="section3-paging-item dk-bg-green"></div>
+              <div class="section3-paging-item dk-bg-gray"></div>
+              <div class="section3-paging-item dk-bg-gray"></div>
+              <div class="section3-paging-item dk-bg-gray"></div>
+            </div>
+          </div>
+          <!--/.page-section3-->
+          <!--Page-footer-->
+          <div class="page-footer text-left">
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-md-6 col-xs-12 col-md-push-6 footer-follow">
+                  <!-- <span>
+                    Follow us on
+                    <i class="fa fa-fw fa-facebook dk-blue" aria-hidden="true"></i>
+                    <i class="fa fa-fw fa-twitter dk-blue1" aria-hidden="true"></i>
+                    <i class="fa fa-fw fa-linkedin-square dk-blue2" aria-hidden="true"></i>
+                  </span> -->
+                </div>
+                <div class="col-md-6 col-xs-12 col-md-pull-6 footer-action">
+                  <div class="footer-group-item">
+                    <div class="footer-item"><a href="about-us">About us</a></div>
+                    <div class="footer-item"><a href="contact">Contact us</a></div>
+                    <div class="footer-item"><a href="#">Terms of Service</a></div>
+                    <div class="footer-item"><a href="privacy">Privacy</a></div>
+                  </div>
+                  <div class="footer-copyright">
+                    <span>2016 <i class="fa fa-fw fa-copyright"></i> Copyright by A-SLS. All rights Reserved.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /#page-wrapper -->
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document" style="max-width: 500px">
+        <div class="modal-content" style="border-radius: 0;border: none;">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title text-center" id="myModalLabel">Sign Up</h4>
+          </div>
+          <div class="modal-body text-center">
+            <a href="https://app.a-smartlearning.com/en/sml/login?mode=register">
+              <button class="btn dk-btn dk-bg-green" style="color: white">
+                I AM A STUDENT
+              </button>
+            </a>
+            <a href="parent?m=su">
+              <button class="btn dk-btn dk-bg-blue" style="color: white">
+                I AM A PARENT
+              </button>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="scripts/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="scripts/bootstrap.min.js"></script>
+
+    <script>
+      var moveFromTo = function() {
+        $('html, body').animate({
+          scrollTop: $("#scrollTo").offset().top
+        }, 500);
+      }
+    </script>
+
+</body>
+
+</html>

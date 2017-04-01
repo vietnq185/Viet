@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Subscription Step 1</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="styles/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="styles/main.css" rel="stylesheet">
+    <link href="styles/col-mixin.css" rel="stylesheet">
+    <link href="styles/subscribe.css" rel="stylesheet">
+
+
+    <!-- Custom Fonts -->
+    <link href="styles/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
+    
+     <script src="scripts/jquery.js"></script>
+    <script src="scripts/bootstrap.min.js"></script>
+    <script src="scripts/subscribe.js"></script>
+</head>
+
+<body>
+  <div id="wrapper">
+    	<div class="subscribe-header">
+    		<nav class="navbar navbar-default dk-navbar" role="navigation">
+	          <!-- Brand and toggle get grouped for better mobile display -->
+	          <div class="navbar-header">
+	              <!-- button for mobile display. show menu-->
+	              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-ex1-collapse" aria-expanded="false">
+	                  <span class="sr-only">Toggle navigation</span>
+	                  <span class="icon-bar"></span>
+	                  <span class="icon-bar"></span>
+	                  <span class="icon-bar"></span>
+	              </button>
+	              <a class="navbar-brand" href="home">A-SLS</a>
+	          </div>
+	          <!-- Top Menu Items -->
+	          <div class="collapse navbar-collapse navbar-ex1-collapse navbar-right">
+	              <ul class="nav navbar-nav side-nav">
+	                  <li>
+	                      <a href="about"><span class="side-nav-item">Home</span></a>
+	                  </li>
+	                  <li>
+	                      <a href="programme"> <span class="side-nav-item">Our Programme</span></a>
+	                  </li>
+	                  <li>
+	                      <a href="student"> <span class="side-nav-item">For Student</span></a>
+	                  </li>
+	                  <li>
+	                      <a href="parent"> <span class="side-nav-item">For Parent</span></a>
+	                  </li>
+	                  <!-- <li>
+	                      <a href="contact"> <span class="side-nav-item">Contact</span></a>
+	                  </li> -->
+	                  <li>
+	                      <a href="#" data-toggle="modal" data-target="#loginModal"> <span class="side-nav-item">Free Trial</span></a>
+	                  </li>
+	                  <li class="signin">
+	                      <a href="https://app.a-smartlearning.com/en/sml/login" class="text-signin"> <span class="side-nav-item">Sign In</span></a>
+	                  </li>
+	              </ul>
+	          </div>
+	          <!-- /.navbar-collapse -->
+	      </nav>
+    	</div>
+    	
+    	<div class="subscribe-wrapper">
+    		<div class="breadcrumb">
+    			<a href="Home" class="passed">Home</a> <i class="fa fa-chevron-right"></i> 
+    			<a href="Home" class="active">Subscribe</a> 
+    		</div> 
+    		<div class="subscribe-content-container">
+    			<h3>Complete your subscription in just a few steps</h3>
+    			<div class="subscribe-content">
+    				<div class="subscribe-steps-nav">
+    					<ul>
+    						<li class="list-inline active">
+    							<span class="num-step-container"><span class="num-step">1</span></span>
+    							<span class="step-title hidden-xs">
+    								ACCOUNT
+    								<span class="step-title-desc">Sign In or Sign Up</span>
+    							</span>
+    						</li>
+    						<li class="list-inline">
+    							<span class="num-step-container"><span class="num-step">2</span></span>
+    							<span class="step-title hidden-xs">
+    								PALN
+    								<span class="step-title-desc">Select a plan</span>
+    							</span>
+    						</li>
+    						<li class="list-inline">
+    							<span class="num-step-container"><span class="num-step">3</span></span>
+    							<span class="step-title hidden-xs">
+    								PAYMENT
+    								<span class="step-title-desc">Complete your payment</span>
+    							</span>
+    						</li>
+    						<li class="list-inline">
+    							<span class="num-step-container"><span class="num-step">4</span></span>
+    							<span class="step-title hidden-xs">
+    								STUDENT
+    								<span class="step-title-desc">Assign plan to a student</span>
+    							</span>
+    						</li>
+    					</ul>
+    				</div>
+    				<div class="form-subscribe">
+    					<div class="form-title">Sign Up for Parent Account</div>
+    					<div class="form-title-desc text-center">Please enter the following information to create a parent account.</div>
+    					<br/>
+	    				<form class="form form-subscribe-register">
+	    					<div class="row">
+	    						<div class="col-sm-6 col-xs-12">
+	    							<div class="form-group">
+					                  <label for="contact-name">First Name</label>
+					                  <input class="form-control" name="first_name" id="first_name" required="" type="text">
+					                </div>
+	    						</div>
+	    						<div class="col-sm-6 col-xs-12">
+	    							<div class="form-group">
+					                  <label for="contact-name">Last Name</label>
+					                  <input class="form-control" name="last_name" id="last_name" required="" type="text">
+					                </div>
+	    						</div>
+	    					</div>
+	    					<div class="form-group">
+			                  <label for="contact-name">Email Address</label>
+			                  <input class="form-control" name="email" id="email" required="" type="text">
+			                </div>
+			                <div class="form-group">
+			                  <label for="contact-name">Phone Number</label>
+			                  <input class="form-control" name="phone" id="phone" required="" type="text">
+			                </div>
+			                <div class="form-group">
+			                  <label for="contact-name">Password</label>
+			                  <input class="form-control" name="password" id="password" required="" type="password">
+			                </div>
+			                <div class="form-group">
+			                  <label for="contact-name">Confirm Password</label>
+			                  <input class="form-control" name="confirm_password" id="confirm_password" required="" type="password">
+			                </div>
+			                <div class="form-group">
+			                  <button type="button" class="btn btn-block dk-bg-blue dk-white">Sign Up</button>
+			                </div>
+			                <div class="form-group text-center signup-term">
+			                  By Signing up, you agree and consent to the<br/><a href="javascript:void(0);" data-toggle="modal" data-target="#modalTermsConditions">Terms of Service and Provacy Policy</a>
+			                </div>
+			                <div class="form-group text-center">
+			                  Alreay have an account? <a href="">Sign In</a>
+			                </div>
+	    				</form>
+	    				
+	    				<!-- Modal -->
+						<div id="modalTermsConditions" class="modal fade" role="dialog">
+						  <div class="modal-dialog">
+						
+						    <!-- Modal content-->
+						    <div class="modal-content">
+						      <div class="modal-header">
+						        <button type="button" class="close" data-dismiss="modal">&times;</button>
+						      </div>
+						      <div class="modal-body">
+						        <h3>Terms of Service:</h3>
+						        <div class="terms-of-service pre-scrollable">
+						        	<p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).</p>
+						        	<p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).</p>
+						        </div><br/>
+						        <h3>Privacy Policy:</h3>
+						        <div class="privacy-policy pre-scrollable">
+						        	<p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).</p>
+						        	<p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).</p>
+						        </div>
+						        <div class="text-center"><button class="btn dk-bg-green dk-white btn-close-modal" type="button" data-dismiss="modal">CLOSE</button></div>
+						      </div>
+						    </div>
+						
+						  </div>
+						</div>
+	
+	    			</div>
+    			</div>
+    		</div>
+    	</div>
+    	
+    	<!--Page-footer-->
+	    <div class="page-footer text-left">
+	      <div class="container-fluid">
+	        <div class="row">
+	          <div class="col-md-6 col-xs-12 col-md-push-6 footer-follow">
+	            <!-- <span>
+	              Follow us on
+	              <i class="fa fa-fw fa-facebook dk-blue" aria-hidden="true"></i>
+	              <i class="fa fa-fw fa-twitter dk-blue1" aria-hidden="true"></i>
+	              <i class="fa fa-fw fa-linkedin-square dk-blue2" aria-hidden="true"></i>
+	            </span> -->
+	          </div>
+	          <div class="col-md-6 col-xs-12 col-md-pull-6 footer-action">
+	            <div class="footer-group-item">
+	              <div class="footer-item"><a href="#">About us</a></div>
+	              <div class="footer-item"><a href="contact">Contact us</a></div>
+	              <div class="footer-item"><a href="#">Terms of Service</a></div>
+	              <div class="footer-item"><a href="privacy">Privacy</a></div>
+	            </div>
+	            <div class="footer-copyright">
+	              <span>2016 <i class="fa fa-fw fa-copyright"></i> Copyright by A-SLS. All rights Reserved.</span>
+	            </div>
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+   </div>
+   	
+</body>
+
+</html>
