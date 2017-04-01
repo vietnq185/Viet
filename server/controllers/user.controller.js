@@ -1,5 +1,6 @@
 import httpStatus from 'http-status';
 
+import * as authCtrl from './auth.controller';
 import UserModel from '../models/user.model';
 import APIResponse from '../helpers/APIResponse';
 import APIError from '../helpers/APIError';
@@ -32,7 +33,13 @@ export const load = (req, res, next, id) => {
  * Get user
  * @returns {UserModel}
  */
-export const get = (req, res) => res.json(new APIResponse(UserModel.extractData(req.user)));
+export const get = (req, res, next) => {
+  const jwtInfo = authCtrl.getJwtInfo(req);
+  if (authCtrl.isUser(req) && jwtInfo.userId !== req.user._id) {
+    return next(new APIError('Forbidden', httpStatus.FORBIDDEN, true));
+  }
+  return res.json(new APIResponse(UserModel.extractData(req.user)));
+};
 
 /**
  * Create new user

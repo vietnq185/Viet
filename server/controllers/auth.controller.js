@@ -320,6 +320,47 @@ export const renewAccessToken = (req, res, next) => {
   return generateTokens(req, userId).then(tokenResp => res.json(tokenResp)).catch(e => next(e)); // eslint-disable-line
 };
 
+// ------------------------------------------------------------------------------------------------
+
+// is authenticated
+export const isAuth = req => (typeof req[requestProperty] !== 'undefined' && Utils.isNotEmptyObject(req[requestProperty]));
+
+export const isAdmin = req => (isAuth(req) && req[requestProperty].role === 'admin');
+
+export const isEditor = req => (isAuth(req) && (req[requestProperty].role === 'admin' || req[requestProperty].role === 'editor'));
+
+export const isUser = req => (isAuth(req) && req[requestProperty].role === 'user');
+
+export const adminAuth = (req, res, next) => {
+  if (!isAdmin(req)) {
+    return next(new APIError('Forbidden (1).', httpStatus.FORBIDDEN, true));
+  }
+  return next();
+};
+
+export const editorAuth = (req, res, next) => {
+  if (!isEditor(req)) {
+    return next(new APIError('Forbidden (2).', httpStatus.FORBIDDEN, true));
+  }
+  return next();
+};
+
+export const adminOrEditorAuth = (req, res, next) => {
+  if (isAdmin(req) || isEditor(req)) return next();
+  return next(new APIError('Forbidden (3).', httpStatus.FORBIDDEN, true));
+};
+
+export const userAuth = (req, res, next) => {
+  if (!isUser(req)) {
+    return next(new APIError('Forbidden (4).', httpStatus.FORBIDDEN, true));
+  }
+  return next();
+};
+
+export const getJwtInfo = req => (isAuth(req) ? req[requestProperty] : null);
+
+// ------------------------------------------------------------------------------------------------
+
 /**
  * This is a protected route. Will return random number only if jwt token is provided in header.
  * @param req
