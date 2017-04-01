@@ -13,20 +13,24 @@ const debug = require('debug')('rest-api:user.controller'); // eslint-disable-li
  * Load user and append to req.
  */
 export const load = (req, res, next, id) => {
-  new UserModel().where('t1._id::varchar=$1').findOne([id])
-    .then((user) => {
-      // not found
-      if (user === null) {
-        const err = new APIError('No such user exists!', httpStatus.NOT_FOUND);
-        return next(err);
-      }
-      // found
-      // delete password
-      delete user.hashedPassword; // eslint-disable-line
-      req.user = user; // eslint-disable-line no-param-reassign
-      return next();
-    })
-    .catch(e => next(e));
+  authCtrl.verifyAccessToken(req, res, (err) => {
+    if (err) {
+      return next(err);
+    }
+    return new UserModel().where('t1._id::varchar=$1').findOne([id])
+      .then((user) => {
+        // not found
+        if (user === null) {
+          return next(new APIError('No such user exists!', httpStatus.NOT_FOUND));
+        }
+        // found
+        // delete password
+        delete user.hashedPassword; // eslint-disable-line
+        req.user = user; // eslint-disable-line no-param-reassign
+        return next();
+      })
+      .catch(e => next(e));
+  });
 };
 
 /**
