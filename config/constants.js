@@ -4,7 +4,7 @@ export default {
       expiresIn: 30 * 60, // in seconds, after this time, user MUST login again
     },
     refreshTokenOpts: {
-      expiresIn: 3 * 60 * 60, // in seconds, after this time, user MUST login again
+      expiresIn: 24 * 60 * 60, // in seconds, after this time, user MUST login again
     },
   },
   errors: {
@@ -13,5 +13,6 @@ export default {
     wrongUsername: 'UNREGISTERED_USER',
     wrongPassword: 'WRONG_PASSWORD',
     unauthorized: 'UNAUTHORIZED',
+    logoutError: 'LOGOUT_ERROR',
   },
 };
