@@ -45,7 +45,6 @@ export const get = (req, res, next) => {
  * Create new user
  * @property {string} req.body.email
  * @property {string} req.body.password
- * @property {string} req.body.phone
  * @property {string} req.body.firstName
  * @property {string} req.body.lastName
  * @returns {UserModel}
@@ -74,7 +73,7 @@ export const create = (req, res, next) => {
       _id: id,
       username,
       email,
-      phone: req.body.phone,
+      phone: req.body.phone || '',
       firstName: req.body.firstName,
       lastName: req.body.lastName,
       salt,
@@ -96,7 +95,7 @@ export const create = (req, res, next) => {
 
 /**
  * Update existing user
- * @property {string} req.body.username // email field
+ * @property {string} req.body.email // optional
  * @property {string} req.body.password // optional
  * @property {string} req.body.phone // optional
  * @property {string} req.body.firstName // optional
@@ -104,24 +103,42 @@ export const create = (req, res, next) => {
  * @returns {UserModel}
  */
 export const update = (req, res, next) => {
+  const jwtInfo = authCtrl.getJwtInfo(req);
+  if (authCtrl.isUser(req) && jwtInfo.userId !== req.user._id) {
+    return next(new APIError('Forbidden', httpStatus.FORBIDDEN, true));
+  }
+
+  const promises = [];
   const userData = Utils.copy(req.user);
-  userData.email = req.body.username;
-  //
-  const optionalParams = ['phone', 'firstName', 'lastName'];
+
+  // validate email (if any)
+  if (typeof req.body.email !== 'undefined') {
+    const validateEmail = new UserModel().where('t1._id::varchar!=$1 AND t1.email=$2').findCount([userData._id, req.body.email]).then((cnt) => {
+      const err = new APIError(constants.errors.emailRegisted, httpStatus.OK, true);
+      return (cnt === 0 ? Promise.resolve() : Promise.reject(err));
+    });
+    promises.push(validateEmail);
+  }
+
+  // update data
+  const optionalParams = ['email', 'phone', 'firstName', 'lastName'];
   for (let i = 0; i < optionalParams.length; i++) { // eslint-disable-line
     const param = optionalParams[i];
     if (typeof req.body[param] !== 'undefined') {
       userData[param] = req.body[param];
     }
   }
-  //
+  // encrypt password (if any)
   if (typeof req.body.password !== 'undefined') {
     userData.hashedPassword = Utils.encrypt(req.body.password, userData.salt);
   }
   //
-  new UserModel().where('t1._id=$1').update(userData, [userData._id])
-    .then(savedUser => res.json(new APIResponse(savedUser !== null ? UserModel.extractData(savedUser[0]) : savedUser))) // eslint-disable-line
-    .catch(e => next(e));
+  promises.push(new UserModel().where('t1._id::varchar=$1').update(userData, [userData._id]));
+
+  return Promise.all(promises).then((results) => {
+    const savedUser = (promises.length === 2 ? results[1] : results[0]);
+    return res.json(new APIResponse(savedUser !== null ? UserModel.extractData(savedUser[0]) : savedUser)); // eslint-disable-line
+  }).catch(e => next(e));
 };
 
 /**
@@ -144,8 +161,13 @@ export const list = (req, res, next) => {
  * @returns {UserModel}
  */
 export const remove = (req, res, next) => {
+  const jwtInfo = authCtrl.getJwtInfo(req);
+  if (authCtrl.isUser(req) && jwtInfo.userId !== req.user._id) {
+    return next(new APIError('Forbidden', httpStatus.FORBIDDEN, true));
+  }
+
   const userData = req.user;
-  new UserModel().where('_id=$1').delete([userData._id])
+  return new UserModel().where('_id::varchar=$1').delete([userData._id])
     .then(deletedUser => res.json(new APIResponse(deletedUser !== null ? UserModel.extractData(deletedUser[0]) : deletedUser))) // eslint-disable-line
     .catch(e => next(e));
 };
