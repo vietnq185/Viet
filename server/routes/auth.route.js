@@ -11,6 +11,10 @@ router.route('/login')
   .post(validate(paramValidation.login), authCtrl.login);
 
 /** GET /api/auth/token - Send refresh token to renew access token */
+router.route('/logout')
+  .get(authCtrl.verifyAccessToken, authCtrl.logout);
+
+/** GET /api/auth/token - Send refresh token to renew access token */
 router.route('/token')
   .get(authCtrl.verifyRefreshToken, authCtrl.renewAccessToken);
 

@@ -18,6 +18,8 @@ const envVarsSchema = Joi.object({
     }),
   JWT_SECRET: Joi.string().required()
     .description('JWT Secret required to sign'),
+  JWT_BLACKLIST_ENABLED: Joi.boolean().required()
+    .description('JWT Blacklist flag to enable token blacklist'),
   POSTGRES_CONNECTION: Joi.string().required()
     .description('Postgres DB connection string')
 }).unknown()
@@ -33,6 +35,7 @@ const config = {
   port: envVars.PORT,
   postgresDebug: envVars.POSTGRES_DEBUG,
   jwtSecret: envVars.JWT_SECRET,
+  jwtBlacklistEnabled: envVars.JWT_BLACKLIST_ENABLED,
   postgres: envVars.POSTGRES_CONNECTION
 };
 

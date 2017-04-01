@@ -11,6 +11,88 @@ import UserModel from '../models/user.model';
 
 const debug = require('debug')('rest-api:user.controller'); // eslint-disable-line
 
+// ------------------------------------------------------------------------------------------------
+
+const blTimerList = {}; // to keep timer id, use to clear the timer
+
+const blacklist = {}; // object to hold access token when user do logout
+
+const blacklistDebug = () => {
+  // debug('---------------> blacklist cnt = %s: ', Object.keys(blacklist).length, blacklist);
+  // debug('---------------> blTimerList cnt = %s: ', Object.keys(blTimerList).length, blTimerList);
+};
+
+const blKey = userId => Utils.sha3Encrypt(userId);
+
+const isBlacklist = (userId, iat) => {
+  blacklistDebug();
+  const key = blKey(userId);
+  if (typeof blacklist[key] === 'undefined') {
+    return false;
+  }
+  const blUser = blacklist[key];
+  if (typeof blUser[iat] === 'undefined') {
+    return false;
+  }
+  return true;
+};
+
+const addBLTimer = (userId, iat) => {
+  if (!config.jwtBlacklistEnabled) return;
+  const autoRemoveBL = (_userId, _iat) => {
+    try {
+      const _timerKey = Utils.sha3Encrypt(_userId + _iat);
+      if (typeof blTimerList[_timerKey] !== 'undefined') {
+        removeFromBlacklist(_userId, _iat); // eslint-disable-line
+        clearInterval(blTimerList[_timerKey]);
+        delete blTimerList[_timerKey];
+        blacklistDebug();
+      }
+    } catch (e) { } //eslint-disable-line
+  };
+  // add 1000 (milisecond) to exp time to make sure that
+  // the item in blacklist will be deleted after token is expired
+  const exp = iat + constants.auth.accessTokenOpts.expiresIn;
+  const now = new Date().getTime();
+  const executeAfter = exp * 1000 - now + 1000; // eslint-disable-line
+  // set timer to auto delete when token expiry.
+  if (executeAfter > 0) {
+    const timerKey = Utils.sha3Encrypt(userId + iat);
+    const timerId = setInterval(() => {
+      autoRemoveBL(userId, iat);
+    }, executeAfter);
+    blTimerList[timerKey] = timerId;
+  }
+};
+
+const addToBlacklist = (userId, iat) => {
+  if (!config.jwtBlacklistEnabled) return;
+  const exp = iat + constants.auth.accessTokenOpts.expiresIn;
+  const key = blKey(userId);
+  if (typeof blacklist[key] === 'undefined') {
+    blacklist[key] = {};
+  }
+  blacklist[key][iat] = { iat: { userId, exp } };
+  blacklistDebug();
+  addBLTimer(userId, iat);
+};
+
+const removeFromBlacklist = (userId, iat) => {
+  if (!config.jwtBlacklistEnabled) return;
+  try {
+    if (isBlacklist(userId, iat)) {
+      const key = blKey(userId);
+      delete blacklist[key][iat];
+      if (Object.keys(blacklist[key]).length === 0) {
+        delete blacklist[key];
+      }
+      blacklistDebug();
+    }
+  } catch (e) { } // eslint-disable-line
+};
+
+// ------------------------------------------------------------------------------------------------
+
 const requestProperty = 'auth'; // token info will be included in req[requestProperty] property
 
 const grantTypes = {
@@ -71,6 +153,8 @@ const verifyToken = (req, res, next) => {
   return middleware(req, res, next);
 };
 
+// ------------------------------------------------------------------------------------------------
+
 export const generateAccessToken = (req, payload) => {
   const jwtOpts = Utils.copy(constants.auth.accessTokenOpts);
   if (typeof req.remember !== 'undefined' && typeof jwtOpts.expiresIn !== 'undefined') {
@@ -93,6 +177,9 @@ export const verifyAccessToken = (req, res, next) => verifyToken(req, res, (err)
   }
   if (req[requestProperty].grantType !== grantTypes.access) {
     return next(new APIError('Authentication error. Invalid token.', httpStatus.UNAUTHORIZED, true));
+  }
+  if (isBlacklist(req[requestProperty].userId, req[requestProperty].iat)) {
+    return next(new APIError('Authentication error. Invalid token. Please login again.', httpStatus.UNAUTHORIZED, true));
   }
   return next();
 });
@@ -128,6 +215,8 @@ const generateTokens = (req, userId) => {
     const tokenData = {
       userId: user._id,
       email: user.email,
+      role: user.role,
+      status: user.status,
     };
     const userData = UserModel.extractData(user);
     // sign tokens
@@ -140,20 +229,23 @@ const generateTokens = (req, userId) => {
       // this hash will be used to renew access token later.
       // when user do logout, we MUST delete this hash from user record,
       // so that the refresh token cannot be used anymore.
-      const { hash } = jwt.decode(tokensList[1]);
-      if (Utils.isNotEmptyString(hash)) {
-        db.reset().where('t1._id=$1').update({ userToken: hash }, [user._id]);
+      const jwtData = jwt.decode(tokensList[1]);
+      if (Utils.isNotEmptyString(jwtData.hash)) {
+        db.reset().where('t1._id=$1').update({ userToken: jwtData.hash }, [user._id]);
       }
+      jwtData.accessToken = tokensList[0];
+      jwtData.refreshToken = tokensList[1];
       // return api reponse
       return Promise.resolve(new APIResponse({
-        accessToken: tokensList[0],
-        refreshToken: tokensList[1],
         ...userData,
+        jwt: jwtData,
       }));
     }).catch(e => Promise.reject(e));
     //
   }).catch(e => Promise.reject(e));
 };
+
+// ------------------------------------------------------------------------------------------------
 
 /**
  * Returns jwt token if valid username and password is provided
@@ -163,6 +255,7 @@ const generateTokens = (req, userId) => {
  * @returns {*}
  */
 export const login = (req, res, next) => {
+  blacklistDebug();
   const db = new UserModel();
   db.where('t1.email=$1').findOne([req.body.username]).then((user) => {
     // verify email and password
@@ -185,10 +278,45 @@ export const login = (req, res, next) => {
   });
 };
 
+export const logout = (req, res, next) => {
+  //
+  const isRevoked = (req, payload, done) => { // eslint-disable-line
+    const { userId, iat } = payload;
+    return new UserModel().where('t1._id=$1').update({ userToken: '' }, [userId]).then((results) => {
+      if (results === null) {
+        // not updated
+        return done(new APIError('Cannot revoke refresh token', httpStatus.UNAUTHORIZED, true));
+      }
+
+      // add to blacklist,
+      // when current time reach exp OR when user re-login,
+      // will delete from the list.
+      addToBlacklist(userId, iat);
+
+      // updated
+      return done(null, true);
+    }).catch(e => done(e)); // eslint-disable-line
+  };
+  //
+  const middleware = expressJwt({ secret: getSecret, requestProperty, isRevoked });
+  return middleware(req, res, (err) => {
+    if (err) {
+      // when revoke success, an error will be returned from express-jwt,
+      // this error has code = revoked_token, so in this case, it means logout success
+      if (err.code === 'revoked_token') {
+        return res.status(httpStatus.OK).json(new APIResponse({ message: 'logout success' }));
+      }
+      return next(err);
+    }
+    return next(new APIError(constants.errors.logoutError, httpStatus.UNAUTHORIZED, true));
+  });
+};
+
 // before request to this function, please make sure that
 // the verifyRefreshToken middleware MUST be applied in prior
 export const renewAccessToken = (req, res, next) => {
-  const { userId } = req[requestProperty];
+  const { userId, iat } = req[requestProperty];
+  addToBlacklist(userId, iat);
   return generateTokens(req, userId).then(tokenResp => res.json(tokenResp)).catch(e => next(e)); // eslint-disable-line
 };
 
