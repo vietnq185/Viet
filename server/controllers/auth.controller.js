@@ -231,7 +231,7 @@ const generateTokens = (req, userId) => {
       // so that the refresh token cannot be used anymore.
       const jwtData = jwt.decode(tokensList[1]);
       if (Utils.isNotEmptyString(jwtData.hash)) {
-        db.reset().where('t1._id=$1').update({ userToken: jwtData.hash }, [user._id]);
+        db.reset().where('t1._id::varchar=$1').update({ userToken: jwtData.hash }, [user._id]);
       }
       jwtData.accessToken = tokensList[0];
       jwtData.refreshToken = tokensList[1];
@@ -282,7 +282,7 @@ export const logout = (req, res, next) => {
   //
   const isRevoked = (req, payload, done) => { // eslint-disable-line
     const { userId, iat } = payload;
-    return new UserModel().where('t1._id=$1').update({ userToken: '' }, [userId]).then((results) => {
+    return new UserModel().where('t1._id::varchar=$1').update({ userToken: '' }, [userId]).then((results) => {
       if (results === null) {
         // not updated
         return done(new APIError('Cannot revoke refresh token', httpStatus.UNAUTHORIZED, true));
