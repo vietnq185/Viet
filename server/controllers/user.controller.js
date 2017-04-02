@@ -2,6 +2,7 @@ import httpStatus from 'http-status';
 
 import * as authCtrl from './auth.controller';
 import UserModel from '../models/user.model';
+import UserRoleModel from '../models/user.role.model';
 import APIResponse from '../helpers/APIResponse';
 import APIError from '../helpers/APIError';
 import Utils from '../helpers/Utils';
@@ -26,10 +27,38 @@ export const load = (req, res, next, id) => {
         // found
         // delete password
         delete user.hashedPassword; // eslint-disable-line
-        req.user = user; // eslint-disable-line no-param-reassign
-        return next();
-      })
-      .catch(e => next(e));
+
+        const finalResp = () => {
+          req.user = user; // eslint-disable-line no-param-reassign
+          return next();
+        };
+        // find linked students (if any)
+        const uModel = new UserModel();
+        const urModel = new UserRoleModel();
+        urModel.reset().where('t1."user"::varchar=$1').findAll([user._id]).then((urResults) => {
+          //
+          urModel.reset().select('t1._id AS "userRoleId", t2.*')
+            .join(`${uModel.getTable()} AS t2`, 't1."targetRef"::varchar=t2."_id"::varchar') // eslint-disable-line
+            .where('t1."user"::varchar=$1')
+            .getDataPair([user._id], ['userRoleId']).then(linkedStudents => { // eslint-disable-line
+              const lsResults = [];
+              for (let i = 0; i < urResults.length; i++) { // eslint-disable-line
+                const urid = urResults[i]._id;
+                const ls = UserModel.extractData(linkedStudents[urid]);
+                delete ls.userRoleId;
+                urResults[i].targetUserInfo = ls; // eslint-disable-line
+                lsResults.push(urResults[i]);
+              }
+              user.roles = lsResults; // eslint-disable-line
+              return finalResp();
+            }).catch(e => { // eslint-disable-line
+              debug('get linked students error: ', e);
+              return finalResp();
+            });
+          //
+        }).catch(e => finalResp()); // eslint-disable-line
+        //
+      }).catch(e => next(e)); // eslint-disable-line
   });
 };
 
@@ -70,7 +99,18 @@ export const create = (req, res, next) => {
   });
   //
   const promises = [validateEmail, validateUsername];
-  Promise.all(promises).then(() => { // eslint-disable-line
+  // validate parent (if any)
+  const reqStatus = req.body.status || [];
+  if (typeof req.body.parentId !== 'undefined' && Utils.isNotEmptyArray(reqStatus) &&
+    (reqStatus.indexOf('student') !== -1 || reqStatus.indexOf('STUDENT') !== -1)) {
+    const validateParent = new UserModel().where('t1._id::varchar=$1').findOne([req.body.parentId]).then((parentData) => {
+      const err = new APIError(constants.errors.wrongUsername, httpStatus.OK, true);
+      return (parentData === null ? Promise.reject(err) : Promise.resolve(parentData));
+    });
+    promises.push(validateParent);
+  }
+  //
+  Promise.all(promises).then((results) => { // eslint-disable-line
     // create data
     const salt = Utils.getSalt();
     var data = { // eslint-disable-line
@@ -84,6 +124,7 @@ export const create = (req, res, next) => {
       hashedPassword: Utils.encrypt(req.body.password, salt),
       provider: 'local',
       dateCreated: new Date().getTime(),
+      role: req.body.role || 'user',
     };
     if (Utils.isNotEmptyObject(req.body.metadata || {})) {
       data.metadata = req.body.metadata;
@@ -92,8 +133,28 @@ export const create = (req, res, next) => {
       data.status = req.body.status;
     }
     // insert
-    return new UserModel().insert(data);
-  }).then(savedUser => res.json(new APIResponse(savedUser !== null ? UserModel.extractData(savedUser) : savedUser))).catch(e => next(e)); // eslint-disable-line
+    return new UserModel().insert(data).then((savedUser) => {
+      if (savedUser === null) {
+        return Promise.reject(new APIError(constants.errors.registerError, httpStatus.OK, true));
+      }
+      if (results.length === 2) {
+        return Promise.resolve(savedUser);
+      }
+      // in this case, now the savedUser is student, then insert to user_roles
+      const parentUserData = results[2];
+      const userRoleData = {
+        _id: Utils.uuid(),
+        user: parentUserData._id,
+        role: 'guardian',
+        targetModel: 'user',
+        targetRef: savedUser._id,
+      };
+      return new UserRoleModel().insert(userRoleData).then(savedUserRole => Promise.resolve(savedUser)).catch(e => { // eslint-disable-line
+        debug('insert student into user_roles error: ', e);
+        return Promise.resolve(savedUser);
+      }); // eslint-disable-line
+    });
+  }).then((savedUser) => res.json(new APIResponse(UserModel.extractData(savedUser)))).catch(e => next(e)); // eslint-disable-line
   //
 };
 

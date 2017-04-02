@@ -14,5 +14,6 @@ export default {
     wrongPassword: 'WRONG_PASSWORD',
     unauthorized: 'UNAUTHORIZED',
     logoutError: 'LOGOUT_ERROR',
+    registerError: 'REGISTER_ERROR',
   },
 };

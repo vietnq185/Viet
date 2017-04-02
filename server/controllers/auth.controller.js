@@ -325,11 +325,11 @@ export const renewAccessToken = (req, res, next) => {
 // is authenticated
 export const isAuth = req => (typeof req[requestProperty] !== 'undefined' && Utils.isNotEmptyObject(req[requestProperty]));
 
-export const isAdmin = req => (isAuth(req) && req[requestProperty].role === 'admin');
+export const isAdmin = req => (isAuth(req) && req[requestProperty].role.toLowerCase() === 'admin');
 
-export const isEditor = req => (isAuth(req) && (req[requestProperty].role === 'admin' || req[requestProperty].role === 'editor'));
+export const isEditor = req => (isAuth(req) && (req[requestProperty].role.toLowerCase() === 'admin' || req[requestProperty].role.toLowerCase() === 'editor'));
 
-export const isUser = req => (isAuth(req) && req[requestProperty].role === 'user');
+export const isUser = req => (isAuth(req) && req[requestProperty].role.toLowerCase() === 'user');
 
 export const adminAuth = (req, res, next) => {
   if (!isAdmin(req)) {
