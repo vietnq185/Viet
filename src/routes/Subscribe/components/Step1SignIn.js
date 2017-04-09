@@ -1,8 +1,10 @@
 import React from 'react'
 import Joi from 'joi'
 
+import config from '../../../config'
 import Utils from '../../../helpers/utils'
 import validate from '../../../helpers/validate'
+import SimpleStorage from '../../../helpers/simpleStorage'
 
 class Step1SignIn extends React.Component {
   constructor (props) {
@@ -13,7 +15,8 @@ class Step1SignIn extends React.Component {
     }
     this.errors = Utils.copy(this.initialErrors)
     this.state = {
-      hasError: false
+      hasError: false,
+      errMsg: ''
     }
   }
 
@@ -28,6 +31,8 @@ class Step1SignIn extends React.Component {
   }
 
   submitForm () {
+    const self = this
+
     this.resetErrors()
 
     const rules = {
@@ -39,6 +44,36 @@ class Step1SignIn extends React.Component {
     if (result === true) {
       // can submit
       console.info('can submit form')
+      return fetch(config.api.signIn, {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json'
+        },
+        body: JSON.stringify({ username: self.refs.email.value, password: self.refs.password.value })
+      }).then((response) => response.json()).then((jsonResponse) => {
+        if (jsonResponse && jsonResponse.success) {
+          console.info('sign in success: ', jsonResponse)
+          const storage = new SimpleStorage(config.storageName)
+          storage.add(Utils.merge({ _id: config.tokenKey }, jsonResponse.result.jwt))
+          return self.props.changeStep(self.props.steps.plan)
+        }
+        console.info('sign in error: ', jsonResponse)
+        const msg = jsonResponse.error.message || ''
+        switch (msg) {
+          case 'UNREGISTERED_USER':
+            this.setState({ errMsg: 'Email not found.' })
+            break
+          case 'WRONG_PASSWORD':
+            this.setState({ errMsg: 'Incorrect password.' })
+            break
+          default:
+            this.setState({ errMsg: 'Server is busy, please try again later.' })
+        }
+      }).catch((error) => {
+        this.setState({ errMsg: 'Server is busy, please try again later.' })
+        console.info('sign in error: ', error)
+      })
+      //
     } else {
       this.setErrors(result)
     }
@@ -62,6 +97,9 @@ class Step1SignIn extends React.Component {
             <input className='form-control' name='password' id='password' required='' type='password' ref='password' />
             <span className='forgot-password'><a href='javascript: void(0);'>Forgot password?</a></span>
             <span className={[this.errors.password ? 'help-block' : 'hide'].join(' ')}>{this.errors.password}</span>
+          </div>
+          <div className={['form-group', this.state.errMsg ? 'has-error' : 'hide'].join(' ')}>
+            <span className='help-block'>{this.state.errMsg}</span>
           </div>
           <div className='form-group'>
             <button type='button' className='btn btn-block dk-bg-blue dk-white' onClick={() => this.submitForm()}>Sign In</button>

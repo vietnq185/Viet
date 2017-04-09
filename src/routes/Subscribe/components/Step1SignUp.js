@@ -4,6 +4,7 @@ import Joi from 'joi'
 import config from '../../../config'
 import Utils from '../../../helpers/utils'
 import validate from '../../../helpers/validate'
+import SimpleStorage from '../../../helpers/simpleStorage'
 
 class Step1SignUp extends React.Component {
   constructor (props) {
@@ -43,6 +44,8 @@ class Step1SignUp extends React.Component {
   }
 
   submitForm () {
+    const self = this
+
     this.resetErrors()
 
     const rules = {
@@ -74,7 +77,36 @@ class Step1SignUp extends React.Component {
         if (jsonResponse && jsonResponse.success) {
           console.info('sign up success: ', jsonResponse)
           // do login automatically
-          return
+          return fetch(config.api.signIn, {
+            method: 'POST',
+            headers: {
+              'Content-type': 'application/json'
+            },
+            body: JSON.stringify({ username: self.refs.email.value, password: self.refs.password.value })
+          }).then((response) => response.json()).then((jsonResponse) => {
+            if (jsonResponse && jsonResponse.success) {
+              console.info('sign in success: ', jsonResponse)
+              const storage = new SimpleStorage(config.storageName)
+              storage.add(Utils.merge({ _id: config.tokenKey }, jsonResponse.result.jwt))
+              return self.props.changeStep(self.props.steps.plan)
+            }
+            console.info('sign in error: ', jsonResponse)
+            const msg = jsonResponse.error.message || ''
+            switch (msg) {
+              case 'UNREGISTERED_USER':
+                this.setState({ errMsg: 'Email not found.' })
+                break
+              case 'WRONG_PASSWORD':
+                this.setState({ errMsg: 'Incorrect password.' })
+                break
+              default:
+                this.setState({ errMsg: 'Server is busy, please try again later.' })
+            }
+          }).catch((error) => {
+            this.setState({ errMsg: 'Server is busy, please try again later.' })
+            console.info('sign in error: ', error)
+          })
+          //
         }
         // parse error msg
         console.info('sign up error: ', jsonResponse)
