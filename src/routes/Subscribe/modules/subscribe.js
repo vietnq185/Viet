@@ -23,10 +23,6 @@ export function changeStep (step) {
   }
 }
 
-export const actions = {
-  changeStep
-}
-
 // ------------------------------------
 // Reducer
 // ------------------------------------

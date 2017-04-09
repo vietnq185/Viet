@@ -1,9 +1,46 @@
 import React from 'react'
+import Joi from 'joi'
+
+import Utils from '../../../helpers/utils'
+import validate from '../../../helpers/validate'
 
 class Step1SignIn extends React.Component {
   constructor (props) {
     super(props)
+    this.initialErrors = {
+      email: '',
+      password: ''
+    }
+    this.errors = Utils.copy(this.initialErrors)
     this.state = {
+      hasError: false
+    }
+  }
+
+  resetErrors () {
+    this.errors = Utils.copy(this.initialErrors)
+    this.setState({ hasError: false })
+  }
+
+  setErrors (errors) {
+    this.errors = errors
+    this.setState({ hasError: true })
+  }
+
+  submitForm () {
+    this.resetErrors()
+
+    const rules = {
+      email: Joi.string().required().email().label('Email'),
+      password: Joi.string().required().min(8).max(50).label('Password')
+    }
+
+    const result = validate(rules, this.refs)  // result === true -> valid, result === error object -> invalid
+    if (result === true) {
+      // can submit
+      console.info('can submit form')
+    } else {
+      this.setErrors(result)
     }
   }
 
@@ -15,17 +52,19 @@ class Step1SignIn extends React.Component {
         <div className='form-title-desc text-center'>If you have a parent account with us, please sign in.</div>
         <br />
         <form className='form form-subscribe-login'>
-          <div className='form-group'>
+          <div className={['form-group', this.errors.email ? 'has-error' : ''].join(' ')}>
             <label htmlFor='contact-name'>Email address</label>
-            <input className='form-control' name='email' id='email' required='' type='text' />
+            <input className='form-control' name='email' id='email' required='' type='text' ref='email' />
+            <span className={[this.errors.email ? 'help-block' : 'hide'].join(' ')}>{this.errors.email}</span>
           </div>
-          <div className='form-group'>
+          <div className={['form-group', this.errors.password ? 'has-error' : ''].join(' ')}>
             <label htmlFor='contact-name'>Password</label>
-            <input className='form-control' name='password' id='password' required='' type='password' />
+            <input className='form-control' name='password' id='password' required='' type='password' ref='password' />
             <span className='forgot-password'><a href='javascript: void(0);'>Forgot password?</a></span>
+            <span className={[this.errors.password ? 'help-block' : 'hide'].join(' ')}>{this.errors.password}</span>
           </div>
           <div className='form-group'>
-            <button type='button' className='btn btn-block dk-bg-blue dk-white'>Sign In</button>
+            <button type='button' className='btn btn-block dk-bg-blue dk-white' onClick={() => this.submitForm()}>Sign In</button>
           </div>
           <div className='form-group text-center'>
             Do not have a parent account?&nbsp;
