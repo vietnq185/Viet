@@ -1,15 +1,33 @@
 import React from 'react'
-import DuckImage from '../assets/Duck.jpg'
-import './HomeView.scss'
+import scrollToComponent from 'react-scroll-to-component'
 
-export const HomeView = () => (
-  <div>
-    <h4>Welcome!</h4>
-    <img
-      alt='This is a duck, because Redux!'
-      className='duck'
-      src={DuckImage} />
-  </div>
-)
+import Utils from '../../../helpers/utils'
+
+import PageHeader from './PageHeader'
+import PageContent from './PageContent'
+import Footer from '../../../components/Footer'
+
+import './HomeView.scss'
+import '../../../styles/programme.css'
+
+class HomeView extends React.Component {
+  componentDidMount() {
+    Utils.redirect('programme')
+  }
+
+  scrollTo() {
+    scrollToComponent(this.refs.pageContent, { align: 'top' })
+  }
+
+  render() {
+    return (
+      <div style={{ margin: '0 auto' }} >
+        <PageHeader scrollTo={() => this.scrollTo()} />
+        <PageContent ref='pageContent' />
+        <Footer />
+      </div>
+    )
+  }
+}
 
 export default HomeView

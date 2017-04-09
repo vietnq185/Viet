@@ -1,4 +1,9 @@
+.route--item {
+  text-decoration: none;
+  color: #ffffff !important;
+}
+.route--item:hover,
 .route--active {
-  font-weight: bold;
-  text-decoration: underline;
+  text-decoration: none;
+  color: #ffdd09 !important;
 }
