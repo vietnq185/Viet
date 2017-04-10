@@ -1,10 +1,9 @@
 import React from 'react'
 import Joi from 'joi'
 
-import config from '../../../config'
+import API from '../../../helpers/api'
 import Utils from '../../../helpers/utils'
 import validate from '../../../helpers/validate'
-import SimpleStorage from '../../../helpers/simpleStorage'
 
 class Step1SignIn extends React.Component {
   constructor (props) {
@@ -41,25 +40,14 @@ class Step1SignIn extends React.Component {
     }
 
     const result = validate(rules, this.refs)  // result === true -> valid, result === error object -> invalid
+
     if (result === true) {
       // can submit
-      console.info('can submit form')
-      return fetch(config.api.signIn, {
-        method: 'POST',
-        headers: {
-          'Content-type': 'application/json'
-        },
-        body: JSON.stringify({ username: self.refs.email.value, password: self.refs.password.value })
-      }).then((response) => response.json()).then((jsonResponse) => {
-        if (jsonResponse && jsonResponse.success) {
-          console.info('sign in success: ', jsonResponse)
-          const storage = new SimpleStorage(config.storageName)
-          storage.add(Utils.merge({ _id: config.tokenKey }, jsonResponse.result.jwt))
-          return self.props.changeStep(self.props.steps.plan)
-        }
-        console.info('sign in error: ', jsonResponse)
-        const msg = jsonResponse.error.message || ''
-        switch (msg) {
+      API.login({ username: self.refs.email.value, password: self.refs.password.value }).then((result) => {
+        const nextAction = () => self.props.changeStep(self.props.steps.plan)
+        self.props.loginSuccess(result, nextAction)
+      }).catch((errMsg) => {
+        switch (errMsg) {
           case 'UNREGISTERED_USER':
             this.setState({ errMsg: 'Email not found.' })
             break
@@ -67,15 +55,19 @@ class Step1SignIn extends React.Component {
             this.setState({ errMsg: 'Incorrect password.' })
             break
           default:
-            this.setState({ errMsg: 'Server is busy, please try again later.' })
+            this.setState({ errMsg })
         }
-      }).catch((error) => {
-        this.setState({ errMsg: 'Server is busy, please try again later.' })
-        console.info('sign in error: ', error)
       })
       //
     } else {
       this.setErrors(result)
+    }
+  }
+
+  componentDidMount () {
+    const { changeStep, steps, auth: { isLoggedIn } } = this.props
+    if (isLoggedIn) {
+      changeStep(steps.plan)
     }
   }
 
@@ -116,7 +108,8 @@ class Step1SignIn extends React.Component {
 
 Step1SignIn.propTypes = {
   steps: React.PropTypes.object.isRequired,
-  changeStep: React.PropTypes.func.isRequired
+  changeStep: React.PropTypes.func.isRequired,
+  auth: React.PropTypes.object.isRequired
 }
 
 export default Step1SignIn

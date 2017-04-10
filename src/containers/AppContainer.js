@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { browserHistory, Router } from 'react-router'
 import { Provider } from 'react-redux'
+import * as auth from '../store/auth'
 
 class AppContainer extends Component {
   static propTypes = {
@@ -10,6 +11,10 @@ class AppContainer extends Component {
 
   shouldComponentUpdate () {
     return false
+  }
+
+  componentDidMount () {
+    this.props.store.dispatch(auth.checkTokensAtStartUp())
   }
 
   render () {

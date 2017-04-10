@@ -1,5 +1,6 @@
 import { connect } from 'react-redux'
 import * as actions from '../modules/subscribe'
+import * as authActions from '../../../store/auth'
 
 /*  This is a container component. Notice it does not contain any JSX,
     nor does it import React. This component is **only** responsible for
@@ -13,11 +14,13 @@ import Subscribe from '../components/Subscribe'
     implementing our wrapper around increment; the component doesn't care   */
 
 const mapDispatchToProps = {
-  ...actions
+  ...actions,
+  ...authActions
 }
 
 const mapStateToProps = (state) => ({
-  ...state.subscribe
+  ...state.subscribe,
+  auth: state.auth
 })
 
 /*  Note: mapStateToProps is where you should use `reselect` to create selectors, ie:

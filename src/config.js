@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 // ---------------------------------------------------------------------------------------------
 // production mode
 // console.log = console.info = console.warn = console.error = function () { }
@@ -30,7 +32,8 @@ const config = {}
 config.apiServer = 'http://localhost:4040'
 config.api = {
   signUp: '/api/users',  // POST
-  signIn: '/api/auth/login' // POST
+  signIn: '/api/auth/login', // POST
+  checkLogin: '/api/users/:userId', // GET
 }
 config.api = concatHost(config.apiServer, config.api)
 
