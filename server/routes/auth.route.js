@@ -1,6 +1,8 @@
 import express from 'express';
 import validate from 'express-validation';
 
+import APIResponse from '../helpers/APIResponse';
+
 import paramValidation from '../../config/param-validation';
 import * as authCtrl from '../controllers/auth.controller';
 
@@ -17,6 +19,10 @@ router.route('/logout')
 /** GET /api/auth/token - Send refresh token to renew access token */
 router.route('/token')
   .get(authCtrl.verifyRefreshToken, authCtrl.renewAccessToken);
+
+/** GET /api/auth/checkToken - Send access token to check if it is valid and not expired */
+router.route('/checkToken')
+  .get(authCtrl.verifyAccessToken, (req, res) => res.json(new APIResponse('OK')));
 
 /** GET /api/auth/random-number - Protected route,
  * needs token returned by the above as header. Authorization: Bearer {token} */

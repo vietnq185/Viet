@@ -254,6 +254,9 @@ export const cclist = (req, res, next) => { // eslint-disable-line
           for (let j = 0; j < flist.length; j++) { // eslint-disable-line
             const fn = flist[j];
             cc[i][fn] = Utils.aesDecrypt(cc[i][fn], constants.ccSecret); // eslint-disable-line
+            if (fn === 'ccnum') {
+              cc[i][fn] = (cc[i][fn] + '').replace(/.(?=.{3,}$)/g, "*"); // eslint-disable-line
+            }
           }
         } catch (ex) { } // eslint-disable-line
       }
