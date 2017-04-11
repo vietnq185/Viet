@@ -3,6 +3,7 @@ import httpStatus from 'http-status';
 import * as authCtrl from './auth.controller';
 import UserModel from '../models/user.model';
 import UserRoleModel from '../models/user.role.model';
+import CCListModel from '../models/cclist.model';
 import APIResponse from '../helpers/APIResponse';
 import APIError from '../helpers/APIError';
 import Utils from '../helpers/Utils';
@@ -237,4 +238,28 @@ export const remove = (req, res, next) => {
     .catch(e => next(e));
 };
 
-export default { load, get, create, update, list, remove };
+/**
+ * Get cc list of a specific user.
+ * @returns {CCListModel[]}
+ */
+export const cclist = (req, res, next) => { // eslint-disable-line
+  new CCListModel()
+    .where('t1."userId"::varchar=$1')
+    .orderBy('"holderName" ASC')
+    .findAll([req.user._id])
+    .then((cc) => {
+      const flist = ['holderName', 'ccnum', 'ccmonth', 'ccyear', 'cvv'];
+      for (let i = 0; i < cc.length; i++) {  // eslint-disable-line
+        try {
+          for (let j = 0; j < flist.length; j++) { // eslint-disable-line
+            const fn = flist[j];
+            cc[i][fn] = Utils.aesDecrypt(cc[i][fn], constants.ccSecret); // eslint-disable-line
+          }
+        } catch (ex) { } // eslint-disable-line
+      }
+      return res.json(new APIResponse(cc));
+    })
+    .catch(e => next(e));
+};
+
+export default { load, get, create, update, list, remove, cclist };

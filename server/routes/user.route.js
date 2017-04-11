@@ -24,6 +24,10 @@ router.route('/:userId')
   /** DELETE /api/users/:userId - Delete user */
   .delete(authCtrl.verifyAccessToken, userCtrl.remove);
 
+router.route('/cclist/:userId')
+  /** GET /api/users/cclist/:userId - Get cclist of user */
+  .get(authCtrl.verifyAccessToken, userCtrl.cclist);
+
 /** Load user when API with userId route parameter is hit */
 router.param('userId', userCtrl.load);  // router.param accepts only tow params, so that do no put authCtrl.verifyAccessToken here
 

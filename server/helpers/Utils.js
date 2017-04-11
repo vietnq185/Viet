@@ -2,9 +2,9 @@
 
 import constants from '../../config/constants';
 
+const CryptoJS = require("crypto-js");
 const sha3 = require('crypto-js/sha3');
 const aes = require('crypto-js/aes');
-const enc = require('crypto-js/enc-utf8');
 
 const crypto = require('crypto');
 const uuidV4 = require('uuid/v4');
@@ -34,7 +34,7 @@ Utils.aesEncrypt = (str, secret) => aes.encrypt(str, Utils.sha3Encrypt(secret)).
 Utils.aesDecrypt = (encryptedStr, secret) => { // eslint-disable-line
   const bytes = aes.decrypt(encryptedStr, Utils.sha3Encrypt(secret));
   try {
-    return bytes.toString(enc.Utf8);
+    return bytes.toString(CryptoJS.enc.Utf8);
   } catch (e) {
     return '';
   }
