@@ -31,9 +31,12 @@ const config = {}
 // API
 config.apiServer = 'http://localhost:4040'
 config.api = {
-  signUp: '/api/users',  // POST
   signIn: '/api/auth/login', // POST
+  checkToken: '/api/auth/checkToken', // GET
+  signUp: '/api/users',  // POST
   checkLogin: '/api/users/:userId', // GET
+  plans: '/api/plans', // GET
+  cclist: '/api/users/cclist/:userId', // GET
 }
 config.api = concatHost(config.apiServer, config.api)
 

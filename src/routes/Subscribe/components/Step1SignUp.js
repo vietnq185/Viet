@@ -4,7 +4,6 @@ import Joi from 'joi'
 import API from '../../../helpers/api'
 import Utils from '../../../helpers/utils'
 import validate from '../../../helpers/validate'
-import SimpleStorage from '../../../helpers/simpleStorage'
 
 class Step1SignUp extends React.Component {
   constructor (props) {
@@ -51,7 +50,6 @@ class Step1SignUp extends React.Component {
     const rules = {
       firstName: Joi.string().required().label('First name'),
       lastName: Joi.string().required().label('Last name'),
-      phone: Joi.string().optional(),
       email: Joi.string().required().email().label('Email'),
       password: Joi.string().required().min(8).max(50).label('Password'),
       confirmPassword: Joi.any().valid(Joi.ref('password')).required().options({

@@ -2,6 +2,27 @@ import config from '../config'
 
 export default class API {
 
+  static checkToken = (accessToken) => {
+    return new Promise((resolve, reject) => {
+      return fetch(config.api.checkToken, {
+        method: 'GET',
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        }
+      }).then((response) => response.json()).then((jsonResponse) => {
+        if (jsonResponse && jsonResponse.success) {
+          return resolve(jsonResponse.result)
+        }
+        const msg = jsonResponse.error.message || ''
+        return reject(msg)
+      }).catch((error) => {
+        const msg = error.message || ''
+        return reject(msg)
+      })
+    })
+  }
+
   static login = (data = { username: '', password: '' }) => {
     return new Promise((resolve, reject) => {
       return fetch(config.api.signIn, {
@@ -52,6 +73,47 @@ export default class API {
           'Content-type': 'application/json'
         },
         body: JSON.stringify(data)
+      }).then((response) => response.json()).then((jsonResponse) => {
+        if (jsonResponse && jsonResponse.success) {
+          return resolve(jsonResponse.result)
+        }
+        const msg = jsonResponse.error.message || ''
+        return reject(msg)
+      }).catch((error) => {
+        const msg = error.message || ''
+        return reject(msg)
+      })
+    })
+  }
+
+  static getPlans = () => {
+    return new Promise((resolve, reject) => {
+      return fetch(config.api.plans, {
+        method: 'GET',
+        headers: {
+          'Content-type': 'application/json'
+        }
+      }).then((response) => response.json()).then((jsonResponse) => {
+        if (jsonResponse && jsonResponse.success) {
+          return resolve(jsonResponse.result)
+        }
+        const msg = jsonResponse.error.message || ''
+        return reject(msg)
+      }).catch((error) => {
+        const msg = error.message || ''
+        return reject(msg)
+      })
+    })
+  }
+
+  static getCCList = (accessToken, userId) => {
+    return new Promise((resolve, reject) => {
+      return fetch(config.api.cclist.replace(/:userId/g, userId), {
+        method: 'GET',
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        }
       }).then((response) => response.json()).then((jsonResponse) => {
         if (jsonResponse && jsonResponse.success) {
           return resolve(jsonResponse.result)

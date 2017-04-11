@@ -1,16 +1,67 @@
 import React from 'react'
 
+import constants from '../../../constants'
+import Utils from '../../../helpers/utils'
+
 import FailImage from '../../../styles/images/icon-failed.png'
 
-class Step1SignIn extends React.Component {
+const MONTHLY = constants.frequency.monthly
+const ANNUALLY = constants.frequency.annually
+
+const BANK_TRANSFER = constants.paymentMethod.bankTransfer
+const CREDIT_CARD = constants.paymentMethod.creditCard
+
+class Step3Payment extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
+      paymentMethod: this.props.paymentMethod,
+      selectedCardId: this.props.selectedCardId || ''
     }
   }
 
   render () {
-    console.info('Subscribe => PageContent => SignIn component => props: ', this.props)
+    const self = this
+
+    console.info('Subscribe => PageContent => Payment component => props: ', this.props)
+    console.info('Subscribe => PageContent => Payment component => state: ', this.state)
+
+    const { applyDiscount, discountPercent, selectedPlan } = this.props // eslint-disable-line
+    let { frequency, fee } = selectedPlan
+    fee = isNaN(fee) ? 0 : (applyDiscount ? (fee - fee * discountPercent / 100) : fee)
+    //
+    const cardList = []
+    let hasChecked = false
+    for (let i = 0; i < this.props.cclist.length; i++) {
+      const ccitem = this.props.cclist[i]
+      hasChecked = this.state.selectedCardId === ccitem._id
+      cardList.push(
+        <li key={ccitem._id}>
+          {this.state.selectedCardId === ccitem._id ? (
+            <input type='radio' name='card_id' id={ccitem._id} value={ccitem._id} defaultChecked onChange={() => self.setState({ selectedCardId: ccitem._id })} />
+          ) : (
+            <input type='radio' name='card_id' id={ccitem._id} value={ccitem._id} onChange={() => self.setState({ selectedCardId: ccitem._id })} />
+          )}&nbsp;
+          <label htmlFor={ccitem._id}>
+            <span>{ccitem.holderName}</span> {ccitem.ccnum} {ccitem.ccmonth}/{ccitem.ccyear}
+          </label>
+        </li>
+      )
+    }
+    cardList.push(
+      <li key='new'>
+        {!hasChecked ? (
+          <input type='radio' name='card_id' id='card_id_new' value='new' defaultChecked onChange={() => self.setState({ selectedCardId: '' })} />
+        ) : (
+          <input type='radio' name='card_id' id='card_id_new' value='new' onChange={() => self.setState({ selectedCardId: '' })} />
+        )}&nbsp;
+        <label htmlFor='card_id_new'>
+          Add new card
+        </label>
+      </li>
+    )
+    //
+
     return (
       <div className='subscription-complete-payment'>
         <div className='row'>
@@ -18,46 +69,35 @@ class Step1SignIn extends React.Component {
             <h2>Select your payment method</h2>
           </div>
           <div className='col-sm-3 col-xs-12 text-right'>
-            <a href='' className='change-plan'>Change plan</a>
+            <a href='javascript: void(0);' onClick={() => this.props.changeStep(this.props.steps.plan)} className='change-plan'>Change plan</a>
           </div>
         </div>
         <hr />
         <div className='payment-method'>
-          <div className='cc-container'>
-            <div>Your credit card will not be charged until the 14 days trial period expires. If you cancel the subscription before the trial expired, your card will not be charged</div>
-            <div>After your trial period you will be charged <strong>$48 per month:</strong></div><br />
+          <div className={this.state.paymentMethod === CREDIT_CARD ? 'cc-container' : 'hide'}>
+            <div>Your credit card will not be charged until the 14 days trial period expires. If you cancel the subscription before the trial expired, your card will not be charged.</div>
+            <div>After your trial period you will be charged <strong>{frequency === MONTHLY ? (<abbr>${fee} per month</abbr>) : (<abbr>${fee * 12} per year</abbr>)}</strong></div><br />
           </div>
-          <div className='bank-container' style={{ display: 'none' }}>
-            <h3>After your trial period you will be charged <strong>$400 per year:</strong></h3>
+          <div className={this.state.paymentMethod === BANK_TRANSFER ? 'bank-container' : 'hide'}>
+            <h3>After your trial period you will be charged <strong>{frequency === MONTHLY ? (<abbr>${fee} per month</abbr>) : (<abbr>${fee * 12} per year</abbr>)}:</strong></h3>
           </div>
           <div className='payment-method-form'>
             <form action='' method='post'>
               <ul className='list-inline'>
-                <li>
-                  <input type='radio' name='payment_method' id='cc' value='cc' defaultChecked />
+                <li onClick={() => this.setState({ paymentMethod: CREDIT_CARD })}>
+                  {this.state.paymentMethod === CREDIT_CARD ? (<input type='radio' name='payment_method' id='cc' value={CREDIT_CARD} defaultChecked />) : (<input type='radio' name='payment_method' id='cc' value={CREDIT_CARD} />)}
                   <label htmlFor='cc'><i className='fa fa-credit-card' aria-hidden='true' />Credit/Debit Card</label>
                 </li>
-                <li>
-                  <input type='radio' name='payment_method' id='bank' value='bank' />
+                <li onClick={() => this.setState({ paymentMethod: BANK_TRANSFER })}>
+                  {this.state.paymentMethod === BANK_TRANSFER ? (<input type='radio' name='payment_method' id='bank' value={BANK_TRANSFER} defaultChecked />) : (<input type='radio' name='payment_method' id='bank' value={BANK_TRANSFER} />)}
                   <label htmlFor='bank'><i className='fa fa-money' aria-hidden='true' />Bank Transfer</label>
                 </li>
               </ul>
-              <div className='cc-container'>
+              <div className={this.state.paymentMethod === CREDIT_CARD ? 'cc-container' : 'hide'}>
                 <ul className='list-inline'>
-                  <li>
-                    <input type='radio' name='card_id' id='card_id_1' value='1' />
-                    <label htmlFor='card_id_1'><span>VISA</span> ****4242 02/2020</label>
-                  </li>
-                  <li>
-                    <input type='radio' name='card_id' id='card_id_2' value='2' />
-                    <label htmlFor='card_id_2'><span>Master Card</span> ****4242 02/2020</label>
-                  </li>
-                  <li>
-                    <input type='radio' name='card_id' id='card_id_3' value='new' defaultChecked />
-                    <label htmlFor='card_id_3'>Add new card</label>
-                  </li>
+                  {cardList}
                 </ul>
-                <div className='cc-details'>
+                <div className={this.state.selectedCardId.length === 0 ? 'cc-details' : 'hide'}>
                   <div className='row'>
                     <div className='col-sm-6 col-xs-12'>
                       <div className='form-group'>
@@ -112,7 +152,7 @@ class Step1SignIn extends React.Component {
                   </div>
                 </div>
               </div>
-              <div className='bank-container' style={{ display: 'none' }}>
+              <div className={this.state.paymentMethod === BANK_TRANSFER ? 'bank-container' : 'hide'}>
                 <p>If you select "Bank Transfer" you can only start the trial period after your account is activated by us. We will call you to confirm the information and we will provide you further instruction via your email address as well.</p>
                 <p>For instant information, please contact us via +65 7432 3421<br />You will skip step 4 if you select this payment method</p>
               </div>
@@ -147,9 +187,13 @@ class Step1SignIn extends React.Component {
   }
 }
 
-Step1SignIn.propTypes = {
+Step3Payment.propTypes = {
   steps: React.PropTypes.object.isRequired,
-  changeStep: React.PropTypes.func.isRequired
+  changeStep: React.PropTypes.func.isRequired,
+  selectedPlan: React.PropTypes.object.isRequired,
+  paymentMethod: React.PropTypes.string.isRequired,
+  cclist: React.PropTypes.array,
+  selectedCardId: React.PropTypes.string
 }
 
-export default Step1SignIn
+export default Step3Payment
