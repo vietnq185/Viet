@@ -1,7 +1,6 @@
-import config from '../config'
 import API from '../helpers/api'
 import Utils from '../helpers/utils'
-import SimpleStorage from '../helpers/simpleStorage'
+import TokenStorage from '../helpers/tokenStorage'
 // ------------------------------------
 // Constants
 // ------------------------------------
@@ -23,11 +22,7 @@ const updateLoginResult = (result) => {
 export const loginSuccess = (data, nextAction = () => { }) => (dispatch, getState) => {
   console.info('login data: ', data)
   return new Promise((resolve, reject) => {
-    const storage = new SimpleStorage(config.storageName)
-    storage.add({
-      _id: config.tokenKey,
-      ...data.jwt
-    })
+    TokenStorage.set(data.jwt)
     return resolve(data)
   }).then((result) => {
     const jwt = Utils.copy(result.jwt)
@@ -42,8 +37,7 @@ export const loginSuccess = (data, nextAction = () => { }) => (dispatch, getStat
 
 export const logout = () => (dispatch, getState) => {
   return new Promise((resolve, reject) => {
-    const storage = new SimpleStorage(config.storageName)
-    storage.remove(config.tokenKey)
+    TokenStorage.delete()
     return resolve()
   }).then(() => {
     dispatch(updateLoginResult({ isLoggedIn: false, jwt: {}, user: {} }))
@@ -56,9 +50,8 @@ export const logout = () => (dispatch, getState) => {
 // now wee need to check if accessToken is still valid, then we need to get login info
 export const checkTokensAtStartUp = () => (dispatch, getState) => {
   return new Promise((resolve, reject) => {
-    const storage = new SimpleStorage(config.storageName)
-    const jwt = storage.get(config.tokenKey)
-    const { accessToken, userId } = jwt || {}
+    const jwt = TokenStorage.get()
+    const { accessToken, userId } = jwt
     if (!accessToken || !userId) {
       return resolve() // not login before
     }
