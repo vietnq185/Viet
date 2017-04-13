@@ -33,7 +33,7 @@ INSERT INTO plans(_id, "courseIds", fee, description, "keyBenefits") VALUES
 CREATE TABLE cclist (
     _id uuid NOT NULL,
     "userId" uuid NOT NULL,
-    "holderName" text,
+    "name" text,
     "ccnum" text,
     "ccmonth" text,
     "ccyear" text,

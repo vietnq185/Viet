@@ -245,10 +245,10 @@ export const remove = (req, res, next) => {
 export const cclist = (req, res, next) => { // eslint-disable-line
   new CCListModel()
     .where('t1."userId"::varchar=$1')
-    .orderBy('"holderName" ASC')
+    .orderBy('"name" ASC')
     .findAll([req.user._id])
     .then((cc) => {
-      const flist = ['holderName', 'ccnum', 'ccmonth', 'ccyear', 'cvv'];
+      const flist = ['name', 'ccnum', 'ccmonth', 'ccyear', 'cvv'];
       for (let i = 0; i < cc.length; i++) {  // eslint-disable-line
         try {
           for (let j = 0; j < flist.length; j++) { // eslint-disable-line
