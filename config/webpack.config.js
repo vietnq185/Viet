@@ -22,9 +22,9 @@ const webpackConfig = {
   module : {},
   node: {
     net: 'empty',
-    dns: 'empty',
-    //fs: 'empty',
-    //tls: 'empty'
+    dns: 'empty'
+    // fs: 'empty',
+    // tls: 'empty'
   }
 }
 // ------------------------------------

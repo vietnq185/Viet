@@ -11,15 +11,15 @@ import './HomeView.scss'
 import '../../../styles/programme.css'
 
 class HomeView extends React.Component {
-  componentDidMount() {
+  componentDidMount () {
     Utils.redirect('programme')
   }
 
-  scrollTo() {
+  scrollTo () {
     scrollToComponent(this.refs.pageContent, { align: 'top' })
   }
 
-  render() {
+  render () {
     return (
       <div style={{ margin: '0 auto' }} >
         <PageHeader scrollTo={() => this.scrollTo()} />

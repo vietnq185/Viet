@@ -18,9 +18,9 @@ export const Header = () => (
     {/* Top Menu Items */}
     <div className='collapse navbar-collapse navbar-ex1-collapse navbar-right dk-white'>
       <ul className='nav navbar-nav side-nav'>
-        {/*<li>
+        {/* <li>
           <IndexLink to='/' className='side-nav-item dk-white route--item' activeClassName='route--active dk-yellow'>Home</IndexLink>
-        </li>*/}
+        </li> */}
         <li>
           <Link to='programme' className='side-nav-item dk-white route--item' activeClassName='route--active dk-yellow'>Our Programme</Link>
         </li>

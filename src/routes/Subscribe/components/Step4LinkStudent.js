@@ -12,8 +12,7 @@ class Step1SignIn extends React.Component {
     return (
       <div className='subscription-assign-student-container'>
         <div className='alert alert-success'>
-          <p>Congrats! You have successfully subscribed to a plan. Now please create a <strong>Student Account</strong> for your
-								child to start enjoyning it.</p>
+          <p>Congrats! You have successfully subscribed to a plan. Now please create a <strong>Student Account</strong> for your child to start enjoyning it.</p>
           <br />
           <p>You can also do it later by accessing to <a href=''>My Subscription</a> page</p>
         </div>

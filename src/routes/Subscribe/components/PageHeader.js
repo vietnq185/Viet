@@ -3,7 +3,7 @@ import { IndexLink, Link } from 'react-router'
 import './PageHeader.scss'
 
 class PageHeader extends React.Component {
-  render() {
+  render () {
     return (
       <div className='subscribe-header'>
         <nav className='navbar navbar-default dk-navbar' role='navigation'>
@@ -21,7 +21,7 @@ class PageHeader extends React.Component {
           {/* Top Menu Items */}
           <div className='collapse navbar-collapse navbar-ex1-collapse navbar-right'>
             <ul className='nav navbar-nav side-nav'>
-              {/*<li><IndexLink to='/' className='side-nav-item route--link' activeClassName='route--link--active dk-yellow'>Home</IndexLink></li>*/}
+              {/* <li><IndexLink to='/' className='side-nav-item route--link' activeClassName='route--link--active dk-yellow'>Home</IndexLink></li> */}
               <li><Link to='programme' className='side-nav-item route--link' activeClassName='route--link--active dk-yellow'>Our Programme</Link></li>
               <li><Link to='student' className='side-nav-item route--link' activeClassName='route--link--active dk-yellow'>For Student</Link></li>
               <li><Link to='parent' className='side-nav-item route--link' activeClassName='route--link--active dk-yellow'>For Parent</Link></li>

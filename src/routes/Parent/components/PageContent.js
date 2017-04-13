@@ -6,7 +6,6 @@ import ParentItem3Image from '../../../styles/images/parent-item3.png'
 import ParentItem4Image from '../../../styles/images/parent-item4.png'
 import ParentItem5Image from '../../../styles/images/parent-item5.png'
 
-
 class PageContent extends React.Component {
   render () {
     return (

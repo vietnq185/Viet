@@ -86,14 +86,14 @@ export const getCCList = () => (dispatch, getState) => {
   })
 }
 
-const COMPLETE_SUBSCRIPTION = 'COMPLETE_SUBSCRIPTION'
+/* const COMPLETE_SUBSCRIPTION = 'COMPLETE_SUBSCRIPTION'
 
 const subscriptionResult = (result) => {
   return {
     type: COMPLETE_SUBSCRIPTION,
     result
   }
-}
+} */
 
 const SAVE_PAYMENT = 'SAVE_PAYMENT'
 
