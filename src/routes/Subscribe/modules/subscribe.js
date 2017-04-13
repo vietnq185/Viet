@@ -86,6 +86,37 @@ export const getCCList = () => (dispatch, getState) => {
   })
 }
 
+const COMPLETE_SUBSCRIPTION = 'COMPLETE_SUBSCRIPTION'
+
+const subscriptionResult = (result) => {
+  return {
+    type: COMPLETE_SUBSCRIPTION,
+    result
+  }
+}
+
+const SAVE_PAYMENT = 'SAVE_PAYMENT'
+
+const paymentResult = (result) => {
+  return {
+    type: SAVE_PAYMENT,
+    result
+  }
+}
+
+export const completeSubscription = (data) => (dispatch, getState) => {
+  return new Promise((resolve, reject) => {
+    dispatch(paymentResult(data))
+    resolve()
+  })
+  /* const { auth } = getState()
+  return API.getCCList(auth.jwt.accessToken || '', auth.jwt.userId || '').then((cclist) => {
+    // dispatch(subscriptionResult(cclist))
+  }).catch(() => {
+    // dispatch(subscriptionResult([]))
+  }) */
+}
+
 // ------------------------------------
 // Reducer
 // ------------------------------------
@@ -102,7 +133,14 @@ const initialState = {
   discountPercent: 20,
   cclist: [],
   selectedCardId: '',
-  paymentMethod: constants.paymentMethod.creditCard
+  paymentMethod: constants.paymentMethod.creditCard,
+  newCC: {
+    name: '',
+    ccnum: '',
+    ccmonth: '',
+    ccyear: '',
+    cvv: ''
+  }
 }
 
 export default (state = initialState, action) => {
@@ -119,6 +157,13 @@ export default (state = initialState, action) => {
       break // eslint-disable-line
     case GET_CCLIST:
       return Utils.merge(state, { cclist: action.cclist })
+      break // eslint-disable-line
+    case SAVE_PAYMENT:
+      return Utils.merge(state, {
+        paymentMethod: action.result.paymentMethod,
+        selectedCardId: action.result.selectedCardId,
+        newCC: action.result.newCC
+      })
       break // eslint-disable-line
     default:
       return state

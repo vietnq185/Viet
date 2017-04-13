@@ -16,8 +16,19 @@ class Step3Payment extends React.Component {
     super(props)
     this.state = {
       paymentMethod: this.props.paymentMethod,
-      selectedCardId: this.props.selectedCardId || ''
+      selectedCardId: this.props.selectedCardId || '',
+      newCC: this.props.newCC || {}
     }
+  }
+
+  setNewCC (key, value) {
+    const obj = {}
+    obj[key] = value
+    this.setState({ newCC: Utils.merge(this.state.newCC, obj) })
+  }
+
+  onSubmit () {
+    this.props.completeSubscription(this.state)
   }
 
   render () {
@@ -41,9 +52,9 @@ class Step3Payment extends React.Component {
             <input type='radio' name='card_id' id={ccitem._id} value={ccitem._id} defaultChecked onChange={() => self.setState({ selectedCardId: ccitem._id })} />
           ) : (
             <input type='radio' name='card_id' id={ccitem._id} value={ccitem._id} onChange={() => self.setState({ selectedCardId: ccitem._id })} />
-          )}&nbsp;
+            )}&nbsp;
           <label htmlFor={ccitem._id}>
-            <span>{ccitem.holderName}</span> {ccitem.ccnum} {ccitem.ccmonth}/{ccitem.ccyear}
+            <span>{ccitem.name}</span> {ccitem.ccnum} {ccitem.ccmonth}/{ccitem.ccyear}
           </label>
         </li>
       )
@@ -54,13 +65,27 @@ class Step3Payment extends React.Component {
           <input type='radio' name='card_id' id='card_id_new' value='new' defaultChecked onChange={() => self.setState({ selectedCardId: '' })} />
         ) : (
           <input type='radio' name='card_id' id='card_id_new' value='new' onChange={() => self.setState({ selectedCardId: '' })} />
-        )}&nbsp;
+          )}&nbsp;
         <label htmlFor='card_id_new'>
           Add new card
         </label>
       </li>
     )
     //
+    const ccmonthList = []
+    for (let i = 1; i <= 12; i++) {
+      let val = i < 10 ? ('0' + i) : ('' + i)
+      let selected = self.state.ccmonth === val
+      ccmonthList.push(selected ? <option key={'ccmonth' + val} value={val} selected>{val}</option> : <option key={'ccmonth' + val} value={val}>{val}</option>)
+    }
+
+    const curYear = new Date().getFullYear()
+    const ccyearList = []
+    for (let i = curYear; i <= curYear + 10; i++) {
+      let val = i
+      let selected = self.state.ccyear === val
+      ccyearList.push(selected ? <option key={'ccyear' + val} value={val} selected>{val}</option> : <option key={'ccyear' + val} value={val}>{val}</option>)
+    }
 
     return (
       <div className='subscription-complete-payment'>
@@ -102,13 +127,13 @@ class Step3Payment extends React.Component {
                     <div className='col-sm-6 col-xs-12'>
                       <div className='form-group'>
                         <label htmlFor='contact-name'>Card Number</label>
-                        <input className='form-control' name='card_number' id='card_number' required='' type='text' />
+                        <input className='form-control' name='ccnum' id='ccnum' required='' type='text' value={this.state.newCC.ccnum} onChange={(e) => this.setNewCC('ccnum', e.target.value)} />
                       </div>
                     </div>
                     <div className='col-sm-6 col-xs-12'>
                       <div className='form-group'>
                         <label htmlFor='contact-name'>Name</label>
-                        <input className='form-control' name='name' id='name' required='' type='text' />
+                        <input className='form-control' name='name' id='name' required='' type='text' value={this.state.newCC.name} onChange={(e) => this.setNewCC('name', e.target.value)} />
                       </div>
                     </div>
                   </div>
@@ -116,37 +141,23 @@ class Step3Payment extends React.Component {
                     <div className='col-sm-4 col-xs-12'>
                       <div className='form-group'>
                         <label htmlFor='contact-name'>Expiry Month</label>
-                        <select className='form-control' name='exp_month' id='exp_month' required=''>
-                          <option value='01'>01</option>
-                          <option value='02'>02</option>
-                          <option value='03'>03</option>
-                          <option value='04'>04</option>
-                          <option value='05'>05</option>
-                          <option value='06'>06</option>
-                          <option value='07'>07</option>
-                          <option value='08'>08</option>
-                          <option value='09'>09</option>
-                          <option value='10'>10</option>
-                          <option value='11'>11</option>
-                          <option value='12'>12</option>
+                        <select className='form-control' name='ccmonth' id='ccmonth' required='' value={this.state.newCC.ccmonth} onChange={(e) => this.setNewCC('ccmonth', e.target.value)}>
+                          {ccmonthList}
                         </select>
                       </div>
                     </div>
                     <div className='col-sm-4 col-xs-12'>
                       <div className='form-group'>
                         <label htmlFor='contact-name'>Expiry Year</label>
-                        <select className='form-control' name='exp_year' id='exp_year' required=''>
-                          <option value='2017'>2017</option>
-                          <option value='2018'>2018</option>
-                          <option value='2019'>2019</option>
-                          <option value='2020'>2020</option>
+                        <select className='form-control' name='ccyear' id='ccyear' required='' value={this.state.newCC.ccyear} onChange={(e) => this.setNewCC('ccyear', e.target.value)}>
+                          {ccyearList}
                         </select>
                       </div>
                     </div>
                     <div className='col-sm-4 col-xs-12'>
                       <div className='form-group'>
                         <label htmlFor='contact-name'>CVV</label>
-                        <input className='form-control' name='cvv' id='cvv' required='' type='text' />
+                        <input className='form-control' name='cvv' id='cvv' required='' type='text' value={this.state.newCC.cvv} onChange={(e) => this.setNewCC('cvv', e.target.value)} />
                       </div>
                     </div>
                   </div>
@@ -158,7 +169,7 @@ class Step3Payment extends React.Component {
               </div>
               <br />
               <div className='form-group'>
-                <button type='button' className='btn dk-bg-blue dk-white btnCompleteSubscription'>Complete Subscription</button>
+                <button type='button' className='btn dk-bg-blue dk-white btnCompleteSubscription' onClick={() => this.onSubmit()}>Complete Subscription</button>
                 <span className='secure-server'><i className='fa fa-lock ' /> Secure Server</span>
               </div>
             </form>
