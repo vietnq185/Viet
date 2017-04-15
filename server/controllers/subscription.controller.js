@@ -55,77 +55,80 @@ export const create = (req, res, next) => {
       }
       return Promise.resolve(planData);
     });
-  }).then((planData) => {
-    return new SubscriptionModel().findCount().then((totalSubscriptions) => {
-      var discountValue = 0,
-        fee = planData.fee;
-      if (parseFloat(discount) > 0 && totalSubscriptions <= 200) {
-        discountValue = (fee * discount) / 100;
-      }
-      fee = fee - discountValue;
+  }).then((planData) => new SubscriptionModel().findCount().then((totalSubscriptions) => {
+    var discountValue = 0,
+      fee = planData.fee;
+    if (parseFloat(discount) > 0 && totalSubscriptions <= 200) {
+      discountValue = (fee * discount) / 100;
+    }
+    fee = fee - discountValue;
 
-      // create data
-      var data = { // eslint-disable-line
-        _id: id,
-        parentId,
-        planId,
-        expirationType,
-        type,
-        dateCreated: new Date().getTime(),
-        dateModified: new Date().getTime(),
-        expiryDate: new Date().getTime() + (14 * 86400), //14 days trial
-        channel,
-        fee,
-        discount: discountValue,
-        status: 'trailing'
-      };
-      if (cardId !== '') {
-        data.cardId = cardId;
+    // create data
+    var data = { // eslint-disable-line
+      _id: id,
+      parentId,
+      planId,
+      expirationType,
+      type,
+      dateCreated: new Date().getTime(),
+      dateModified: new Date().getTime(),
+      expiryDate: new Date().getTime() + (14 * 86400 * 1000), //14 days trial
+      channel,
+      fee,
+      discount: discountValue,
+      status: 'trailing'
+    };
+    if (cardId !== '') {
+      data.cardId = cardId;
+    }
+    if (expirationType == 'annually') {
+      data.frequency = 'monthly';
+    } else {
+      data.frequency = 'yearly';
+    }
+    // insert
+    return new SubscriptionModel().insert(data).then((savedSubscription) => {
+      if (savedSubscription === null) {
+        return Promise.reject(new APIError(constants.errors.createSubscriptionError, httpStatus.OK, true));
       }
-      // insert
-      return new SubscriptionModel().insert(data).then((savedSubscription) => {
-        if (savedSubscription === null) {
-          return Promise.reject(new APIError(constants.errors.createSubscriptionError, httpStatus.OK, true));
+      return Promise.resolve(savedSubscription)
+    }).then((savedSubscription) => {
+      if (channel == 'bank' && typeof req.body.addCard !== 'undefined') {
+        var cardData = {
+          _id: Utils.uuid(),
+          userId: parentId,
+          name: Utils.aesEncrypt(req.body.card_name, constants.ccSecret),
+          ccnum: Utils.aesEncrypt(req.body.ccnum, constants.ccSecret),
+          ccmonth: Utils.aesEncrypt(req.body.ccmonth, constants.ccSecret),
+          ccyear: Utils.aesEncrypt(req.body.ccyear, constants.ccSecret),
+          cvv: Utils.aesEncrypt(req.body.cvv, constants.ccSecret),
+          dateCreated: new Date().getTime()
+        };
+        const savedCard = new CCListModel().insert(cardData).then(savedCard);
+        if (savedCard !== null) {
+          new SubscriptionModel().where('t1._id::varchar=$1').update({ cardId: cardData._id }, [savedSubscription._id]);
         }
-        return Promise.resolve(savedSubscription)
-      }).then((savedSubscription) => {
-        if (channel == 'bank' && typeof req.body.addCard !== 'undefined') {
-          var cardData = {
-            _id: Utils.uuid(),
-            userId: parentId,
-            name: Utils.aesEncrypt(req.body.card_name, constants.ccSecret),
-            ccnum: Utils.aesEncrypt(req.body.ccnum, constants.ccSecret),
-            ccmonth: Utils.aesEncrypt(req.body.ccmonth, constants.ccSecret),
-            ccyear: Utils.aesEncrypt(req.body.ccyear, constants.ccSecret),
-            cvv: Utils.aesEncrypt(req.body.cvv, constants.ccSecret),
-            dateCreated: new Date().getTime()
-          };
-          const savedCard = new CCListModel().insert(cardData).then(savedCard);
-          if (savedCard !== null) {
-            new SubscriptionModel().where('t1._id::varchar=$1').update({ cardId: cardData._id }, [savedSubscription._id]);
-          }
+      }
+      const planItems = [];
+      for (var i = 0; i < planData.courseIds.length; i++) {
+        var dataItem = {
+          _id: Utils.uuid(),
+          creator: parentId,
+          dateCreated: new Date().getTime(),
+          dateModified: new Date().getTime(),
+          order: savedSubscription._id,
+          course: planData.courseIds[i]
+        };
+        if (studentId != '') {
+          dataItem.user = studentId;
         }
-        const planItems = [];
-        for (var i = 0; i < planData.courseIds.length; i++) {
-          var dataItem = {
-            _id: Utils.uuid(),
-            creator: parentId,
-            dateCreated: new Date().getTime(),
-            dateModified: new Date().getTime(),
-            order: savedSubscription._id,
-            course: planData.courseIds[i]
-          };
-          if (studentId != '') {
-            dataItem.user = studentId;
-          }
-          const savedItem = new ItemModel().insert(dataItem).then(savedItem);
-          planItems[i] = dataItem;
-        }
-        savedSubscription.planItems = planItems;
-        return Promise.resolve(savedSubscription);
-      }).then(savedSubscription => res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)))).catch(e => next(e)); // eslint-disable-line;
-    });
-  }).catch(e => next(e)); // eslint-disable-line
+        const savedItem = new ItemModel().insert(dataItem).then(savedItem);
+        planItems[i] = dataItem;
+      }
+      savedSubscription.planItems = planItems;
+      return Promise.resolve(savedSubscription);
+    }).then(savedSubscription => res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)))).catch(e => next(e)); // eslint-disable-line;
+  })).catch(e => next(e)); // eslint-disable-line
   //
 };
 
@@ -172,7 +175,7 @@ export const UpdateCardIdForSubscription = (req, res, next) => {
   const promises = [validateSubscription, validateCard];
 
   Promise.all(promises).then((results) => { // eslint-disable-line
-    promises.push(new SubscriptionModel().where('t1._id::varchar=$1').update({ cardId: cardId }, [subscriptionId]));
+    promises.push(new SubscriptionModel().where('t1._id::varchar=$1').update({ cardId }, [subscriptionId]));
     return res.json(new APIResponse("Card has been updated for subscription")); // eslint-disable-line
   }).catch(e => next(e));
 };
@@ -187,20 +190,20 @@ export const UpdateCardIdForSubscription = (req, res, next) => {
 export const getSubscriptionsByUser = (req, res, next) => {
   const { limit = 10, offset = 0 } = req.query;
   return new SubscriptionModel().where('t1."parentId"::varchar=$1').findCount([req.params.userId]).then((total) => {
-    var rowCount = 10,
+    let rowCount = 10,
       pages = Math.ceil(total / rowCount),
       page = 1;
     if (req.params.page != undefined && parseInt(req.params.page) > 0) {
       page = parseInt(req.params.page);
     }
-    var offset = (parseInt(page) - 1) * rowCount;
+    let offset = (parseInt(page) - 1) * rowCount;
     if (page > pages) {
       page = pages;
     }
 
     const iModel = new ItemModel();
     const pModel = new PlanModel();
-    const cModel = new CourseModel()
+    const cModel = new CourseModel();
     new SubscriptionModel().where('t1."parentId"::varchar=$1')
       .select(`t1."_id", t1."parentId", t1."planId", t1."expirationType", t1."type", 
         t1."expiryDate", t1.discount, t1.fee, t1.status, t1."dateCreated", t1.channel, t1."cardId", 
@@ -210,37 +213,57 @@ export const getSubscriptionsByUser = (req, res, next) => {
       .orderBy('t1."dateCreated" DESC')
       .limit(limit).offset(offset)
       .findAll([req.params.userId])
-      .then(subscriptions => {
+      .then((subscriptions) => {
         const result = {
           subscriptions,
           page,
           totalPages: pages
-        }
-        return res.json(new APIResponse(result))
+        };
+        return res.json(new APIResponse(result));
       })
       .catch(e => next(e));
   });
 };
 
-export const countSubscriptions = (req, res, next) => {
-  return new SubscriptionModel().findCount().then((total) => {
-    return res.json(new APIResponse(total))
-  }).catch(e => next(e));
-};
+export const countSubscriptions = (req, res, next) => new SubscriptionModel().findCount().then((total) => {
+  return res.json(new APIResponse(total))
+}).catch(e => next(e));
 
 export const getSubscriptionById = (req, res, next) => {
-  return new SubscriptionModel().where('t1._id::varchar=$1').findOne([req.params.subscriptionId]).then((subscription) => {
-    if (subscription !== null) {
-      // if (subscription.parentId != req.params.userId) {
-      //   return res.json(new APIResponse({ msg: constants.errors.subscriptionDoesNotBelongToYou }))
-      // } else {
-      //   return res.json(new APIResponse(subscription))
-      // }
-      return res.json(new APIResponse(subscription))
-    } else {
+  const cModel = new CourseModel();
+  const pModel = new PlanModel();
+  const ccModel = new CCListModel();
+  return new SubscriptionModel().select(`t1.*,
+      ARRAY(SELECT t2.title FROM ${cModel.getTable()} AS t2 
+            INNER JOIN ${pModel.getTable()} AS t3 ON t2._id = ANY(ARRAY[t3."courseIds"])
+            WHERE t3._id=t1."planId") AS "courseTitles", t4.name, t4.ccnum, t4.ccmonth, t4.ccyear, t4.cvv
+    `)
+    .join(`${ccModel.getTable()} AS t4`, 't1."cardId"::varchar=t4."_id"::varchar') // eslint-disable-line
+    .where('t1._id::varchar=$1').limit(1).offset(0).findAll([req.params.subscriptionId]).then((subscription) => {
+      if (subscription !== null) {
+        // if (subscription.parentId != req.params.userId) {
+        //   return res.json(new APIResponse({ msg: constants.errors.subscriptionDoesNotBelongToYou }))
+        // } else {
+        //   return res.json(new APIResponse(subscription))
+        // }
+
+        const flist = ['name', 'ccnum', 'ccmonth', 'ccyear', 'cvv'];
+        for (let i = 0; i < subscription.length; i++) {  // eslint-disable-line
+          try {
+            for (let j = 0; j < flist.length; j++) { // eslint-disable-line
+              const fn = flist[j];
+              subscription[i][fn] = Utils.aesDecrypt(subscription[i][fn], constants.ccSecret); // eslint-disable-line
+              if (fn === 'ccnum') {
+                subscription[i][fn] = (subscription[i][fn] + '').replace(/.(?=.{4,}$)/g, "*"); // eslint-disable-line
+              }
+            }
+          } catch (ex) { } // eslint-disable-line
+        }
+        return res.json(new APIResponse(subscription[0]))
+      }
       return res.json(new APIResponse({ msg: constants.errors.subscriptionNotFound }))
-    }
-  }).catch(e => next(e));
+
+    }).catch(e => next(e));
 };
 
 export default { getSubscriptionsByUser, create, assignStudent, UpdateCardIdForSubscription, countSubscriptions, getSubscriptionById };
