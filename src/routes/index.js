@@ -6,6 +6,7 @@ import ProgrammeRoute from './Programme'
 import StudentRoute from './Student'
 import ParentRoute from './Parent'
 import SubscribeRoute from './Subscribe'
+import SubscriptionDetailsRoute from './SubscriptionDetails'
 
 /*  Note: Instead of using JSX, we recommend using react-router
     PlainRoute objects to build route definitions.   */
@@ -19,7 +20,8 @@ export const createRoutes = (store) => ({
     ProgrammeRoute(store),
     StudentRoute(store),
     ParentRoute(store),
-    SubscribeRoute(store)
+    SubscribeRoute(store),
+    SubscriptionDetailsRoute(store)
   ]
 })
 

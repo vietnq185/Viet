@@ -31,6 +31,7 @@ const config = {}
 // API
 config.apiServer = 'http://localhost:4040'
 config.api = {
+  getSubscriptionDetails: '/api/subscriptions/details/:subscriptionId', // GET
   signIn: '/api/auth/login', // POST
   checkToken: '/api/auth/checkToken', // GET
   signUp: '/api/users',  // POST
