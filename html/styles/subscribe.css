@@ -3,6 +3,7 @@ body {
 }
 a{
 	color: #000;
+	cursor: pointer;
 }
 #wrapper{
 	background: #a3d6bb none repeat scroll 0 0;
@@ -558,40 +559,132 @@ a{
 .subscribe-wrapper .my-subscription .subscriptions-paging li a:hover{
 	text-decoration: none;
 }
-.subscribe-wrapper .my-subscription .subcribe-contact-info{
+.subscribe-wrapper .subcribe-contact-info{
 	background: #f5f8fd;
 	border-left: 5px solid #8bb4e7;
 }
-.subscribe-wrapper .my-subscription .subcribe-contact-info .subcribe-contact-info-desc{
+.subcribe-contact-info .subcribe-contact-info-desc{
 	padding: 15px 25px;
 }
-.subscribe-wrapper .my-subscription .subcribe-contact-info .subcribe-contact-info-desc .subcribe-contact-info-desc-options{
+.subcribe-contact-info .subcribe-contact-info-desc .subcribe-contact-info-desc-options{
 	padding-left: 30px;
 }
-.subscribe-wrapper .my-subscription .subcribe-contact-info .subcribe-contact-info-desc .subcribe-contact-info-desc-options li{
+.subcribe-contact-info .subcribe-contact-info-desc .subcribe-contact-info-desc-options li{
 	width: 40%;
 	margin-bottom: 5px;
 }
-.subscribe-wrapper .my-subscription .subcribe-contact-info .subcribe-contact-info-desc .subcribe-contact-info-desc-options li i.fa{
+.subcribe-contact-info .subcribe-contact-info-desc .subcribe-contact-info-desc-options li i.fa{
 	color: #2a78e4;
     font-size: 17px;
     padding-right: 5px;
 }
-.subscribe-wrapper .my-subscription .subcribe-contact-info .subcribe-contact-info-desc .contact-phone{
+.subcribe-contact-info .subcribe-contact-info-desc .contact-phone{
 	display: inline-block;
 	padding-left: 50px;
 }
-.subscribe-wrapper .my-subscription .subcribe-contact-info .subcribe-contact-info-desc .contact-phone i.fa{
+.subcribe-contact-info .subcribe-contact-info-desc .contact-phone i.fa{
 	font-size: 16px;
 	padding-right: 5px;
 }
-.subscribe-wrapper .my-subscription .subcribe-contact-info .subcribe-contact-info-desc .contact-email{
+.subcribe-contact-info .subcribe-contact-info-desc .contact-email{
 	display: inline-block;
 	padding-left: 50px;
 }
-.subscribe-wrapper .my-subscription .subcribe-contact-info .subcribe-contact-info-desc .contact-email i.fa{
+.subcribe-contact-info .subcribe-contact-info-desc .contact-email i.fa{
 	font-size: 16px;
 	padding-right: 5px;
+}
+.subscribe-wrapper .subscribe-details{
+	margin-bottom: 20px;
+}
+.subscribe-wrapper .subscribe-details h1{
+	font-size: 20px;
+	border-bottom: 1px solid #ddd;
+	padding-bottom: 7px;
+	margin-bottom: 20px;
+}
+.subscribe-wrapper .subscribe-details h1 span.status{
+	font-size: 14px;
+	font-weight: normal;
+	text-transform: uppercase;
+	display: inline-block;
+	margin-right: 10px;
+	padding: 5px 10px;
+}
+.subscribe-wrapper .subscribe-details h1 span.status-cancelled{
+	background: #ccc;
+}
+.subscribe-wrapper .subscribe-details h1 span.status-overdue{
+	background: #cf2a27;
+	color: #fff;
+}
+.subscribe-wrapper .subscribe-details h1 span.status-pending{
+	background: #ff9900;
+	color: #fff;
+}
+.subscribe-wrapper .subscribe-details h1 span.status-trailing{
+	background: #2b78e4;
+	color: #fff;
+}
+.subscribe-wrapper .subscribe-details h1 span.status-active{
+	background: #8ac750;
+	color: #fff;
+}
+.subscribe-wrapper .subscribe-details h3{
+	font-size: 16px;
+	font-weight: 600;
+}
+.subscribe-wrapper .subscribe-details .info{
+	border: 1px solid #000;
+	border-radius: 10px;
+	padding: 15px 30px;
+	margin-bottom: 25px;
+	line-height: 25px;
+}
+.subscribe-wrapper .subscribe-details .pending-account-info{
+	color: #cf2a27;
+	text-align: center;
+	margin-top: 30px;
+	margin-bottom: 50px;
+}
+.subscribe-wrapper .subscribe-details .trail-near-expire{
+	display: inline-block;
+	padding-left: 5px;
+	font-size: 12px;
+	font-weight: normal;
+	color: #cf2a27;
+}
+.subscribe-wrapper .subscribe-details a.cancel-link{
+	display: inline-block;
+	float: right;
+	color: #cf2a27;
+	font-size: 15px;
+	border: 1px solid #cf2a27;
+	padding: 5px 10px;
+	text-transform: uppercase;
+}
+.subscribe-wrapper .subscribe-details a.cancel-link:hover,
+.subscribe-wrapper .subscribe-details a.assign-now-link:hover,
+.subscribe-wrapper .subscribe-details a.upgrade-link:hover{
+	text-decoration: none;
+}
+.subscribe-wrapper .subscribe-details .assign-now-link{
+	display: inline-block;
+	color: #007fff;
+	font-size: 15px;
+	border: 1px solid #007fff;
+	padding: 5px 10px;
+	text-transform: uppercase;
+}
+.subscribe-wrapper .subscribe-details .upgrade-link{
+	display: inline-block;
+	float: right;
+	color: #8ac750;
+	font-size: 15px;
+	border: 1px solid #8ac750;
+	padding: 5px 10px;
+	text-transform: uppercase;
+	margin-right: 10px;
 }
 @media (max-width: 1199px){
 	.subscription-plan .subscription-plan-item{
@@ -605,13 +698,13 @@ a{
 	.subscribe-content-container .subscribe-content .subscribe-steps-nav ul li.list-inline{
 		text-align: center;
 	}
-	.subscribe-wrapper .my-subscription .subcribe-contact-info .subcribe-contact-info-desc .subcribe-contact-info-desc-options li{
+	.subcribe-contact-info .subcribe-contact-info-desc .subcribe-contact-info-desc-options li{
 		width: 95%;
 	}
-	.subscribe-wrapper .my-subscription .subcribe-contact-info .subcribe-contact-info-desc .contact-phone{
+	.subcribe-contact-info .subcribe-contact-info-desc .contact-phone{
 		padding-left: 10px;
 	}
-	.subscribe-wrapper .my-subscription .subcribe-contact-info .subcribe-contact-info-desc .contact-email{
+	.subcribe-contact-info .subcribe-contact-info-desc .contact-email{
 		padding-left: 10px;
 	}
 }
@@ -638,10 +731,10 @@ a{
 	    line-height: 35px;
 	    width: 35px;
 	}
-	.subscribe-wrapper .my-subscription .subcribe-contact-info .subcribe-contact-info-desc .subcribe-contact-info-desc-options{
+	.subcribe-contact-info .subcribe-contact-info-desc .subcribe-contact-info-desc-options{
 		padding-left: 15px;
 	}
-	.subscribe-wrapper .my-subscription .subcribe-contact-info .subcribe-contact-info-desc .subcribe-contact-info-desc-options li{
+	.subcribe-contact-info .subcribe-contact-info-desc .subcribe-contact-info-desc-options li{
 		width: 98%;
 	}
 }
