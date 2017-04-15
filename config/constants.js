@@ -21,6 +21,7 @@ export default {
     createSubscriptionError: 'CREATE_SUBSCRIPTION_ERROR',
     subscriptionNotFound: 'SUBSCRIPTION_NOT_FOUND',
     studentNotFound: 'STUDENT_NOT_FOUND',
-    cardNotFound: 'CARD_NOT_FOUND'
+    cardNotFound: 'CARD_NOT_FOUND',
+    subscriptionDoesNotBelongToYou: 'SUBSCRIPTION_DOES_NOT_BELONG_TO_YOU',
   },
 };
