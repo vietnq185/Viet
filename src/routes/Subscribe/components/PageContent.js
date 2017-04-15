@@ -1,5 +1,4 @@
 import React from 'react'
-import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup' // eslint-disable-line
 import { IndexLink } from 'react-router'
 
 import StepNav from './StepNav'
@@ -47,8 +46,6 @@ class PageContent extends React.Component {
           <div className='subscribe-content'>
 
             <StepNav {...this.props} />
-
-            {/* <CSSTransitionGroup transitionName='subscribe'>{stepContent}</CSSTransitionGroup> */}
 
             {stepContent}
 

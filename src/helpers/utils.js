@@ -18,6 +18,15 @@ Utils.redirect = function (route) {
   browserHistory.push(route);
 }
 
+Utils.range = (low, hi) => {
+  function rangeRec(low, hi, vals) {
+    if (low > hi) return vals;
+    vals.push(low);
+    return rangeRec(low + 1, hi, vals);
+  }
+  return rangeRec(low, hi, []);
+}
+
 /**
 * Check if is a not empty object.
 * @param {object} obj

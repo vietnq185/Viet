@@ -14,8 +14,9 @@ class Step1SignIn extends React.Component {
     }
   }
 
-  submitForm() {
-
+  showSubscription() {
+    this.props.restart()
+    Utils.redirect('subscription')
   }
 
   render() {
@@ -34,7 +35,7 @@ class Step1SignIn extends React.Component {
           <p>The subscription has been assigned to a student.</p>
           <p>You can check all your subscriptions in My Subscription page</p>
         </div>
-        <br /><br /><a href='javascript: void(0);' className='btn dk-bg-green dk-white' onClick={() => Utils.redirect('subscription')}>See your subscription</a>
+        <br /><br /><a href='javascript: void(0);' className='btn dk-bg-green dk-white' onClick={() => this.showSubscription()}>See your subscription</a>
         {studentLogin}
         <br /><br /><br />Download <strong>Parent App</strong> for iOS or Android and enjoy the learning journey with your child
         <br /><br />

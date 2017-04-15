@@ -210,4 +210,25 @@ export default class API {
     })
   }
 
+  static getSubscriptionList = (accessToken, userId, page) => {
+    return new Promise((resolve, reject) => {
+      return fetch(config.api.getSubscriptionList.replace(/:userId/g, userId).replace(/:page/g, page), {
+        method: 'GET',
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        }
+      }).then((response) => response.json()).then((jsonResponse) => {
+        if (jsonResponse && jsonResponse.success) {
+          return resolve(jsonResponse.result)
+        }
+        const msg = jsonResponse.error.message || ''
+        return reject(msg)
+      }).catch((error) => {
+        const msg = error.message || ''
+        return reject(msg)
+      })
+    })
+  }
+
 }

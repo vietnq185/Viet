@@ -1,7 +1,7 @@
 import constants from '../../../constants'
 import API from '../../../helpers/api'
 import Utils from '../../../helpers/utils'
-import * as auth from '../../../store/auth'
+import * as authActions from '../../../store/auth'
 // ------------------------------------
 // Constants
 // ------------------------------------
@@ -118,7 +118,7 @@ const subscriptionResult = (result) => {
 
 const RESTART_SUBSCRIPTION = 'RESTART_SUBSCRIPTION'
 
-const restart = () => {
+export const restart = () => {
   return {
     type: RESTART_SUBSCRIPTION
   }
@@ -136,7 +136,7 @@ export const assignStudent = (result) => {
 export const completeSubscription = (data) => (dispatch, getState) => {
   return new Promise((resolve, reject) => {
     dispatch(paymentResult(data))
-    return auth.checkAccessToken().then(() => {
+    return authActions.checkAccessToken().then(() => {
       const state = getState()
       const jwt = state.auth.jwt
       const info = state.subscribe
@@ -147,7 +147,8 @@ export const completeSubscription = (data) => (dispatch, getState) => {
         planId: info.selectedPlan._id,
         expirationType: info.selectedPlan.frequency,
         type: 'USER_PLAN',
-        channel: info.paymentMethod
+        channel: info.paymentMethod,
+        discount: (state.subscribe.applyDiscount ? state.subscribe.discountPercent : 0)
       }
       if (info.paymentMethod !== constants.paymentMethod.bankTransfer) {
         subData.cardId = info.selectedCardId
@@ -177,7 +178,7 @@ export const completeSubscription = (data) => (dispatch, getState) => {
       const nextAction = () => {
         dispatch(changeStep(STEPS.signIn))
       }
-      dispatch(auth.logout(nextAction))
+      dispatch(authActions.logout(nextAction))
     })
   })
 }

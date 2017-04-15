@@ -76,7 +76,9 @@ export const checkAccessToken = () => {
     if (!accessToken || !userId) {
       return reject('NOT_LOGIN') // not login before
     }
-    return API.checkToken(accessToken).then(resolve).catch(reject) // eslint-disable-line
+    return API.checkToken(accessToken).then(() => {
+      return resolve(jwt)
+    }).catch(reject) // eslint-disable-line
   })
 }
 
