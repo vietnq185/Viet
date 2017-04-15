@@ -19,8 +19,12 @@ router.route('/UpdateCardIdForSubscription')
   /** POST /api/subscriptions/UpdateCardIdForSubscription - Update card id for subscription */
   .post(/*authCtrl.verifyAccessToken, */subscriptionCtrl.UpdateCardIdForSubscription)
 
-router.route('/:userId')
+router.route('/:userId/:page')
   /** GET /api/subscriptions/:userId - Get subscriptions */
   .get(/*authCtrl.verifyAccessToken, */subscriptionCtrl.getSubscriptionsByUser)
+
+router.route('/countSubscriptions')
+  /** GET /api/subscriptions/countSubscriptions - Count subscriptions */
+  .get(/*authCtrl.verifyAccessToken, */subscriptionCtrl.countSubscriptions)
 
 export default router;
