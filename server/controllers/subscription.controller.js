@@ -231,11 +231,12 @@ export const countSubscriptions = (req, res, next) => {
 export const getSubscriptionById = (req, res, next) => {
   return new SubscriptionModel().where('t1._id::varchar=$1').findOne([req.params.subscriptionId]).then((subscription) => {
     if (subscription !== null) {
-      if (subscription.parentId != req.params.userId) {
-        return res.json(new APIResponse({ msg: constants.errors.subscriptionDoesNotBelongToYou }))
-      } else {
-        return res.json(new APIResponse(subscription))
-      }
+      // if (subscription.parentId != req.params.userId) {
+      //   return res.json(new APIResponse({ msg: constants.errors.subscriptionDoesNotBelongToYou }))
+      // } else {
+      //   return res.json(new APIResponse(subscription))
+      // }
+      return res.json(new APIResponse(subscription))
     } else {
       return res.json(new APIResponse({ msg: constants.errors.subscriptionNotFound }))
     }

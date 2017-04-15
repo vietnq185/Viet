@@ -1,3 +1,4 @@
+/* eslint-disable */
 import express from 'express';
 import validate from 'express-validation';
 
@@ -13,22 +14,22 @@ router.route('/')
 
 router.route('/AssignStudent')
   /** POST /api/subscriptions/AssignStudent - Assign student */
-  .post(/*authCtrl.verifyAccessToken, */subscriptionCtrl.assignStudent)
+  .post(/* authCtrl.verifyAccessToken, */subscriptionCtrl.assignStudent);
 
 router.route('/UpdateCardIdForSubscription')
   /** POST /api/subscriptions/UpdateCardIdForSubscription - Update card id for subscription */
-  .post(/*authCtrl.verifyAccessToken, */subscriptionCtrl.UpdateCardIdForSubscription)
+  .post(/* authCtrl.verifyAccessToken, */subscriptionCtrl.UpdateCardIdForSubscription);
 
-router.route('/:userId/:page')
+router.route('/list/:userId/:page')
   /** GET /api/subscriptions/:userId - Get subscriptions */
-  .get(/*authCtrl.verifyAccessToken, */subscriptionCtrl.getSubscriptionsByUser)
+  .get(/* authCtrl.verifyAccessToken, */subscriptionCtrl.getSubscriptionsByUser);
 
 router.route('/countSubscriptions')
   /** GET /api/subscriptions/countSubscriptions - Count subscriptions */
-  .get(/*authCtrl.verifyAccessToken, */subscriptionCtrl.countSubscriptions)
+  .get(/* authCtrl.verifyAccessToken, */subscriptionCtrl.countSubscriptions);
 
-router.route('/details/:userId/:subscriptionId')
-  /** GET /api/subscriptions/:userId/:subscriptionId - Get subscription details */
-  .get(/*authCtrl.verifyAccessToken, */subscriptionCtrl.getSubscriptionById)
+router.route('/details/:subscriptionId')
+  /** GET /api/subscriptions/:subscriptionId - Get subscription details */
+  .get(/* authCtrl.verifyAccessToken, */subscriptionCtrl.getSubscriptionById);
 
 export default router;
