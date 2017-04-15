@@ -42,3 +42,29 @@ CREATE TABLE cclist (
     "dateCreated" bigint,
     CONSTRAINT cclist_pkey PRIMARY KEY (_id)
 );
+
+ALTER TABLE subscriptions ADD COLUMN "parentId" uuid NOT NULL;
+ALTER TABLE subscriptions ADD COLUMN "planId" uuid NOT NULL;
+ALTER TABLE subscriptions ADD COLUMN "expirationType" character varying(255) COLLATE pg_catalog."default" DEFAULT 'monthly'::character varying;
+ALTER TABLE subscriptions ADD COLUMN "expiryDate" bigint;
+ALTER TABLE subscriptions ADD COLUMN "cardId" uuid;
+
+CREATE TABLE payment_history (
+    _id uuid NOT NULL,
+    "subscriptionId" uuid NOT NULL,
+    "paymentMethod" character varying(255) COLLATE pg_catalog."default" DEFAULT 'stripe'::character varying,
+    "txnid" character varying(255) COLLATE pg_catalog."default" DEFAULT NULL::character varying,
+    "paymentStatus" character varying(255) COLLATE pg_catalog."default" DEFAULT NULL::character varying,
+    "paymentDate" bigint,
+    CONSTRAINT payment_history_pkey PRIMARY KEY (_id)
+);
+
+ALTER TABLE subscriptions DROP CONSTRAINT subscriptions_user_fkey CASCADE;
+ALTER TABLE subscriptions DROP CONSTRAINT subscriptions_creator_fkey CASCADE;
+ALTER TABLE subscriptions DROP CONSTRAINT "subscriptions_externalUser_fkey" CASCADE;
+
+ALTER TABLE items DROP CONSTRAINT items_course_fkey CASCADE;
+ALTER TABLE items DROP CONSTRAINT items_creator_fkey CASCADE;
+ALTER TABLE items DROP CONSTRAINT items_order_fkey CASCADE;
+ALTER TABLE items DROP CONSTRAINT "items_parentItem_fkey" CASCADE;
+ALTER TABLE items DROP CONSTRAINT items_user_fkey CASCADE;
