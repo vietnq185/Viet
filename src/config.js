@@ -39,6 +39,7 @@ config.api = {
   cclist: '/api/users/cclist/:userId', // GET
   createSubscription: '/api/subscriptions', // POST
   countSubscriptions: '/api/subscriptions/countSubscriptions', // GET
+  assignStudent: '/api/subscriptions/AssignStudent', // POST
 }
 config.api = concatHost(config.apiServer, config.api)
 
