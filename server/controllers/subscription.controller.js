@@ -198,8 +198,15 @@ export const getSubscriptionsByUser = (req, res, next) => {
       page = pages;
     }
 
+    const iModel = new ItemModel();
+    const pModel = new PlanModel();
+    const cModel = new CourseModel()
     new SubscriptionModel().where('t1."parentId"::varchar=$1')
-      .select('t1."_id", t1."parentId", t1."planId", t1."expirationType", t1."type", t1."expiryDate", t1.discount, t1.fee, t1,status')
+      .select(`t1."_id", t1."parentId", t1."planId", t1."expirationType", t1."type", 
+        t1."expiryDate", t1.discount, t1.fee, t1.status, t1."dateCreated", t1.channel, t1."cardId", 
+        ARRAY(SELECT t2.title FROM ${cModel.getTable()} AS t2 
+          INNER JOIN ${pModel.getTable()} AS t3 ON t2._id = ANY(ARRAY[t3."courseIds"])
+          WHERE t3._id=t1."planId") AS "courseTitles"`)
       .orderBy('t1."dateCreated" DESC')
       .limit(limit).offset(offset)
       .findAll([req.params.userId])
@@ -224,13 +231,13 @@ export const countSubscriptions = (req, res, next) => {
 export const getSubscriptionById = (req, res, next) => {
   return new SubscriptionModel().where('t1._id::varchar=$1').findOne([req.params.subscriptionId]).then((subscription) => {
     if (subscription !== null) {
-        if (subscription.parentId != req.params.userId) {
-          return res.json(new APIResponse({msg: constants.errors.subscriptionDoesNotBelongToYou}))
-        } else {
-          return res.json(new APIResponse(subscription))
-        }
+      if (subscription.parentId != req.params.userId) {
+        return res.json(new APIResponse({ msg: constants.errors.subscriptionDoesNotBelongToYou }))
+      } else {
+        return res.json(new APIResponse(subscription))
+      }
     } else {
-      return res.json(new APIResponse({msg: constants.errors.subscriptionNotFound}))
+      return res.json(new APIResponse({ msg: constants.errors.subscriptionNotFound }))
     }
   }).catch(e => next(e));
 };
