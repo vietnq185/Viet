@@ -16,5 +16,10 @@ export default {
     unauthorized: 'UNAUTHORIZED',
     logoutError: 'LOGOUT_ERROR',
     registerError: 'REGISTER_ERROR',
+    parentNotFound: 'PARENT_NOT_FOUND',
+    planNotFound: 'PLAN_NOT_FOUND',
+    createSubscriptionError: 'CREATE_SUBSCRIPTION_ERROR',
+    subscriptionNotFound: 'SUBSCRIPTION_NOT_FOUND',
+    studentNotFound: 'STUDENT_NOT_FOUND'
   },
 };

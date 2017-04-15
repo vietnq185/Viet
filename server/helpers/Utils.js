@@ -29,9 +29,13 @@ Utils.sha3Encrypt = (str) => {
   return sha3(str, SHA3_OPTS).toString();
 };
 
-Utils.aesEncrypt = (str, secret) => aes.encrypt(str, Utils.sha3Encrypt(secret)).toString(); // eslint-disable-line
+Utils.aesEncrypt = (str, secret) => {
+  str += '';
+  return aes.encrypt(str, Utils.sha3Encrypt(secret)).toString();
+} // eslint-disable-line
 
 Utils.aesDecrypt = (encryptedStr, secret) => { // eslint-disable-line
+  encryptedStr += '';
   const bytes = aes.decrypt(encryptedStr, Utils.sha3Encrypt(secret));
   try {
     return bytes.toString(CryptoJS.enc.Utf8);

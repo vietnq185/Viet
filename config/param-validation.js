@@ -38,5 +38,13 @@ export default {
       username: Joi.string().required().email(),
       password: Joi.string().required().min(8).max(50),
     }
+  },
+
+  // Create subscription /api/subscriptions
+  createSubscription: {
+    body: {
+      parentId: Joi.string().guid(), // optional
+      planId: Joi.string().guid() // optional
+    }
   }
 };
