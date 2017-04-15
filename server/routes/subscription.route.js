@@ -27,4 +27,8 @@ router.route('/countSubscriptions')
   /** GET /api/subscriptions/countSubscriptions - Count subscriptions */
   .get(/*authCtrl.verifyAccessToken, */subscriptionCtrl.countSubscriptions)
 
+router.route('/details/:userId/:subscriptionId')
+  /** GET /api/subscriptions/:userId/:subscriptionId - Get subscription details */
+  .get(/*authCtrl.verifyAccessToken, */subscriptionCtrl.getSubscriptionById)
+
 export default router;
