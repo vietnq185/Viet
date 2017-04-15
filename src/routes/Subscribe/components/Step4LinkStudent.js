@@ -7,6 +7,10 @@ class Step1SignIn extends React.Component {
     }
   }
 
+  submitForm () {
+    this.props.changeStep(this.props.steps.success)
+  }
+
   render () {
     console.info('Subscribe => PageContent => SignIn component => props: ', this.props)
     return (
@@ -48,7 +52,7 @@ class Step1SignIn extends React.Component {
                 </div>
                 <div className='col-xs-12'><br /><br />
                   <div className='form-group'>
-                    <button type='button' className='btn dk-bg-blue dk-white'>Complete Assignment</button>
+                    <button type='button' className='btn dk-bg-blue dk-white' onClick={() => this.submitForm()}>Complete Assignment</button>
                   </div>
                 </div>
               </div>

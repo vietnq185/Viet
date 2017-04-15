@@ -11,7 +11,8 @@ export const STEPS = {
   plan: 'PLAN',
   payment: 'PAYMENT',
   createStudent: 'CREATE_STUDENT',
-  linkStudent: 'LINK_STUDENT'
+  linkStudent: 'LINK_STUDENT',
+  success: 'SUCCESS'
 }
 
 // ------------------------------------
@@ -125,10 +126,10 @@ const restart = () => {
 
 const ASSIGN_STUDENT = 'ASSIGN_STUDENT'
 
-const assignStudent = (assignSubscriptionId) => {
+export const assignStudent = (result) => {
   return {
     type: ASSIGN_STUDENT,
-    assignSubscriptionId
+    result
   }
 }
 
@@ -165,7 +166,7 @@ export const completeSubscription = (data) => (dispatch, getState) => {
         console.info('createSubscription => result: ', result)
         dispatch(restart())
         dispatch(subscriptionResult({ success: true, result, error: null }))
-        dispatch(assignStudent(result._id))
+        dispatch(assignStudent({ subscriptionId: result._id }))
         dispatch(changeStep(STEPS.linkStudent))
       }).catch((error) => {
         dispatch(subscriptionResult({ success: false, result: null, error }))
@@ -210,7 +211,11 @@ const initialState = {
     result: null,
     error: null
   },
-  assignSubscriptionId: ''
+  assignment: {
+    subscriptionId: '',
+    studentId: '',
+    success: false
+  }
 }
 
 export default (state = initialState, action) => {
@@ -242,7 +247,7 @@ export default (state = initialState, action) => {
       return Utils.copy(initialState)
       break // eslint-disable-line
     case ASSIGN_STUDENT:
-      return Utils.merge(state, { assignSubscriptionId: action.assignSubscriptionId })
+      return Utils.merge(state, { assignment: { ...state.assignment, ...action.result } })
       break // eslint-disable-line
     default:
       return state

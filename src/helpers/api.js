@@ -178,14 +178,34 @@ export default class API {
           'Content-type': 'application/json'
         }
       }).then((response) => response.json()).then((jsonResponse) => {
-        console.info('API => countSubscriptions => jsonResponse: ', jsonResponse)
         if (jsonResponse && jsonResponse.success) {
           return resolve(jsonResponse.result)
         }
         return resolve(0)
-      }).catch((error) => {
-        console.info('API => countSubscriptions => error: ', error)
+      }).catch(() => {
         return resolve(0)
+      })
+    })
+  }
+
+  static assignStudent = (accessToken, data) => {
+    return new Promise((resolve, reject) => {
+      return fetch(config.api.assignStudent, {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify(data)
+      }).then((response) => response.json()).then((jsonResponse) => {
+        if (jsonResponse && jsonResponse.success) {
+          return resolve(jsonResponse.result)
+        }
+        const msg = jsonResponse.error.message || ''
+        return reject(msg)
+      }).catch((error) => {
+        const msg = error.message || ''
+        return reject(msg)
       })
     })
   }

@@ -9,6 +9,7 @@ import Step2Plan from './Step2Plan'
 import Step3Payment from './Step3Payment'
 import Step4CreateStudent from './Step4CreateStudent'
 import Step4LinkStudent from './Step4LinkStudent'
+import Step5Success from './Step5Success'
 
 import Utils from '../../../helpers/utils'
 
@@ -31,6 +32,7 @@ class PageContent extends React.Component {
     viewMap[steps.payment] = (<Step3Payment key={Utils.guid()} {...this.props} />)
     viewMap[steps.createStudent] = (<Step4CreateStudent key={Utils.guid()} {...this.props} />)
     viewMap[steps.linkStudent] = (<Step4LinkStudent key={Utils.guid()} {...this.props} />)
+    viewMap[steps.success] = (<Step5Success key={Utils.guid()} {...this.props} />)
 
     const stepContent = viewMap[step]
 
