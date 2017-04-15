@@ -149,4 +149,24 @@ export default class API {
     })
   }
 
+  static countSubscriptions = () => {
+    return new Promise((resolve, reject) => {
+      return fetch(config.api.countSubscriptions, {
+        method: 'GET',
+        headers: {
+          'Content-type': 'application/json'
+        }
+      }).then((response) => response.json()).then((jsonResponse) => {
+        console.info('API => countSubscriptions => jsonResponse: ', jsonResponse)
+        if (jsonResponse && jsonResponse.success) {
+          return resolve(jsonResponse.result)
+        }
+        return resolve(0)
+      }).catch((error) => {
+        console.info('API => countSubscriptions => error: ', error)
+        return resolve(0)
+      })
+    })
+  }
+
 }

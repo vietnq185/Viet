@@ -13,6 +13,8 @@ import Planet7Image from '../../../styles/images/planet7.png'
 class PageContent extends React.Component {
 
   render () {
+    console.info('Student => PageContent component => props: ', this.props)
+
     return (
       <div>
         <div className='student-section1 text-center'>

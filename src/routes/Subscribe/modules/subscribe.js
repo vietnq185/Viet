@@ -43,18 +43,28 @@ export const changeStep = (step) => (dispatch, getState) => {
 
 const GET_PLANS = 'GET_PLANS'
 
-const plansResult = (plans) => {
+const plansResult = (result) => {
   return {
     type: GET_PLANS,
-    plans
+    result
   }
 }
 
 export const getPlans = () => (dispatch, getState) => {
-  return API.getPlans().then((plans) => {
-    dispatch(plansResult(plans))
-  }).catch(() => {
-    dispatch(plansResult([]))
+  const promises = [API.getPlans(), API.countSubscriptions()]
+  Promise.all(promises).then((results) => {
+    const plans = results[0]
+    const totalSubscriptions = results[1]
+    dispatch(plansResult({
+      plans,
+      applyDiscount: (totalSubscriptions < 200)
+    }))
+  }).catch((errors) => {
+    console.info('getPlans => errors: ', errors)
+    dispatch(plansResult({
+      plans: [],
+      applyDiscount: false
+    }))
   })
 }
 
@@ -113,6 +123,15 @@ const restart = () => {
   }
 }
 
+const ASSIGN_STUDENT = 'ASSIGN_STUDENT'
+
+const assignStudent = (assignSubscriptionId) => {
+  return {
+    type: ASSIGN_STUDENT,
+    assignSubscriptionId
+  }
+}
+
 export const completeSubscription = (data) => (dispatch, getState) => {
   return new Promise((resolve, reject) => {
     dispatch(paymentResult(data))
@@ -146,6 +165,7 @@ export const completeSubscription = (data) => (dispatch, getState) => {
         console.info('createSubscription => result: ', result)
         dispatch(restart())
         dispatch(subscriptionResult({ success: true, result, error: null }))
+        dispatch(assignStudent(result._id))
         dispatch(changeStep(STEPS.linkStudent))
       }).catch((error) => {
         dispatch(subscriptionResult({ success: false, result: null, error }))
@@ -173,7 +193,7 @@ const initialState = {
   // discount is applied for the first 200 subscription,
   // so that we should have an async action to check can apply discount or not,
   // and assign to applyDiscount property
-  applyDiscount: true,
+  applyDiscount: false,
   discountPercent: 20,
   cclist: [],
   selectedCardId: '',
@@ -189,7 +209,8 @@ const initialState = {
     success: false,
     result: null,
     error: null
-  }
+  },
+  assignSubscriptionId: ''
 }
 
 export default (state = initialState, action) => {
@@ -199,7 +220,7 @@ export default (state = initialState, action) => {
       return Utils.merge(state, { step: action.step, prevStep })
       break // eslint-disable-line
     case GET_PLANS:
-      return Utils.merge(state, { plans: action.plans })
+      return Utils.merge(state, { plans: action.result.plans, applyDiscount: action.result.applyDiscount })
       break // eslint-disable-line
     case SELECT_PLAN:
       return Utils.merge(state, { selectedPlan: action.selectedPlan })
@@ -219,6 +240,9 @@ export default (state = initialState, action) => {
       break // eslint-disable-line
     case RESTART_SUBSCRIPTION:
       return Utils.copy(initialState)
+      break // eslint-disable-line
+    case ASSIGN_STUDENT:
+      return Utils.merge(state, { assignSubscriptionId: action.assignSubscriptionId })
       break // eslint-disable-line
     default:
       return state
