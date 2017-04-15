@@ -217,7 +217,13 @@ const generateTokens = (req, userId) => {
       email: user.email,
       role: user.role,
       status: user.status,
+      isAdmin: (user.role.toLowerCase() === 'admin'),
+      isEditor: (user.role.toLowerCase() === 'admin' || user.role.toLowerCase() === 'editor'),
+      isUser: (user.role.toLowerCase() === 'user'),
+      isTeacher: (user.status.indexOf('teacher') !== -1 || user.status.indexOf('TEACHER') !== -1),
+      isParent: (user.status.indexOf('parent') !== -1 || user.status.indexOf('PARENT') !== -1),
     };
+    tokenData.isStudent = (user.status.indexOf('student') !== -1 || user.status.indexOf('STUDENT') !== -1 || (!tokenData.isTeacher && !tokenData.isParent));
     const userData = UserModel.extractData(user);
     // sign tokens
     const list = [
