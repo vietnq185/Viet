@@ -48,6 +48,7 @@ class Step1SignUp extends React.Component {
         data[field] = this.refs[field].value || ''
       }
     }
+    data.status = ['parent']
     return data
   }
 

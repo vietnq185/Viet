@@ -37,6 +37,7 @@ config.api = {
   checkLogin: '/api/users/:userId', // GET
   plans: '/api/plans', // GET
   cclist: '/api/users/cclist/:userId', // GET
+  createSubscription: '/api/subscriptions', // POST
 }
 config.api = concatHost(config.apiServer, config.api)
 

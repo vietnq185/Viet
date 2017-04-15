@@ -88,10 +88,12 @@ class Step2Plan extends React.Component {
       )
     }
 
+    const discountPanel = applyDiscount ? (<div className='discount-info'>DISCOUNT 20% for the first 200 subscriptions</div>) : ''
+
     return (
       <div className='subscription-plan'>
         <h3>Pickup your subscription plan</h3>
-        <div className='discount-info'>DISCOUNT 20% for the first 200 subscriptions</div>
+        {discountPanel}
         <div className='row'>{planList}</div>
       </div>
     )

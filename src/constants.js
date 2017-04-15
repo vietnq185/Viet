@@ -6,6 +6,6 @@ export default {
   },
   paymentMethod: {
     bankTransfer: 'bank',
-    creditCard: 'cc'
+    creditCard: 'stripe'
   }
 };

@@ -35,14 +35,16 @@ export const loginSuccess = (data, nextAction = () => { }) => (dispatch, getStat
   })
 }
 
-export const logout = () => (dispatch, getState) => {
+export const logout = (nextAction = () => { }) => (dispatch, getState) => {
   return new Promise((resolve, reject) => {
     TokenStorage.delete()
     return resolve()
   }).then(() => {
     dispatch(updateLoginResult({ isLoggedIn: false, jwt: {}, user: {} }))
+    nextAction()  // call next action (if any)
   }).catch(() => {
     dispatch(updateLoginResult({ isLoggedIn: false, jwt: {}, user: {} }))
+    nextAction()  // call next action (if any)
   })
 }
 
@@ -53,7 +55,7 @@ export const checkTokensAtStartUp = () => (dispatch, getState) => {
     const jwt = TokenStorage.get()
     const { accessToken, userId } = jwt
     if (!accessToken || !userId) {
-      return resolve() // not login before
+      return resolve('NOT_LOGIN') // not login before
     }
     return API.checkLogin(accessToken, userId).then((result) => resolve(Utils.copy({ jwt, user: result }))).catch(reject) // eslint-disable-line
   }).then((result) => {
@@ -62,6 +64,20 @@ export const checkTokensAtStartUp = () => (dispatch, getState) => {
       return dispatch(updateLoginResult({ isLoggedIn: true, jwt: result.jwt }))
     }
   }).catch(() => dispatch(logout()))
+}
+
+// ------------------------------------
+// Utility function
+// ------------------------------------
+export const checkAccessToken = () => {
+  return new Promise((resolve, reject) => {
+    const jwt = TokenStorage.get()
+    const { accessToken, userId } = jwt
+    if (!accessToken || !userId) {
+      return reject('NOT_LOGIN') // not login before
+    }
+    return API.checkToken(accessToken).then(resolve).catch(reject) // eslint-disable-line
+  })
 }
 
 // ------------------------------------

@@ -1,6 +1,7 @@
 import constants from '../../../constants'
 import API from '../../../helpers/api'
 import Utils from '../../../helpers/utils'
+import * as auth from '../../../store/auth'
 // ------------------------------------
 // Constants
 // ------------------------------------
@@ -86,15 +87,6 @@ export const getCCList = () => (dispatch, getState) => {
   })
 }
 
-/* const COMPLETE_SUBSCRIPTION = 'COMPLETE_SUBSCRIPTION'
-
-const subscriptionResult = (result) => {
-  return {
-    type: COMPLETE_SUBSCRIPTION,
-    result
-  }
-} */
-
 const SAVE_PAYMENT = 'SAVE_PAYMENT'
 
 const paymentResult = (result) => {
@@ -104,17 +96,69 @@ const paymentResult = (result) => {
   }
 }
 
+const COMPLETE_SUBSCRIPTION = 'COMPLETE_SUBSCRIPTION'
+
+const subscriptionResult = (result) => {
+  return {
+    type: COMPLETE_SUBSCRIPTION,
+    result
+  }
+}
+
+const RESTART_SUBSCRIPTION = 'RESTART_SUBSCRIPTION'
+
+const restart = () => {
+  return {
+    type: RESTART_SUBSCRIPTION
+  }
+}
+
 export const completeSubscription = (data) => (dispatch, getState) => {
   return new Promise((resolve, reject) => {
     dispatch(paymentResult(data))
-    resolve()
+    return auth.checkAccessToken().then(() => {
+      const state = getState()
+      const jwt = state.auth.jwt
+      const info = state.subscribe
+      console.info('createSubscription => state: ', state)
+      console.info('createSubscription => info: ', info)
+      const subData = {
+        parentId: jwt.userId,
+        planId: info.selectedPlan._id,
+        expirationType: info.selectedPlan.frequency,
+        type: 'USER_PLAN',
+        channel: info.paymentMethod
+      }
+      if (info.paymentMethod !== constants.paymentMethod.bankTransfer) {
+        subData.cardId = info.selectedCardId
+        if (info.selectedCardId.length === 0) {
+          // add new card
+          subData.addCard = 1
+          subData.card_name = info.newCC.name
+          subData.ccnum = info.newCC.ccnum
+          subData.ccmonth = info.newCC.ccmonth
+          subData.ccyear = info.newCC.ccyear
+          subData.cvv = info.newCC.cvv
+        }
+      }
+      console.info('createSubscription => subData: ', subData)
+      return API.createSubscription(jwt.accessToken, subData).then((result) => {
+        console.info('createSubscription => result: ', result)
+        dispatch(restart())
+        dispatch(subscriptionResult({ success: true, result, error: null }))
+        dispatch(changeStep(STEPS.linkStudent))
+      }).catch((error) => {
+        dispatch(subscriptionResult({ success: false, result: null, error }))
+        console.info('createSubscription => error: ', error)
+      })
+    }).catch((error) => {
+      console.info('createSubscription => checkAccessToken => error: ', error)
+      const nextAction = () => {
+        dispatch(changeStep(STEPS.signIn))
+      }
+      dispatch(auth.logout(nextAction))
+    })
   })
-  /* const { auth } = getState()
-  return API.getCCList(auth.jwt.accessToken || '', auth.jwt.userId || '').then((cclist) => {
-    // dispatch(subscriptionResult(cclist))
-  }).catch(() => {
-    // dispatch(subscriptionResult([]))
-  }) */
 }
 
 // ------------------------------------
@@ -140,6 +184,11 @@ const initialState = {
     ccmonth: '',
     ccyear: '',
     cvv: ''
+  },
+  subscriptionResult: {
+    success: false,
+    result: null,
+    error: null
   }
 }
 
@@ -164,6 +213,12 @@ export default (state = initialState, action) => {
         selectedCardId: action.result.selectedCardId,
         newCC: action.result.newCC
       })
+      break // eslint-disable-line
+    case COMPLETE_SUBSCRIPTION:
+      return Utils.merge(state, { subscriptionResult: action.result })
+      break // eslint-disable-line
+    case RESTART_SUBSCRIPTION:
+      return Utils.copy(initialState)
       break // eslint-disable-line
     default:
       return state

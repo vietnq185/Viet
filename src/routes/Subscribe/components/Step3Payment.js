@@ -1,8 +1,11 @@
 /* eslint-disable */
 import React from 'react'
+import { fadeIn } from 'react-animations'
+import { StyleSheet, css } from 'aphrodite'
 
 import constants from '../../../constants'
 import Utils from '../../../helpers/utils'
+import validate from '../../../helpers/validate'
 
 import FailImage from '../../../styles/images/icon-failed.png'
 
@@ -12,27 +15,92 @@ const ANNUALLY = constants.frequency.annually
 const BANK_TRANSFER = constants.paymentMethod.bankTransfer
 const CREDIT_CARD = constants.paymentMethod.creditCard
 
+const styles = StyleSheet.create({
+  fadeIn: {
+    animationName: fadeIn,
+    animationDuration: '1s'
+  }
+})
+
 class Step3Payment extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
+    this.initialErrors = {
+      name: '',
+      ccnum: '',
+      ccmonth: '',
+      ccyear: '',
+      cvv: ''
+    }
+    this.errors = Utils.copy(this.initialErrors)
     this.state = {
       paymentMethod: this.props.paymentMethod,
       selectedCardId: this.props.selectedCardId || '',
-      newCC: this.props.newCC || {}
+      newCC: this.props.newCC || {},
+      hasError: false,
+      errMsg: '',
+      showFailedDialog: (this.props.subscriptionResult.success === false && this.props.subscriptionResult.error !== null)
     }
   }
 
-  setNewCC (key, value) {
+  resetErrors() {
+    this.errors = Utils.copy(this.initialErrors)
+    this.setState({ hasError: false })
+  }
+
+  setErrors(errors) {
+    this.errors = errors
+    this.setState({ hasError: true })
+  }
+
+  setNewCC(key, value) {
     const obj = {}
     obj[key] = value
     this.setState({ newCC: Utils.merge(this.state.newCC, obj) })
   }
 
-  onSubmit () {
-    this.props.completeSubscription(this.state)
+  onSubmit() {
+    // need to validate cc info in case create new cc
+    const needValidate = this.state.paymentMethod !== BANK_TRANSFER && this.state.selectedCardId.length === 0
+
+    if (!needValidate) {
+      return this.props.completeSubscription(this.state)
+    }
+
+    const self = this
+
+    this.resetErrors()
+
+    const rules = {
+      name: {
+        required: 'Credit card name is required'
+      },
+      ccnum: {
+        required: 'Card number is required'
+      },
+      ccmonth: {
+        required: 'Expiry month is required'
+      },
+      ccyear: {
+        required: 'Expiry year is required'
+      },
+      cvv: {
+        required: 'CVV is required'
+      }
+    }
+
+    const result = validate(rules, this.refs)  // result === null -> valid, result === error object -> invalid
+
+    if (result === null) {
+      this.props.completeSubscription(this.state)
+    }
+    else {
+      this.setErrors(result)
+    }
+
   }
 
-  render () {
+  render() {
     const self = this
 
     console.info('Subscribe => PageContent => Payment component => props: ', this.props)
@@ -52,7 +120,7 @@ class Step3Payment extends React.Component {
           {this.state.selectedCardId === ccitem._id ? (
             <input type='radio' name='card_id' id={ccitem._id} value={ccitem._id} defaultChecked onChange={() => self.setState({ selectedCardId: ccitem._id })} />
           ) : (
-            <input type='radio' name='card_id' id={ccitem._id} value={ccitem._id} onChange={() => self.setState({ selectedCardId: ccitem._id })} />
+              <input type='radio' name='card_id' id={ccitem._id} value={ccitem._id} onChange={() => self.setState({ selectedCardId: ccitem._id })} />
             )}&nbsp;
           <label htmlFor={ccitem._id}>
             <span>{ccitem.name}</span> {ccitem.ccnum} {ccitem.ccmonth}/{ccitem.ccyear}
@@ -65,7 +133,7 @@ class Step3Payment extends React.Component {
         {!hasChecked ? (
           <input type='radio' name='card_id' id='card_id_new' value='new' defaultChecked onChange={() => self.setState({ selectedCardId: '' })} />
         ) : (
-          <input type='radio' name='card_id' id='card_id_new' value='new' onChange={() => self.setState({ selectedCardId: '' })} />
+            <input type='radio' name='card_id' id='card_id_new' value='new' onChange={() => self.setState({ selectedCardId: '' })} />
           )}&nbsp;
         <label htmlFor='card_id_new'>
           Add new card
@@ -126,39 +194,44 @@ class Step3Payment extends React.Component {
                 <div className={this.state.selectedCardId.length === 0 ? 'cc-details' : 'hide'}>
                   <div className='row'>
                     <div className='col-sm-6 col-xs-12'>
-                      <div className='form-group'>
+                      <div className={['form-group', this.errors.ccnum ? 'has-error' : ''].join(' ')}>
                         <label htmlFor='contact-name'>Card Number</label>
-                        <input className='form-control' name='ccnum' id='ccnum' required='' type='text' value={this.state.newCC.ccnum} onChange={(e) => this.setNewCC('ccnum', e.target.value)} />
+                        <input className='form-control' name='ccnum' id='ccnum' required='' type='text' value={this.state.newCC.ccnum} ref='ccnum' onChange={(e) => this.setNewCC('ccnum', e.target.value)} />
+                        <span className={[this.errors.ccnum ? 'help-block' : 'hide'].join(' ')}>{this.errors.ccnum}</span>
                       </div>
                     </div>
                     <div className='col-sm-6 col-xs-12'>
-                      <div className='form-group'>
+                      <div className={['form-group', this.errors.name ? 'has-error' : ''].join(' ')}>
                         <label htmlFor='contact-name'>Name</label>
-                        <input className='form-control' name='name' id='name' required='' type='text' value={this.state.newCC.name} onChange={(e) => this.setNewCC('name', e.target.value)} />
+                        <input className='form-control' name='name' id='name' required='' type='text' value={this.state.newCC.name} ref='name' onChange={(e) => this.setNewCC('name', e.target.value)} />
+                        <span className={[this.errors.name ? 'help-block' : 'hide'].join(' ')}>{this.errors.name}</span>
                       </div>
                     </div>
                   </div>
                   <div className='row'>
                     <div className='col-sm-4 col-xs-12'>
-                      <div className='form-group'>
+                      <div className={['form-group', this.errors.ccmonth ? 'has-error' : ''].join(' ')}>
                         <label htmlFor='contact-name'>Expiry Month</label>
-                        <select className='form-control' name='ccmonth' id='ccmonth' required='' value={this.state.newCC.ccmonth} onChange={(e) => this.setNewCC('ccmonth', e.target.value)}>
+                        <select className='form-control' name='ccmonth' id='ccmonth' required='' value={this.state.newCC.ccmonth} ref='ccmonth' onChange={(e) => this.setNewCC('ccmonth', e.target.value)}>
                           {ccmonthList}
                         </select>
+                        <span className={[this.errors.ccmonth ? 'help-block' : 'hide'].join(' ')}>{this.errors.ccmonth}</span>
                       </div>
                     </div>
                     <div className='col-sm-4 col-xs-12'>
-                      <div className='form-group'>
+                      <div className={['form-group', this.errors.ccyear ? 'has-error' : ''].join(' ')}>
                         <label htmlFor='contact-name'>Expiry Year</label>
-                        <select className='form-control' name='ccyear' id='ccyear' required='' value={this.state.newCC.ccyear} onChange={(e) => this.setNewCC('ccyear', e.target.value)}>
+                        <select className='form-control' name='ccyear' id='ccyear' required='' value={this.state.newCC.ccyear} ref='ccyear' onChange={(e) => this.setNewCC('ccyear', e.target.value)}>
                           {ccyearList}
                         </select>
+                        <span className={[this.errors.ccyear ? 'help-block' : 'hide'].join(' ')}>{this.errors.ccyear}</span>
                       </div>
                     </div>
                     <div className='col-sm-4 col-xs-12'>
-                      <div className='form-group'>
+                      <div className={['form-group', this.errors.cvv ? 'has-error' : ''].join(' ')}>
                         <label htmlFor='contact-name'>CVV</label>
-                        <input className='form-control' name='cvv' id='cvv' required='' type='text' value={this.state.newCC.cvv} onChange={(e) => this.setNewCC('cvv', e.target.value)} />
+                        <input className='form-control' name='cvv' id='cvv' required='' type='text' value={this.state.newCC.cvv} ref='cvv' onChange={(e) => this.setNewCC('cvv', e.target.value)} />
+                        <span className={[this.errors.cvv ? 'help-block' : 'hide'].join(' ')}>{this.errors.cvv}</span>
                       </div>
                     </div>
                   </div>
@@ -176,7 +249,7 @@ class Step3Payment extends React.Component {
             </form>
 
             {/* <!-- Modal --> */}
-            <div id='modalPaymentFailed' className='modal fade' role='dialog'>
+            <div id='modalPaymentFailed' className={['modal fade', this.state.showFailedDialog ? 'in' : '', css(styles.fadeIn)].join(' ')} role='dialog' style={this.state.showFailedDialog ? { display: 'block' } : { display: 'none' }}>
               <div className='modal-dialog'>
 
                 {/* <!-- Modal content--> */}
@@ -185,7 +258,7 @@ class Step3Payment extends React.Component {
                     <div><img src={FailImage} /></div>
                     <h1>FAILED!</h1>
                     <p>Sorry, an error has occured.<br />Please check your payment detail and try again. Thank you!</p>
-                    <div><button className='btn dk-bg-green dk-white btn-close-modal' type='button' data-dismiss='modal'>Try Again</button></div>
+                    <div><button className='btn dk-bg-green dk-white btn-close-modal' type='button' data-dismiss='modal' onClick={() => this.setState({ showFailedDialog: false })}>Try Again</button></div>
                   </div>
                 </div>
 
