@@ -15,7 +15,16 @@ router.route('/AssignStudent')
   /** POST /api/subscriptions/AssignStudent - Assign student */
   .post(/*authCtrl.verifyAccessToken, */subscriptionCtrl.assignStudent)
 
-router.route('/UpdateSubscriptionCardId')
-  /** POST /api/subscriptions/UpdateSubscriptionCardId - Update card id for subscription */
-  .post(/*authCtrl.verifyAccessToken, */subscriptionCtrl.updateSubscriptionCardId)
+router.route('/UpdateCardIdForSubscription')
+  /** POST /api/subscriptions/UpdateCardIdForSubscription - Update card id for subscription */
+  .post(/*authCtrl.verifyAccessToken, */subscriptionCtrl.UpdateCardIdForSubscription)
+
+router.route('/:userId/:page')
+  /** GET /api/subscriptions/:userId - Get subscriptions */
+  .get(/*authCtrl.verifyAccessToken, */subscriptionCtrl.getSubscriptionsByUser)
+
+router.route('/countSubscriptions')
+  /** GET /api/subscriptions/countSubscriptions - Count subscriptions */
+  .get(/*authCtrl.verifyAccessToken, */subscriptionCtrl.countSubscriptions)
+
 export default router;
