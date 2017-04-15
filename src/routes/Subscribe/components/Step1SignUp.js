@@ -1,5 +1,4 @@
 import React from 'react'
-import Joi from 'joi'
 
 import API from '../../../helpers/api'
 import Utils from '../../../helpers/utils'
@@ -48,21 +47,30 @@ class Step1SignUp extends React.Component {
     this.resetErrors()
 
     const rules = {
-      firstName: Joi.string().required().label('First name'),
-      lastName: Joi.string().required().label('Last name'),
-      email: Joi.string().required().email().label('Email'),
-      password: Joi.string().required().min(8).max(50).label('Password'),
-      confirmPassword: Joi.any().valid(Joi.ref('password')).required().options({
-        language: {
-          any: {
-            allowOnly: 'must match password'
-          }
+      firstName: {
+        required: 'First name is required'
+      },
+      lastName: {
+        required: 'Last name is required'
+      },
+      email: {
+        required: 'Email is required',
+        email: 'Invalid email address'
+      },
+      password: {
+        required: 'Password is required'
+      },
+      confirmPassword: {
+        match: {
+          ref: 'password',
+          msg: 'Confirm password does not match'
         }
-      }).label('Password confirmation')
+      }
     }
 
-    const result = validate(rules, this.refs)  // result === true -> valid, result === error object -> invalid
-    if (result === true) {
+    const result = validate(rules, this.refs)  // result === null -> valid, result === error object -> invalid
+
+    if (result === null) {
       // can submit
       console.info('can submit form')
       API.register(this.extractdata()).then((jsonResponse) => {

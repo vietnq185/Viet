@@ -10,6 +10,8 @@
   "scripts": {
     "clean": "rimraf dist",
     "compile": "better-npm-run compile",
+    "compile:dev": "better-npm-run compile:dev",
+    "compile:prod": "better-npm-run compile:prod",
     "lint": "eslint bin build config server src tests",
     "lint:fix": "npm run lint -- --fix",
     "start": "better-npm-run start",
@@ -25,6 +27,20 @@
     "compile": {
       "command": "node bin/compile",
       "env": {
+        "DEBUG": "app:*"
+      }
+    },
+    "compile:dev": {
+      "command": "node bin/compile",
+      "env": {
+        "NODE_ENV": "development",
+        "DEBUG": "app:*"
+      }
+    },
+    "compile:prod": {
+      "command": "node bin/compile",
+      "env": {
+        "NODE_ENV": "production",
         "DEBUG": "app:*"
       }
     },
@@ -94,7 +110,6 @@
     "html-webpack-plugin": "^2.22.0",
     "imports-loader": "^0.7.0",
     "ip": "^1.1.2",
-    "joi": "^10.4.1",
     "json-loader": "^0.5.4",
     "node-sass": "^4.0.0",
     "normalize.css": "^5.0.0",

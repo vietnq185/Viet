@@ -1,5 +1,4 @@
 import React from 'react'
-import Joi from 'joi'
 
 import API from '../../../helpers/api'
 import Utils from '../../../helpers/utils'
@@ -35,13 +34,18 @@ class Step1SignIn extends React.Component {
     this.resetErrors()
 
     const rules = {
-      email: Joi.string().required().email().label('Email'),
-      password: Joi.string().required().min(8).max(50).label('Password')
+      email: {
+        required: 'Email is required',
+        email: 'Invalid email address'
+      },
+      password: {
+        required: 'Password is required'
+      }
     }
 
-    const result = validate(rules, this.refs)  // result === true -> valid, result === error object -> invalid
+    const result = validate(rules, this.refs)  // result === null -> valid, result === error object -> invalid
 
-    if (result === true) {
+    if (result === null) {
       // can submit
       API.login({ username: self.refs.email.value, password: self.refs.password.value }).then((result) => {
         const nextAction = () => self.props.changeStep(self.props.steps.plan)

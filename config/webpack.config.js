@@ -21,8 +21,8 @@ const webpackConfig = {
   },
   module : {},
   node: {
-    net: 'empty',
-    dns: 'empty'
+    // net: 'empty',
+    // dns: 'empty',
     // fs: 'empty',
     // tls: 'empty'
   }
