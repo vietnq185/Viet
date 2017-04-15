@@ -26,12 +26,13 @@ const debug = require('debug')('rest-api:subscription.controller'); // eslint-di
 export const create = (req, res, next) => {
   //
   const id = Utils.uuid();
-  const parentId = req.body.parentId;
-  const planId = req.body.planId;
-  const expirationType = req.body.expirationType;
-  const type = req.body.type;
-  const studentId = req.body.studentId;
-  const channel =  req.body.chanel;
+  const parentId = req.body.parentId || '';
+  const planId = req.body.planId || '';
+  const expirationType = req.body.expirationType || '';
+  const type = req.body.type || '';
+  const studentId = req.body.studentId || '';
+  const channel = req.body.channel || '';
+  const cardId = req.body.cardId || '';
   // validate parent
   const validateParent = new UserModel().where('t1._id=$1').findCount([parentId]).then((cnt) => {
     const err = new APIError(constants.errors.parentNotFound, httpStatus.OK, true);
@@ -59,6 +60,9 @@ export const create = (req, res, next) => {
       expiryDate: new Date().getTime() + (14 * 86400), //14 days trial
       channel
     };
+    if (cardId !== '') {
+      data.cardId = cardId;
+    }
     // insert
     return new SubscriptionModel().insert(data).then((savedSubscription) => {
       if (savedSubscription === null) {
@@ -79,26 +83,27 @@ export const create = (req, res, next) => {
         dateCreated: new Date().getTime()
       };
       const savedCard = new CCListModel().insert(cardData).then(savedCard);
-      debug('card data', savedCard);
       if (savedCard !== null) {
-        new SubscriptionModel().where('t1._id::varchar=$1').update({cardId: cardData._id}, [savedSubscription._id]);
+        new SubscriptionModel().where('t1._id::varchar=$1').update({ cardId: cardData._id }, [savedSubscription._id]);
       }
     }
     const planItems = [];
     return new PlanModel().getPlanById(planId).then((planData) => {
       if (planData !== null) {
-        for(var i=0;i<planData.courseIds.length;i++){
+        for (var i = 0; i < planData.courseIds.length; i++) {
           var dataItem = {
             _id: Utils.uuid(),
-            user: studentId,
             creator: parentId,
             dateCreated: new Date().getTime(),
             dateModified: new Date().getTime(),
             order: savedSubscription._id,
             course: planData.courseIds[i]
           };
-         const savedItem = new ItemModel().insert(dataItem).then(savedItem);
-         planItems[i] = dataItem;
+          if (studentId != '') {
+            dataItem.user = studentId;
+          }
+          const savedItem = new ItemModel().insert(dataItem).then(savedItem);
+          planItems[i] = dataItem;
         }
       }
       savedSubscription.planItems = planItems;
@@ -109,8 +114,8 @@ export const create = (req, res, next) => {
 };
 
 export const assignStudent = (req, res, next) => {
-  const subscriptionId = req.body.subscriptionId;
-  const studentId = req.body.studentId;
+  const subscriptionId = req.body.subscriptionId || '';
+  const studentId = req.body.studentId || '';
 
   // validate subscription
   const validateSubscription = new SubscriptionModel().where('t1._id=$1').findCount([subscriptionId]).then((cnt) => {
@@ -127,14 +132,14 @@ export const assignStudent = (req, res, next) => {
   const promises = [validateSubscription, validateStudent];
 
   Promise.all(promises).then((results) => { // eslint-disable-line
-    promises.push(new ItemModel().where('t1.order::varchar=$1').update({user: studentId}, [subscriptionId]));
+    promises.push(new ItemModel().where('t1.order::varchar=$1').update({ user: studentId }, [subscriptionId]));
     return res.json(new APIResponse("Assigned student")); // eslint-disable-line
   }).catch(e => next(e));
 };
 
-export const updateSubscriptionCardId = (req, res, next) => {
-  const subscriptionId = req.body.subscriptionId;
-  const studentId = req.body.studentId;
+export const UpdateCardIdForSubscription = (req, res, next) => {
+  const subscriptionId = req.body.subscriptionId || '';
+  const cardId = req.body.cardId || '';
 
   // validate subscription
   const validateSubscription = new SubscriptionModel().where('t1._id=$1').findCount([subscriptionId]).then((cnt) => {
@@ -142,17 +147,17 @@ export const updateSubscriptionCardId = (req, res, next) => {
     return (cnt > 0 ? Promise.resolve() : Promise.reject(err));
   });
 
-  // validate student
-  const validateStudent = new UserModel().where('t1._id=$1').findCount([studentId]).then((cnt) => {
-    const err = new APIError(constants.errors.studentNotFound, httpStatus.OK, true);
+  // validate card
+  const validateCard = new CCListModel().where('t1._id=$1').findCount([cardId]).then((cnt) => {
+    const err = new APIError(constants.errors.cardNotFound, httpStatus.OK, true);
     return (cnt > 0 ? Promise.resolve() : Promise.reject(err));
   });
   //
-  const promises = [validateSubscription, validateStudent];
+  const promises = [validateSubscription, validateCard];
 
   Promise.all(promises).then((results) => { // eslint-disable-line
-    promises.push(new ItemModel().where('t1.order::varchar=$1').update({user: studentId}, [subscriptionId]));
-    return res.json(new APIResponse("Assigned student")); // eslint-disable-line
+    promises.push(new SubscriptionModel().where('t1._id::varchar=$1').update({ cardId: cardId }, [subscriptionId]));
+    return res.json(new APIResponse("Card has been updated for subscription")); // eslint-disable-line
   }).catch(e => next(e));
 };
 
@@ -162,13 +167,15 @@ export const updateSubscriptionCardId = (req, res, next) => {
  * @property {number} req.query.offset - Position to fetch data.
  * @returns {SubscriptionModel[]}
  */
-export const list = (req, res, next, id) => {
+export const getSubscriptionsByUser = (req, res, next, userId) => {
   const { limit = 50, offset = 0 } = req.query;
-  new SubscriptionModel().where('t1.parentId::varchar=$1').select('t1."_id", t1."parentId", t1."planId", t1."expirationType", t1."type", t1."expiryDate"')
+  new SubscriptionModel().where('t1.parentId::varchar=$1')
+    .join(`${uModel.getTable()} AS t2`, 't1."targetRef"::varchar=t2."_id"::varchar')
+    .select('t1."_id", t1."parentId", t1."planId", t1."expirationType", t1."type", t1."expiryDate"')
     .limit(limit).offset(offset)
     .findAll()
     .then(subscriptions => res.json(new APIResponse(subscriptions)))
     .catch(e => next(e));
 };
 
-export default { list, create, assignStudent, updateSubscriptionCardId};
+export default { getSubscriptionsByUser, create, assignStudent, UpdateCardIdForSubscription };
