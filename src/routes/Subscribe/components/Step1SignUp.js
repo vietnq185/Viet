@@ -1,8 +1,17 @@
 import React from 'react'
+import { fadeIn } from 'react-animations'
+import { StyleSheet, css } from 'aphrodite'
 
 import API from '../../../helpers/api'
 import Utils from '../../../helpers/utils'
 import validate from '../../../helpers/validate'
+
+const styles = StyleSheet.create({
+  fadeIn: {
+    animationName: fadeIn,
+    animationDuration: '1s'
+  }
+})
 
 class Step1SignUp extends React.Component {
   constructor (props) {
@@ -17,7 +26,8 @@ class Step1SignUp extends React.Component {
     this.errors = Utils.copy(this.initialErrors)
     this.state = {
       hasError: false,
-      errMsg: ''
+      errMsg: '',
+      showTerms: false
     }
   }
 
@@ -118,7 +128,7 @@ class Step1SignUp extends React.Component {
 
   render () {
     return (
-      <div className='form-subscribe'>
+      <div className={['form-subscribe'].join(' ')}>
         <div className='form-title'>Sign Up for Parent Account</div>
         <div className='form-title-desc text-center'>Please enter the following information to create a parent account.</div>
         <br />
@@ -165,7 +175,7 @@ class Step1SignUp extends React.Component {
             <button type='button' className='btn btn-block dk-bg-blue dk-white' onClick={() => this.submitForm()}>Sign Up</button>
           </div>
           <div className='form-group text-center signup-term'>
-            By Signing up, you agree and consent to the<br /><a href='javascript:void(0);' data-toggle='modal' data-target='#modalTermsConditions'>Terms of Service and Provacy Policy</a>
+            By Signing up, you agree and consent to the<br /><a href='javascript:void(0);' data-toggle='modal' data-target='#modalTermsConditions' onClick={() => this.setState({ showTerms: true })}>Terms of Service and Provacy Policy</a>
           </div>
           <div className='form-group text-center'>
             Alreay have an account?&nbsp;
@@ -174,13 +184,13 @@ class Step1SignUp extends React.Component {
         </form>
 
         {/* <!-- Modal --> */}
-        <div id='modalTermsConditions' className='modal fade' role='dialog'>
+        <div id='modalTermsConditions' aria-hidden='false' className={['modal fade', this.state.showTerms ? 'in' : '', css(styles.fadeIn)].join(' ')} role='dialog' style={this.state.showTerms ? { display: 'block' } : { display: 'none' }}>
           <div className='modal-dialog'>
 
             {/* <!-- Modal content--> */}
             <div className='modal-content'>
               <div className='modal-header'>
-                <button type='button' className='close' data-dismiss='modal'>&times;</button>
+                <button type='button' className='close' data-dismiss='modal' onClick={() => this.setState({ showTerms: false })}>&times;</button>
               </div>
               <div className='modal-body'>
                 <h3>Terms of Service:</h3>
@@ -193,7 +203,7 @@ class Step1SignUp extends React.Component {
                   <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).</p>
                   <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).</p>
                 </div>
-                <div className='text-center'><button className='btn dk-bg-green dk-white btn-close-modal' type='button' data-dismiss='modal'>CLOSE</button></div>
+                <div className='text-center'><button className='btn dk-bg-green dk-white btn-close-modal' type='button' data-dismiss='modal' onClick={() => this.setState({ showTerms: false })}>CLOSE</button></div>
               </div>
             </div>
 
