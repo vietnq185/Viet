@@ -31,6 +31,7 @@ const config = {}
 // API
 config.apiServer = 'http://localhost:4040'
 config.api = {
+  getSubscriptionDetails: '/api/subscriptions/details/:subscriptionId', // GET
   signIn: '/api/auth/login', // POST
   checkToken: '/api/auth/checkToken', // GET
   signUp: '/api/users',  // POST
@@ -38,7 +39,7 @@ config.api = {
   plans: '/api/plans', // GET
   cclist: '/api/users/cclist/:userId', // GET
   createSubscription: '/api/subscriptions', // POST
-  countSubscriptions: '/api/subscriptions/countSubscriptions', // GET
+  countSubscriptions: '/api/subscriptions/countSubscriptions' // GET
 }
 config.api = concatHost(config.apiServer, config.api)
 

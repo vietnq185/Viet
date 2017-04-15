@@ -618,6 +618,7 @@ a{
 }
 .subscribe-wrapper .subscribe-details{
 	margin-bottom: 20px;
+	min-height: 300px;
 }
 .subscribe-wrapper .subscribe-details h1{
 	font-size: 20px;
