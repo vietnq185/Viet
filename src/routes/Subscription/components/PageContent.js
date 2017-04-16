@@ -6,6 +6,12 @@ import moment from 'moment'
 import constants from '../../../constants'
 import Utils from '../../../helpers/utils'
 
+const MONTHLY = constants.frequency.monthly
+const ANNUALLY = constants.frequency.annually
+
+const BANK_TRANSFER = constants.paymentMethod.bankTransfer
+const CREDIT_CARD = constants.paymentMethod.creditCard
+
 class PageContent extends React.Component {
   constructor(props) {
     super(props)
@@ -68,9 +74,14 @@ class PageContent extends React.Component {
               </thead>
               <tbody>
                 {this.props.list.subscriptions.map(item => { // eslint-disable-line
+                  let isAnnually = (item.expirationType === ANNUALLY)
+                  let theRate = isAnnually ? 12 : 1
+                  let theLabel = isAnnually ? 'year' : 'month'
                   let buttonsPanel = []
                   if (item.status === 'active' || item.status === 'trailing') {
-                    buttonsPanel.push(<a key={Utils.guid()} className='link-upgrade-subscription' href='javascript: void(0);' onClick={() => this.updateSubscription(item._id)}>Upgrade</a>)
+                    if (!isAnnually) {
+                      buttonsPanel.push(<a key={Utils.guid()} className='link-upgrade-subscription' href='javascript: void(0);' onClick={() => this.updateSubscription(item._id)}>Upgrade</a>)
+                    }
                     buttonsPanel.push(<a key={Utils.guid()} className='link-cancel-subscription' href='javascript: void(0);' onClick={() => this.cancelSubscription(item._id)}>Cancel</a>)
                     if ((item.studentId || '').length === 0) {
                       buttonsPanel.push(<a key={Utils.guid()} className='link-assign-student' href='javascript: void(0);' onClick={() => this.assignSubscription(item._id)}>Assign</a>)
@@ -80,7 +91,7 @@ class PageContent extends React.Component {
                     <tr key={item._id}>
                       <td className={'dk-blue-text'}><a className={'dk-blue-text'} href='javascript: void(0);' onClick={() => Utils.redirect(`subscription-details/${item._id}`)}>#{item._id.substring(0, 7)}...</a></td>
                       <td>{item.courseTitles.join(' & ')}</td>
-                      <td>${Math.abs(item.fee - item.discount)}/month <span className='payment-method'>via {item.channel === constants.paymentMethod.creditCard ? 'Credit Card' : item.channel}</span></td>
+                      <td>${Math.abs(item.fee - item.discount) * theRate}/{theLabel} <span className='payment-method'>via {item.channel === constants.paymentMethod.creditCard ? 'Credit Card' : item.channel}</span></td>
                       <td>{moment.unix(item.dateCreated / 1000).format('MMM D, YYYY')}</td>
                       <td>{moment.unix(item.expiryDate / 1000).format('MMM D, YYYY')}</td>
                       <td><span className={`subscribe-status subscribe-status-${item.status}`}>{Utils.ucfirst(item.status)}</span></td>

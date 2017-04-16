@@ -552,8 +552,8 @@ a{
     min-width: 75px;
     padding: 5px;
     text-align: center;
-   	margin-left: 5px;
-   	margin-bottom: 5px;
+   	margin-right: 5px;
+    margin-bottom: 5px;
 }
 .subscribe-wrapper .my-subscription .tbl-subscriptions .link-assign-student{
 	border: 1px solid #007fff;
@@ -562,6 +562,7 @@ a{
     min-width: 75px;
     padding: 5px;
     text-align: center;
+    margin-right: 5px;
     margin-bottom: 5px;
 }
 .subscribe-wrapper .my-subscription .subscriptions-paging li{
