@@ -19,10 +19,14 @@ class PageHeader extends React.Component {
 
   render() {
     const { auth } = this.props
-    console.info('PageHeader => this.props: ', this.props, auth.isLoggedIn)
+    const isLoggedIn = auth && auth.isLoggedIn
+    let subscriptionLink = ''
     let theLink = (<li className='signin'><a href='https://app.a-smartlearning.com/en/sml/login' className='text-signin'> <span className='side-nav-item'>Sign In</span></a></li>)
-    if (auth && auth.isLoggedIn) {
+    if (isLoggedIn) {
       theLink = (<li><a href='javascript: void(0);' className='side-nav-item route--link' onClick={() => this.doLogout()}>Logout</a></li>)
+      if (auth.jwt.isParent) {
+        subscriptionLink = (<li><Link to='/subscription' className='side-nav-item route--link' activeClassName='route--link--active dk-yellow'>My Subscriptions</Link></li>)
+      }
     }
     return (
       <div className='subscribe-header'>
@@ -48,6 +52,7 @@ class PageHeader extends React.Component {
               <li><Link to='/subscribe' className='side-nav-item route--link' activeClassName='route--link--active dk-yellow'>Free Trial</Link></li>
               {/* <li><a href="/contact"> <span class="side-nav-item">Contact</span></a></li> */}
               {/* <li><a href='javascript: void(0);' data-toggle='modal' data-target='#loginModal'> <span className='side-nav-item'>Sign Up</span></a></li> */}
+              {subscriptionLink}
               {theLink}
             </ul>
           </div>
