@@ -72,6 +72,7 @@ export const create = (req, res, next) => {
       type,
       dateCreated: new Date().getTime(),
       dateModified: new Date().getTime(),
+      expiryDateFrom: new Date().getTime(),
       expiryDate: new Date().getTime() + (14 * 86400 * 1000), //14 days trial
       channel,
       fee,
@@ -233,20 +234,17 @@ export const getSubscriptionById = (req, res, next) => {
   const cModel = new CourseModel();
   const pModel = new PlanModel();
   const ccModel = new CCListModel();
+  const uModel = new UserModel;
+  const iModel = new ItemModel;
   return new SubscriptionModel().select(`t1.*,
       ARRAY(SELECT t2.title FROM ${cModel.getTable()} AS t2 
             INNER JOIN ${pModel.getTable()} AS t3 ON t2._id = ANY(ARRAY[t3."courseIds"])
-            WHERE t3._id=t1."planId") AS "courseTitles", t4.name, t4.ccnum, t4.ccmonth, t4.ccyear, t4.cvv
+            WHERE t3._id=t1."planId") AS "courseTitles", t4.name, t4.ccnum, t4.ccmonth, t4.ccyear, t4.cvv,
+      (SELECT t5.user FROM ${iModel.getTable()} AS t5 WHERE t5.order=t1._id Limit 1) AS "studentId"
     `)
     .join(`${ccModel.getTable()} AS t4`, 't1."cardId"::varchar=t4."_id"::varchar') // eslint-disable-line
     .where('t1._id::varchar=$1').limit(1).offset(0).findAll([req.params.subscriptionId]).then((subscription) => {
       if (subscription !== null) {
-        // if (subscription.parentId != req.params.userId) {
-        //   return res.json(new APIResponse({ msg: constants.errors.subscriptionDoesNotBelongToYou }))
-        // } else {
-        //   return res.json(new APIResponse(subscription))
-        // }
-
         const flist = ['name', 'ccnum', 'ccmonth', 'ccyear', 'cvv'];
         for (let i = 0; i < subscription.length; i++) {  // eslint-disable-line
           try {
@@ -259,10 +257,21 @@ export const getSubscriptionById = (req, res, next) => {
             }
           } catch (ex) { } // eslint-disable-line
         }
-        return res.json(new APIResponse(subscription[0]))
+        const items = '',
+          subscriptionData = subscription[0];
+        subscriptionData.items = []
+        return new ItemModel()
+        .select('t1.*, t2."firstName", t2."lastName", t2."email", t2."metadata" AS "studentInfo"')
+        .where('t1.order=$1')
+        .join(`${uModel.getTable()} AS t2`, 't1."user"=t2."_id"', 'left outer') // eslint-disable-line
+        .findAll([subscriptionData._id])
+          .then((items) => {
+            subscriptionData.items = items;
+            return res.json(new APIResponse(subscriptionData));
+          })
+          .catch(e => next(e));
       }
       return res.json(new APIResponse({ msg: constants.errors.subscriptionNotFound }))
-
     }).catch(e => next(e));
 };
 

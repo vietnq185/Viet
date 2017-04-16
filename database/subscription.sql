@@ -52,6 +52,9 @@ ALTER TABLE subscriptions ADD COLUMN "cardId" uuid;
 ALTER TABLE subscriptions ADD COLUMN "discount" double precision DEFAULT 0;
 ALTER TABLE subscriptions ADD COLUMN "fee" double precision DEFAULT 0;
 
+ALTER TABLE subscriptions ADD COLUMN "lastPaymentDate" bigint;
+ALTER TABLE subscriptions ADD COLUMN "expiryDateFrom" bigint;
+
 CREATE TABLE payment_history (
     _id uuid NOT NULL,
     "subscriptionId" uuid NOT NULL,
