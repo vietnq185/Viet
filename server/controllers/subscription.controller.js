@@ -77,7 +77,7 @@ export const create = (req, res, next) => {
       channel,
       fee,
       discount: discountValue,
-      status: 'trailing'
+      status: (channel === 'bank' ? 'pending' : 'trailing')
     };
     if (cardId !== '') {
       data.cardId = cardId;
@@ -94,7 +94,7 @@ export const create = (req, res, next) => {
       }
       return Promise.resolve(savedSubscription)
     }).then((savedSubscription) => {
-      if (channel == 'bank' && typeof req.body.addCard !== 'undefined') {
+      if (channel !== 'bank' && typeof req.body.addCard !== 'undefined') {
         var cardData = {
           _id: Utils.uuid(),
           userId: parentId,
@@ -269,6 +269,49 @@ export const getSubscriptionById = (req, res, next) => {
       }
       return res.json(new APIResponse({ msg: constants.errors.subscriptionNotFound }));
     }).catch(e => next(e));
+};
+
+export const changeStatus = (req, res, next) => {
+  const id = req.params.subscriptionId || '';
+  const status = req.params.newStatus || '';
+
+  const sModel = new SubscriptionModel();
+
+  return sModel.reset().where('t1._id::varchar=$1').findCount([id]).then(cnt => {
+    if (cnt === 0) {
+      return res.json({
+        success: false,
+        message: 'Subscription not found'
+      });
+    }
+    const allowList = ['pending', 'trailing', 'active', 'overdue', 'cancelled'];
+    if (allowList.indexOf(status) === -1) {
+      return res.json({
+        success: false,
+        message: 'Not allow status',
+        allowList
+      });
+    }
+    return sModel.reset().where('t1._id::varchar=$1').update({ status }, [id]).then(result => {
+      if (result === null) {
+        return res.json({
+          success: false,
+          message: 'Update failed'
+        });
+      }
+      return res.json({
+        success: true,
+        message: 'OK',
+        newStatus: status
+      });
+    }).catch(e => res.json({
+      success: false,
+      message: 'Error. Try again later.'
+    }))
+  }).catch(e => res.json({
+    success: false,
+    message: 'Error. Try again later.'
+  }));
 };
 
 export default { getSubscriptionsByUser, create, assignStudent, UpdateCardIdForSubscription, countSubscriptions, getSubscriptionById };
