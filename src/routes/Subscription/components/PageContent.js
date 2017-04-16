@@ -2,25 +2,38 @@ import React from 'react'
 import { IndexLink } from 'react-router'
 import moment from 'moment'
 
+import constants from '../../../constants'
 import Utils from '../../../helpers/utils'
 
 class PageContent extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
     }
   }
 
-  componentDidMount() {
+  componentDidMount () {
     this.getList(1)
   }
 
-  getList(page) {
+  getList (page) {
     this.props.getSubscriptionList(page)
     this.props.scrollTo()
   }
 
-  render() {
+  updateSubscription (id) {
+
+  }
+
+  cancelSubscription (id) {
+
+  }
+
+  assignSubscription (id) {
+
+  }
+
+  render () {
     console.info('Subscription => PageContent component => props: ', this.props)
 
     return (
@@ -54,19 +67,23 @@ class PageContent extends React.Component {
               </thead>
               <tbody>
                 {this.props.list.subscriptions.map(item => { // eslint-disable-line
+                  let buttonsPanel = []
+                  if (item.status === 'active' || item.status === 'trailing') {
+                    buttonsPanel.push(<a key={Utils.guid()} className='link-upgrade-subscription' href='javascript: void(0);' onClick={() => this.updateSubscription(item._id)}>Upgrade</a>)
+                    buttonsPanel.push(<a key={Utils.guid()} className='link-cancel-subscription' href='javascript: void(0);' onClick={() => this.cancelSubscription(item._id)}>Cancel</a>)
+                  }
+                  if (typeof item.studentId === 'string' && item.studentId.length === 0) {
+                    buttonsPanel.push(<a key={Utils.guid()} className='link-assign-student' href='javascript: void(0);' onClick={() => this.assignSubscription(item._id)}>Assign</a>)
+                  }
                   return (
                     <tr key={item._id}>
                       <td><a href='javascript: void(0);' onClick={() => Utils.redirect(`subscription-details/${item._id}`)}>#{item._id.substring(0, 7)}...</a></td>
                       <td>{item.courseTitles.join(' & ')}</td>
-                      <td>${Math.abs(item.fee - item.discount)}/month <span className='payment-method'>via {item.channel}</span></td>
-                      <td>{moment.unix(item.dateCreated / 1000).format("MMM D, YYYY")}</td>
-                      <td>{moment.unix(item.expiryDate / 1000).format("MMM D, YYYY")}</td>
+                      <td>${Math.abs(item.fee - item.discount)}/month <span className='payment-method'>via {item.channel === constants.paymentMethod.creditCard ? 'Credit Card' : item.channel}</span></td>
+                      <td>{moment.unix(item.dateCreated / 1000).format('MMM D, YYYY')}</td>
+                      <td>{moment.unix(item.expiryDate / 1000).format('MMM D, YYYY')}</td>
                       <td><span className={`subscribe-status subscribe-status-${item.status}`}>{Utils.ucfirst(item.status)}</span></td>
-                      <td>
-                        <a className='link-upgrade-subscription' href=''>Upgrade</a>
-                        <a className='link-cancel-subscription' href=''>Cancel</a>
-                        <a className='link-assign-student' href=''>Assign</a>
-                      </td>
+                      <td>{buttonsPanel}</td>
                     </tr>
                   )
                 })}
