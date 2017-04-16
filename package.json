@@ -11,9 +11,11 @@
     "yarn": ">=0.21.3"
   },
   "scripts": {
+    "preinstall": "npm install pm2 yarn -g",
+    "start": "pm2 start --attach index.js",
     "dev": "cross-env DEBUG=rest-api:* nodemon -x  \"babel-node\" index.js",
-    "start": "gulp serve",
-    "start:debug": "cross-env DEBUG=rest-api:* yarn start",
+    "start:no-debug": "gulp serve",
+    "start:debug": "cross-env DEBUG=rest-api:* yarn start:no-debug",
     "build": "gulp",
     "lint": "esw *.js server config --color",
     "lint:watch": "yarn lint -- --watch",
