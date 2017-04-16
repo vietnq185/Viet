@@ -5,9 +5,10 @@ import CounterRoute from './Counter'
 import ProgrammeRoute from './Programme'
 import StudentRoute from './Student'
 import ParentRoute from './Parent'
-import SubscribeRoute from './Subscribe'
+import SubscribeRoute, { signUpRoute } from './Subscribe'
 import SubscriptionRoute from './Subscription'
 import SubscriptionDetailsRoute from './SubscriptionDetails'
+import NotFoundRoute from './NotFound'
 
 /*  Note: Instead of using JSX, we recommend using react-router
     PlainRoute objects to build route definitions.   */
@@ -23,7 +24,9 @@ export const createRoutes = (store) => ({
     ParentRoute(store),
     SubscribeRoute(store),
     SubscriptionRoute(store),
-    SubscriptionDetailsRoute(store)
+    SubscriptionDetailsRoute(store),
+    signUpRoute(store),
+    NotFoundRoute(store)
   ]
 })
 

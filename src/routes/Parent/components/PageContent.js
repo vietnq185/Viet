@@ -1,5 +1,7 @@
 import React from 'react'
 
+import Utils from '../../../helpers/utils'
+
 import ParentItem1Image from '../../../styles/images/parent-item1.png'
 import ParentItem2Image from '../../../styles/images/parent-item2.png'
 import ParentItem3Image from '../../../styles/images/parent-item3.png'
@@ -7,6 +9,10 @@ import ParentItem4Image from '../../../styles/images/parent-item4.png'
 import ParentItem5Image from '../../../styles/images/parent-item5.png'
 
 class PageContent extends React.Component {
+
+  onCreateParent () {
+    Utils.redirect('subscribe/signUp')
+  }
   render () {
     return (
       <div>
@@ -88,7 +94,7 @@ class PageContent extends React.Component {
           <div className='parent-section1-footer'>
             <p className='parent-section1-footer-text dk-blue-text'>Be There for Your Child on His/Her Learning Journey</p>
             <div>
-              <button className='btn dk-btn dk-bg-blue dk-white' data-toggle='modal' data-target='#parentModal'>
+              <button className='btn dk-btn dk-bg-blue dk-white' data-toggle='modal' data-target='#parentModal' onClick={() => this.onCreateParent()}>
                 CREATE PARENT ACCOUNT
               </button>
               {/* <button className="btn dk-btn dk-bg-green dk-white">

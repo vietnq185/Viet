@@ -2,7 +2,7 @@ import React from 'react'
 
 class StepNav extends React.Component {
   change (step) {
-    this.props.changeStep(step)
+    // this.props.changeStep(step)
   }
   render () {
     const { step, steps } = this.props

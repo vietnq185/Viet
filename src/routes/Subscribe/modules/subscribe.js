@@ -186,7 +186,7 @@ export const completeSubscription = (data) => (dispatch, getState) => {
 // ------------------------------------
 // Reducer
 // ------------------------------------
-const initialState = {
+export const initialState = {
   prevStep: STEPS.signIn,
   step: STEPS.signIn,
   steps: STEPS,

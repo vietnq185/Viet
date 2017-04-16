@@ -1,4 +1,7 @@
 import React from 'react'
+
+import Utils from '../../../helpers/utils'
+
 import Header from '../../../components/Header'
 import ScrollImage from '../../../styles/images/mouse-scroll.png'
 
@@ -18,7 +21,7 @@ class PageHeader extends React.Component {
               </h3>
           </div>
           <div className='programme-btn'>
-            <button className='btn dk-btn dk-bg-blue' data-toggle='modal' data-target='#loginModal'>
+            <button className='btn dk-btn dk-bg-blue' data-toggle='modal' data-target='#loginModal' onClick={() => Utils.redirect('subscribe')}>
               START A FREE TRIAL
               </button>
           </div>

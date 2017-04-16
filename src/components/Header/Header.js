@@ -22,16 +22,16 @@ export const Header = () => (
           <IndexLink to='/' className='side-nav-item dk-white route--item' activeClassName='route--active dk-yellow'>Home</IndexLink>
         </li> */}
         <li>
-          <Link to='programme' className='side-nav-item dk-white route--item' activeClassName='route--active dk-yellow'>Our Programme</Link>
+          <Link to='/programme' className='side-nav-item dk-white route--item' activeClassName='route--active dk-yellow'>Our Programme</Link>
         </li>
         <li>
-          <Link to='student' className='side-nav-item dk-white route--item' activeClassName='route--active dk-yellow'>For Student</Link>
+          <Link to='/student' className='side-nav-item dk-white route--item' activeClassName='route--active dk-yellow'>For Student</Link>
         </li>
         <li>
-          <Link to='parent' className='side-nav-item dk-white route--item' activeClassName='route--active dk-yellow'>For Parent</Link>
+          <Link to='/parent' className='side-nav-item dk-white route--item' activeClassName='route--active dk-yellow'>For Parent</Link>
         </li>
         <li>
-          <Link to='subscribe' className='side-nav-item dk-white route--item' activeClassName='route--active dk-yellow'>Free Trial</Link>
+          <Link to='/subscribe' className='side-nav-item dk-white route--item' activeClassName='route--active dk-yellow'>Free Trial</Link>
         </li>
         {/* <li><a href="contact"> <span class="side-nav-item dk-white">Contact</span></a></li> */}
         {/* <li><a href='javascript: void(0);' data-toggle='modal' data-target='#loginModal'> <span className='side-nav-item dk-white'>Sign Up</span></a></li> */}
