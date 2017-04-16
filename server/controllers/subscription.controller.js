@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getSubscriptionById = exports.countSubscriptions = exports.getSubscriptionsByUser = exports.UpdateCardIdForSubscription = exports.assignStudent = exports.create = undefined;
+exports.changeStatus = exports.getSubscriptionById = exports.countSubscriptions = exports.getSubscriptionsByUser = exports.UpdateCardIdForSubscription = exports.assignStudent = exports.create = undefined;
 
 var _httpStatus = require('http-status');
 
@@ -124,7 +124,7 @@ var create = exports.create = function create(req, res, next) {
         channel: channel,
         fee: fee,
         discount: discountValue,
-        status: 'trailing'
+        status: channel === 'bank' ? 'pending' : 'trailing'
       };
       if (cardId !== '') {
         data.cardId = cardId;
@@ -141,7 +141,7 @@ var create = exports.create = function create(req, res, next) {
         }
         return Promise.resolve(savedSubscription);
       }).then(function (savedSubscription) {
-        if (channel == 'bank' && typeof req.body.addCard !== 'undefined') {
+        if (channel !== 'bank' && typeof req.body.addCard !== 'undefined') {
           var cardData = {
             _id: _Utils2.default.uuid(),
             userId: parentId,
@@ -324,6 +324,53 @@ var getSubscriptionById = exports.getSubscriptionById = function getSubscription
     return res.json(new _APIResponse2.default({ msg: _constants2.default.errors.subscriptionNotFound }));
   }).catch(function (e) {
     return next(e);
+  });
+};
+
+var changeStatus = exports.changeStatus = function changeStatus(req, res, next) {
+  var id = req.params.subscriptionId || '';
+  var status = req.params.newStatus || '';
+
+  var sModel = new _subscription2.default();
+
+  return sModel.reset().where('t1._id::varchar=$1').findCount([id]).then(function (cnt) {
+    if (cnt === 0) {
+      return res.json({
+        success: false,
+        message: 'Subscription not found'
+      });
+    }
+    var allowList = ['pending', 'trailing', 'active', 'overdue', 'cancelled'];
+    if (allowList.indexOf(status) === -1) {
+      return res.json({
+        success: false,
+        message: 'Not allow status',
+        allowList: allowList
+      });
+    }
+    return sModel.reset().where('t1._id::varchar=$1').update({ status: status }, [id]).then(function (result) {
+      if (result === null) {
+        return res.json({
+          success: false,
+          message: 'Update failed'
+        });
+      }
+      return res.json({
+        success: true,
+        message: 'OK',
+        newStatus: status
+      });
+    }).catch(function (e) {
+      return res.json({
+        success: false,
+        message: 'Error. Try again later.'
+      });
+    });
+  }).catch(function (e) {
+    return res.json({
+      success: false,
+      message: 'Error. Try again later.'
+    });
   });
 };
 

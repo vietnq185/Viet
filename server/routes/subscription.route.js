@@ -55,6 +55,10 @@ router.route('/details/:subscriptionId')
 /** GET /api/subscriptions/:subscriptionId - Get subscription details */
 .get( /* authCtrl.verifyAccessToken, */subscriptionCtrl.getSubscriptionById);
 
+router.route('/changeStatus/:subscriptionId/:newStatus')
+/** GET /api/subscriptions/changeStatus/:subscriptionId/:newStatus - Get subscription details */
+.get( /* authCtrl.verifyAccessToken, */subscriptionCtrl.changeStatus);
+
 exports.default = router;
 module.exports = exports['default'];
 //# sourceMappingURL=subscription.route.js.map
