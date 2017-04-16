@@ -11,10 +11,13 @@ import './Header.scss'
 
 class Header extends React.Component {
   doLogout() {
-    const nextAction = () => {
-      Utils.redirect('subscribe')
-    }
-    this.props.logout(nextAction)
+    const self = this
+    setTimeout(function () {
+      const nextAction = () => {
+        Utils.redirect('subscribe')
+      }
+      self.props.logout(nextAction)
+    }, 500);
   }
 
   render() {
