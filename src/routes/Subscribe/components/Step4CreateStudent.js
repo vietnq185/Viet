@@ -39,6 +39,11 @@ class Step4CreateStudent extends React.Component {
       }
     }
     data.status = ['student']
+    data.metadata = {
+      class: (this.refs.class.value || ''),
+      school: (this.refs.school.value || ''),
+      yearOfBirth: (this.refs.yearOfBirth.value || '')
+    }
     return data
   }
 
@@ -152,7 +157,7 @@ class Step4CreateStudent extends React.Component {
                 <div className='col-sm-6 col-xs-12'>
                   <div className='form-group'>
                     <label htmlFor='contact-name'>School</label>
-                    <input className='form-control' name='school' id='school' type='text' />
+                    <input className='form-control' name='school' id='school' type='text' ref='school' />
                   </div>
                 </div>
               </div>
@@ -160,7 +165,7 @@ class Step4CreateStudent extends React.Component {
                 <div className='col-sm-6 col-xs-12'>
                   <div className='form-group'>
                     <label htmlFor='contact-name'>Level</label>
-                    <select className='form-control' name='level' id='level'>
+                    <select className='form-control' name='level' id='level' ref='class'>
                       <option value='P1'>P1</option>
                       <option value='P2'>P2</option>
                       <option value='P3'>P3</option>
@@ -170,7 +175,7 @@ class Step4CreateStudent extends React.Component {
                 <div className='col-sm-6 col-xs-12'>
                   <div className='form-group'>
                     <label htmlFor='contact-name'>Year of Birth</label>
-                    <select className='form-control' name='year_of_birth' id='year_of_birth' required=''>
+                    <select className='form-control' name='year_of_birth' id='year_of_birth' required='' ref='yearOfBirth'>
                       <option value='2017'>2017</option>
                       <option value='2018'>2018</option>
                       <option value='2019'>2019</option>

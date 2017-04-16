@@ -18,10 +18,10 @@ class SubscriptionTrailing extends React.Component {
       </div>
     )
     if (objSubscription.studentId !== null) {
-      var studentData = objSubscription.items[0],
-        sYearOfBirth = studentData.studentInfo.yearOfBirth || '',
-        sClass = studentData.studentInfo.class || '',
-        sSchool = studentData.studentInfo.school || '',
+      var studentData = objSubscription.items[0]
+      var sYearOfBirth = studentData.studentInfo !== null ? (studentData.studentInfo.yearOfBirth || '') : '',
+        sClass = studentData.studentInfo !== null ? (studentData.studentInfo.class || '') : '',
+        sSchool = studentData.studentInfo !== null ? (studentData.studentInfo.school || '') : '',
         mailTo = 'mailto:' + studentData.email;
       studentInfo = (
         <div className='row'>
