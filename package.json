@@ -7,9 +7,11 @@
   "private": false,
   "engines": {
     "node": ">=6.9.1",
-    "npm": ">=3.10.8"
+    "npm": ">=3.10.8",
+    "yarn": ">=0.21.3"
   },
   "scripts": {
+    "preinstall": "npm install pm2 yarn -g",
     "start": "pm2 start --attach index.js",
     "dev": "cross-env DEBUG=rest-api:* nodemon -x  \"babel-node\" index.js",
     "start:no-debug": "gulp serve",
