@@ -1,5 +1,7 @@
 import React from 'react'
 
+import Utils from '../../../helpers/utils'
+
 import CaculatorImage from '../../../styles/images/caculator.svg'
 import MicroscopeImage from '../../../styles/images/microscope.svg'
 
@@ -118,7 +120,7 @@ class PageContent extends React.Component {
             <h3 className='dk-blue1 tree-trial'>
               Join our learning group today!
         </h3>
-            <button className='btn dk-btn dk-bg-blue dk-white' data-toggle='modal' data-target='#loginModal'>
+            <button className='btn dk-btn dk-bg-blue dk-white' data-toggle='modal' data-target='#loginModal' onClick={() => Utils.redirect('subscribe')}>
               START A FREE TRIAL
         </button>
           </div>
