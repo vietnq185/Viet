@@ -106,6 +106,8 @@ class Step3Payment extends React.Component {
     console.info('Subscribe => PageContent => Payment component => props: ', this.props)
     console.info('Subscribe => PageContent => Payment component => state: ', this.state)
 
+    const requiredLabel = (<abbr className='dk-red-text'>&nbsp;*</abbr>)
+
     const { applyDiscount, discountPercent, selectedPlan } = this.props // eslint-disable-line
     let { frequency, fee } = selectedPlan
     fee = isNaN(fee) ? 0 : (applyDiscount ? (fee - fee * discountPercent / 100) : fee)
@@ -142,6 +144,7 @@ class Step3Payment extends React.Component {
     )
     //
     const ccmonthList = []
+    ccmonthList.push(<option key={'ccmonth_empty'} value={''}></option>)
     for (let i = 1; i <= 12; i++) {
       let val = i < 10 ? ('0' + i) : ('' + i)
       let selected = self.state.ccmonth === val
@@ -150,6 +153,7 @@ class Step3Payment extends React.Component {
 
     const curYear = new Date().getFullYear()
     const ccyearList = []
+    ccyearList.push(<option key={'ccyear_empty'} value={''}></option>)
     for (let i = curYear; i <= curYear + 10; i++) {
       let val = i
       let selected = self.state.ccyear === val
@@ -208,14 +212,14 @@ class Step3Payment extends React.Component {
                   <div className='row'>
                     <div className='col-sm-6 col-xs-12'>
                       <div className={['form-group', this.errors.ccnum ? 'has-error' : ''].join(' ')}>
-                        <label htmlFor='contact-name'>Card Number</label>
+                        <label htmlFor='contact-name'>Card Number{requiredLabel}</label>
                         <input className='form-control' name='ccnum' id='ccnum' required='' type='text' value={this.state.newCC.ccnum} ref='ccnum' onChange={(e) => this.setNewCC('ccnum', e.target.value)} />
                         <span className={[this.errors.ccnum ? 'help-block' : 'hide'].join(' ')}>{this.errors.ccnum}</span>
                       </div>
                     </div>
                     <div className='col-sm-6 col-xs-12'>
                       <div className={['form-group', this.errors.name ? 'has-error' : ''].join(' ')}>
-                        <label htmlFor='contact-name'>Name</label>
+                        <label htmlFor='contact-name'>Name{requiredLabel}</label>
                         <input className='form-control' name='name' id='name' required='' type='text' value={this.state.newCC.name} ref='name' onChange={(e) => this.setNewCC('name', e.target.value)} />
                         <span className={[this.errors.name ? 'help-block' : 'hide'].join(' ')}>{this.errors.name}</span>
                       </div>
@@ -224,7 +228,7 @@ class Step3Payment extends React.Component {
                   <div className='row'>
                     <div className='col-sm-4 col-xs-12'>
                       <div className={['form-group', this.errors.ccmonth ? 'has-error' : ''].join(' ')}>
-                        <label htmlFor='contact-name'>Expiry Month</label>
+                        <label htmlFor='contact-name'>Expiry Month{requiredLabel}</label>
                         <select className='form-control' name='ccmonth' id='ccmonth' required='' value={this.state.newCC.ccmonth} ref='ccmonth' onChange={(e) => this.setNewCC('ccmonth', e.target.value)}>
                           {ccmonthList}
                         </select>
@@ -233,7 +237,7 @@ class Step3Payment extends React.Component {
                     </div>
                     <div className='col-sm-4 col-xs-12'>
                       <div className={['form-group', this.errors.ccyear ? 'has-error' : ''].join(' ')}>
-                        <label htmlFor='contact-name'>Expiry Year</label>
+                        <label htmlFor='contact-name'>Expiry Year{requiredLabel}</label>
                         <select className='form-control' name='ccyear' id='ccyear' required='' value={this.state.newCC.ccyear} ref='ccyear' onChange={(e) => this.setNewCC('ccyear', e.target.value)}>
                           {ccyearList}
                         </select>
@@ -242,7 +246,7 @@ class Step3Payment extends React.Component {
                     </div>
                     <div className='col-sm-4 col-xs-12'>
                       <div className={['form-group', this.errors.cvv ? 'has-error' : ''].join(' ')}>
-                        <label htmlFor='contact-name'>CVV</label>
+                        <label htmlFor='contact-name'>CVV{requiredLabel}</label>
                         <input className='form-control' name='cvv' id='cvv' required='' type='text' value={this.state.newCC.cvv} ref='cvv' onChange={(e) => this.setNewCC('cvv', e.target.value)} />
                         <span className={[this.errors.cvv ? 'help-block' : 'hide'].join(' ')}>{this.errors.cvv}</span>
                       </div>

@@ -7,34 +7,34 @@ import constants from '../../../constants'
 import Utils from '../../../helpers/utils'
 
 class PageContent extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
     }
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.getList(1)
   }
 
-  getList (page) {
+  getList(page) {
     this.props.getSubscriptionList(page)
     this.props.scrollTo()
   }
 
-  updateSubscription (id) {
+  updateSubscription(id) {
 
   }
 
-  cancelSubscription (id) {
+  cancelSubscription(id) {
 
   }
 
-  assignSubscription (id) {
+  assignSubscription(id) {
 
   }
 
-  render () {
+  render() {
     console.info('Subscription => PageContent component => props: ', this.props)
 
     return (
@@ -72,13 +72,13 @@ class PageContent extends React.Component {
                   if (item.status === 'active' || item.status === 'trailing') {
                     buttonsPanel.push(<a key={Utils.guid()} className='link-upgrade-subscription' href='javascript: void(0);' onClick={() => this.updateSubscription(item._id)}>Upgrade</a>)
                     buttonsPanel.push(<a key={Utils.guid()} className='link-cancel-subscription' href='javascript: void(0);' onClick={() => this.cancelSubscription(item._id)}>Cancel</a>)
-                  }
-                  if ((item.studentId || '').length === 0) {
-                    buttonsPanel.push(<a key={Utils.guid()} className='link-assign-student' href='javascript: void(0);' onClick={() => this.assignSubscription(item._id)}>Assign</a>)
+                    if ((item.studentId || '').length === 0) {
+                      buttonsPanel.push(<a key={Utils.guid()} className='link-assign-student' href='javascript: void(0);' onClick={() => this.assignSubscription(item._id)}>Assign</a>)
+                    }
                   }
                   return (
                     <tr key={item._id}>
-                      <td><a href='javascript: void(0);' onClick={() => Utils.redirect(`subscription-details/${item._id}`)}>#{item._id.substring(0, 7)}...</a></td>
+                      <td className={'dk-blue-text'}><a className={'dk-blue-text'} href='javascript: void(0);' onClick={() => Utils.redirect(`subscription-details/${item._id}`)}>#{item._id.substring(0, 7)}...</a></td>
                       <td>{item.courseTitles.join(' & ')}</td>
                       <td>${Math.abs(item.fee - item.discount)}/month <span className='payment-method'>via {item.channel === constants.paymentMethod.creditCard ? 'Credit Card' : item.channel}</span></td>
                       <td>{moment.unix(item.dateCreated / 1000).format('MMM D, YYYY')}</td>

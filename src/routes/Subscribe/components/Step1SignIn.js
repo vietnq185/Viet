@@ -76,7 +76,7 @@ class Step1SignIn extends React.Component {
   }
 
   render () {
-    console.info('Subscribe => PageContent => SignIn component => props: ', this.props)
+    const requiredLabel = (<abbr className='dk-red-text'>&nbsp;*</abbr>)
     return (
       <div className='form-subscribe'>
         <div className='form-title'>Sign In</div>
@@ -84,12 +84,12 @@ class Step1SignIn extends React.Component {
         <br />
         <form className='form form-subscribe-login'>
           <div className={['form-group', this.errors.email ? 'has-error' : ''].join(' ')}>
-            <label htmlFor='contact-name'>Email address</label>
+            <label htmlFor='contact-name'>Email address{requiredLabel}</label>
             <input className='form-control' name='email' id='email' required='' type='text' ref='email' />
             <span className={[this.errors.email ? 'help-block' : 'hide'].join(' ')}>{this.errors.email}</span>
           </div>
           <div className={['form-group', this.errors.password ? 'has-error' : ''].join(' ')}>
-            <label htmlFor='contact-name'>Password</label>
+            <label htmlFor='contact-name'>Password{requiredLabel}</label>
             <input className='form-control' name='password' id='password' required='' type='password' ref='password' />
             <span className='forgot-password'><a href='javascript: void(0);'>Forgot password?</a></span>
             <span className={[this.errors.password ? 'help-block' : 'hide'].join(' ')}>{this.errors.password}</span>

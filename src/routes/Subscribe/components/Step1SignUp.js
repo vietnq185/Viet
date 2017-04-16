@@ -20,6 +20,7 @@ class Step1SignUp extends React.Component {
       firstName: '',
       lastName: '',
       email: '',
+      phone: '',
       password: '',
       confirmPassword: ''
     }
@@ -67,6 +68,9 @@ class Step1SignUp extends React.Component {
       email: {
         required: 'Email is required',
         email: 'Invalid email address'
+      },
+      phone: {
+        required: 'Phone is required'
       },
       password: {
         required: 'Password is required'
@@ -128,6 +132,7 @@ class Step1SignUp extends React.Component {
   }
 
   render () {
+    const requiredLabel = (<abbr className='dk-red-text'>&nbsp;*</abbr>)
     return (
       <div className={['form-subscribe'].join(' ')}>
         <div className='form-title'>Sign Up for Parent Account</div>
@@ -137,35 +142,36 @@ class Step1SignUp extends React.Component {
           <div className='row'>
             <div className='col-sm-6 col-xs-12'>
               <div className={['form-group', this.errors.firstName ? 'has-error' : ''].join(' ')}>
-                <label htmlFor='contact-name'>First Name</label>
+                <label htmlFor='contact-name'>First Name{requiredLabel}</label>
                 <input className='form-control' name='first_name' id='first_name' required='' type='text' ref='firstName' />
                 <span className={[this.errors.firstName ? 'help-block' : 'hide'].join(' ')}>{this.errors.firstName}</span>
               </div>
             </div>
             <div className='col-sm-6 col-xs-12'>
               <div className={['form-group', this.errors.lastName ? 'has-error' : ''].join(' ')}>
-                <label htmlFor='contact-name'>Last Name</label>
+                <label htmlFor='contact-name'>Last Name{requiredLabel}</label>
                 <input className='form-control' name='last_name' id='last_name' required='' type='text' ref='lastName' />
                 <span className={[this.errors.lastName ? 'help-block' : 'hide'].join(' ')}>{this.errors.lastName}</span>
               </div>
             </div>
           </div>
           <div className={['form-group', this.errors.email ? 'has-error' : ''].join(' ')}>
-            <label htmlFor='contact-name'>Email Address</label>
+            <label htmlFor='contact-name'>Email Address{requiredLabel}</label>
             <input className='form-control' name='email' id='email' required='' type='text' ref='email' />
             <span className={[this.errors.email ? 'help-block' : 'hide'].join(' ')}>{this.errors.email}</span>
           </div>
-          <div className={['form-group'].join(' ')}>
-            <label htmlFor='contact-name'>Phone Number</label>
+          <div className={['form-group', this.errors.email ? 'has-error' : ''].join(' ')}>
+            <label htmlFor='contact-name'>Phone Number{requiredLabel}</label>
             <input className='form-control' name='phone' id='phone' required='' type='text' ref='phone' />
+            <span className={[this.errors.phone ? 'help-block' : 'hide'].join(' ')}>{this.errors.phone}</span>
           </div>
           <div className={['form-group', this.errors.password ? 'has-error' : ''].join(' ')}>
-            <label htmlFor='contact-name'>Password</label>
+            <label htmlFor='contact-name'>Password{requiredLabel}</label>
             <input className='form-control' name='password' id='password' required='' type='password' ref='password' />
             <span className={[this.errors.password ? 'help-block' : 'hide'].join(' ')}>{this.errors.password}</span>
           </div>
           <div className={['form-group', this.errors.confirmPassword ? 'has-error' : ''].join(' ')}>
-            <label htmlFor='contact-name'>Confirm Password</label>
+            <label htmlFor='contact-name'>Confirm Password{requiredLabel}</label>
             <input className='form-control' name='confirm_password' id='confirm_password' required='' type='password' ref='confirmPassword' />
             <span className={[this.errors.confirmPassword ? 'help-block' : 'hide'].join(' ')}>{this.errors.confirmPassword}</span>
           </div>

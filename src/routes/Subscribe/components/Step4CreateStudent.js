@@ -112,6 +112,7 @@ class Step4CreateStudent extends React.Component {
   }
 
   render () {
+    const requiredLabel = (<abbr className='dk-red-text'>&nbsp;*</abbr>)
     const currentYear = new Date().getFullYear()
     const yearList = []
     for (let year = currentYear; year > currentYear - 50; year--) { // eslint-disable-line
@@ -138,14 +139,14 @@ class Step4CreateStudent extends React.Component {
               <div className='row'>
                 <div className='col-sm-6 col-xs-12'>
                   <div className={['form-group', this.errors.firstName ? 'has-error' : ''].join(' ')}>
-                    <label htmlFor='contact-name'>First Name</label>
+                    <label htmlFor='contact-name'>First Name{requiredLabel}</label>
                     <input className='form-control' name='first_name' id='first_name' required='' type='text' ref='firstName' />
                     <span className={[this.errors.firstName ? 'help-block' : 'hide'].join(' ')}>{this.errors.firstName}</span>
                   </div>
                 </div>
                 <div className='col-sm-6 col-xs-12'>
                   <div className={['form-group', this.errors.lastName ? 'has-error' : ''].join(' ')}>
-                    <label htmlFor='contact-name'>Last Name</label>
+                    <label htmlFor='contact-name'>Last Name{requiredLabel}</label>
                     <input className='form-control' name='last_name' id='last_name' required='' type='text' ref='lastName' />
                     <span className={[this.errors.lastName ? 'help-block' : 'hide'].join(' ')}>{this.errors.lastName}</span>
                   </div>
@@ -154,7 +155,7 @@ class Step4CreateStudent extends React.Component {
               <div className='row'>
                 <div className='col-sm-6 col-xs-12'>
                   <div className={['form-group', this.errors.email ? 'has-error' : ''].join(' ')}>
-                    <label htmlFor='contact-name'>Email Address*</label>
+                    <label htmlFor='contact-name'>Email Address{requiredLabel}</label>
                     <input className='form-control' name='email' id='email' required='' type='text' ref='email' />
                     <span className={[this.errors.email ? 'help-block' : 'hide'].join(' ')}>{this.errors.email}</span>
                   </div>
@@ -189,14 +190,14 @@ class Step4CreateStudent extends React.Component {
               <div className='row'>
                 <div className='col-sm-6 col-xs-12'>
                   <div className={['form-group', this.errors.password ? 'has-error' : ''].join(' ')}>
-                    <label htmlFor='contact-name'>Password</label>
+                    <label htmlFor='contact-name'>Password{requiredLabel}</label>
                     <input className='form-control' name='password' id='password' required='' type='password' ref='password' />
                     <span className={[this.errors.password ? 'help-block' : 'hide'].join(' ')}>{this.errors.password}</span>
                   </div>
                 </div>
                 <div className='col-sm-6 col-xs-12'>
                   <div className={['form-group', this.errors.confirmPassword ? 'has-error' : ''].join(' ')}>
-                    <label htmlFor='contact-name'>Confirm Password</label>
+                    <label htmlFor='contact-name'>Confirm Password{requiredLabel}</label>
                     <input className='form-control' name='confirm_password' id='confirm_password' required='' type='password' ref='confirmPassword' />
                     <span className={[this.errors.confirmPassword ? 'help-block' : 'hide'].join(' ')}>{this.errors.confirmPassword}</span>
                   </div>

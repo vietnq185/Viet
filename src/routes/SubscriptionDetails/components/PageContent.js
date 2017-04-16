@@ -45,9 +45,9 @@ class PageContent extends React.Component {
       if (typeof viewMap[objSubscription.status] !== 'undefined') {
         subscriptionDetails = viewMap[objSubscription.status]
       } else {
-        subscriptionDetails = (
+        /*subscriptionDetails = (
           <div className='subscribe-details'><h3>Subscription not found!</h3></div>
-        )
+        )*/
       }
     }
     return (
