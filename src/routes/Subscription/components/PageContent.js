@@ -91,7 +91,7 @@ class PageContent extends React.Component {
                     <tr key={item._id}>
                       <td className={'dk-blue-text'}><a className={'dk-blue-text'} href='javascript: void(0);' onClick={() => Utils.redirect(`subscription-details/${item._id}`)}>#{item._id.substring(0, 7)}...</a></td>
                       <td>{item.courseTitles.join(' & ')}</td>
-                      <td>${Math.abs(item.fee - item.discount) * theRate}/{theLabel} <span className='payment-method'>via {item.channel === constants.paymentMethod.creditCard ? 'Credit Card' : item.channel}</span></td>
+                      <td>${item.fee * theRate}/{theLabel} <span className='payment-method'>via {item.channel === constants.paymentMethod.creditCard ? 'Credit Card' : item.channel}</span></td>
                       <td>{moment.unix(item.dateCreated / 1000).format('MMM D, YYYY')}</td>
                       <td>{moment.unix(item.expiryDate / 1000).format('MMM D, YYYY')}</td>
                       <td><span className={`subscribe-status subscribe-status-${item.status}`}>{Utils.ucfirst(item.status)}</span></td>

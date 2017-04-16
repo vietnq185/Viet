@@ -17,7 +17,7 @@ class SubscriptionPending extends React.Component {
           <div className='row'>
             <div className='col-sm-6 col-xs-12'>
               <div>ID: {objSubscription._id}</div>
-              <div>Plan: <span className='dk-blue'>{objSubscription.courseTitles.join(' & ')} (${parseFloat((objSubscription.fee - objSubscription.discount) * theRate).toFixed(2)}/{objSubscription.expirationType == 'annually' ? 'year' : 'month'})</span></div>
+              <div>Plan: <span className='dk-blue'>{objSubscription.courseTitles.join(' & ')} (${parseFloat(objSubscription.fee * theRate).toFixed(2)}/{objSubscription.expirationType == 'annually' ? 'year' : 'month'})</span></div>
               <div>Payment method: {objSubscription.channel == 'bank' ? 'Bank Transfer' : 'VISA ******' + objSubscription.ccnum}</div>
             </div>
             <div className='col-sm-6 col-xs-12'>
