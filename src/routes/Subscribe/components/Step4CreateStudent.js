@@ -84,7 +84,8 @@ class Step4CreateStudent extends React.Component {
           self.props.assignStudent({ studentId: jsonResponse._id, success: true })
           self.props.changeStep(self.props.steps.success)
         }).catch((errMsg) => {
-          this.setState({ errMsg })
+          // this.setState({ errMsg })
+          this.setState({ errMsg: 'Cannot create student. Please try again later' })
         })
         // END - do login
       }).catch((errMsg) => {

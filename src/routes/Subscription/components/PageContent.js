@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from 'react'
 import { IndexLink } from 'react-router'
 import moment from 'moment'
@@ -72,7 +73,7 @@ class PageContent extends React.Component {
                     buttonsPanel.push(<a key={Utils.guid()} className='link-upgrade-subscription' href='javascript: void(0);' onClick={() => this.updateSubscription(item._id)}>Upgrade</a>)
                     buttonsPanel.push(<a key={Utils.guid()} className='link-cancel-subscription' href='javascript: void(0);' onClick={() => this.cancelSubscription(item._id)}>Cancel</a>)
                   }
-                  if (typeof item.studentId === 'string' && item.studentId.length === 0) {
+                  if ((item.studentId || '').length === 0) {
                     buttonsPanel.push(<a key={Utils.guid()} className='link-assign-student' href='javascript: void(0);' onClick={() => this.assignSubscription(item._id)}>Assign</a>)
                   }
                   return (

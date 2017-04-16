@@ -189,6 +189,7 @@ export default class API {
   }
 
   static assignStudent = (accessToken, data) => {
+    console.info('assignStudent => data: ', data)
     return new Promise((resolve, reject) => {
       return fetch(config.api.assignStudent, {
         method: 'POST',

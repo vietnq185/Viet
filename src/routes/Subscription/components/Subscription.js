@@ -25,10 +25,17 @@ class Subscription extends React.Component {
   }
 
   render () {
+    const { auth } = this.props // eslint-disable-line
+    let contentPage = (<PageContent ref='pageContent' scrollTo={() => this.scrollTo()} {...this.props} />)
+    if (!auth || (auth.isLoggedIn && (!auth.jwt || !auth.jwt.isParent))) {
+      contentPage = (
+        <div ref='pageContent' className='subscribe-wrapper' style={{ height: '700px', color: 'red', paddingTop: '100px' }}>Permission Deny.</div>
+      )
+    }
     return (
       <div className='wrapper-bg-white' style={{ margin: '0 auto', height: '100%' }} >
         <PageHeader scrollTo={() => this.scrollTo()} />
-        <PageContent ref='pageContent' scrollTo={() => this.scrollTo()} {...this.props} />
+        {contentPage}
         <Footer />
       </div>
     )

@@ -1,9 +1,29 @@
+/* eslint-disable */
 import React from 'react'
+import { connect } from 'react-redux'
 import { IndexLink, Link } from 'react-router'
+
+import * as authActions from '../../../store/auth'
+
+import Utils from '../../../helpers/utils'
+
 import './PageHeader.scss'
 
 class PageHeader extends React.Component {
-  render () {
+  doLogout() {
+    const nextAction = () => {
+      Utils.redirect('subscribe')
+    }
+    this.props.logout(nextAction)
+  }
+
+  render() {
+    const { auth } = this.props
+    console.info('PageHeader => this.props: ', this.props, auth.isLoggedIn)
+    let theLink = (<li className='signin'><a href='https://app.a-smartlearning.com/en/sml/login' className='text-signin'> <span className='side-nav-item'>Sign In</span></a></li>)
+    if (auth && auth.isLoggedIn) {
+      theLink = (<li><a href='javascript: void(0);' className='side-nav-item route--link' onClick={() => this.doLogout()}>Logout</a></li>)
+    }
     return (
       <div className='subscribe-header'>
         <nav className='navbar navbar-default dk-navbar' role='navigation'>
@@ -28,7 +48,7 @@ class PageHeader extends React.Component {
               <li><Link to='subscribe' className='side-nav-item route--link' activeClassName='route--link--active dk-yellow'>Free Trial</Link></li>
               {/* <li><a href="contact"> <span class="side-nav-item">Contact</span></a></li> */}
               {/* <li><a href='javascript: void(0);' data-toggle='modal' data-target='#loginModal'> <span className='side-nav-item'>Sign Up</span></a></li> */}
-              <li className='signin'><a href='https://app.a-smartlearning.com/en/sml/login' className='text-signin'> <span className='side-nav-item'>Sign In</span></a></li>
+              {theLink}
             </ul>
           </div>
           {/* /.navbar-collapse */}
@@ -42,4 +62,12 @@ PageHeader.propTypes = {
   scrollTo: React.PropTypes.func.isRequired
 }
 
-export default PageHeader
+const mapDispatchToProps = {
+  ...authActions
+}
+
+const mapStateToProps = (state) => ({
+  auth: state.auth
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(PageHeader)
