@@ -40,7 +40,7 @@ class PageContent extends React.Component {
         <div className='student-section2 text-center' ref='journey'>
           <h3 className='dk-blue-text student-section2-text-header'>Your Smart Learning Journey</h3>
           <img className='rocket' src={RocketImage} alt='Rocket' />
-          <div className='text-left'>
+          <div className='text-left' style={{ overflow: 'hidden' }}>
             <div className='planet1'>
               <div className='planet'>
                 <img src={Planet1Image} alt='planet1' />
