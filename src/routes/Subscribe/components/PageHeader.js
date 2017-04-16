@@ -46,7 +46,7 @@ class PageHeader extends React.Component {
               <li><Link to='/student' className='side-nav-item route--link' activeClassName='route--link--active dk-yellow'>For Student</Link></li>
               <li><Link to='/parent' className='side-nav-item route--link' activeClassName='route--link--active dk-yellow'>For Parent</Link></li>
               <li><Link to='/subscribe' className='side-nav-item route--link' activeClassName='route--link--active dk-yellow'>Free Trial</Link></li>
-              {/* <li><a href="contact"> <span class="side-nav-item">Contact</span></a></li> */}
+              {/* <li><a href="/contact"> <span class="side-nav-item">Contact</span></a></li> */}
               {/* <li><a href='javascript: void(0);' data-toggle='modal' data-target='#loginModal'> <span className='side-nav-item'>Sign Up</span></a></li> */}
               {theLink}
             </ul>

@@ -54,7 +54,7 @@ class PageContent extends React.Component {
       <div className='subscribe-wrapper'>
         <div className='breadcrumb'>
           <a href='/' className='passed'>Home</a> <i className='fa fa-chevron-right' />
-          <a href='/subscriptions' className='passed'>My Subscription</a> <i className='fa fa-chevron-right' />
+          <a href='/subscription' className='passed'>My Subscription</a> <i className='fa fa-chevron-right' />
           <a href='javascript:void(0)' className='active'>Subscription Details</a>
         </div>
         {subscriptionDetails}

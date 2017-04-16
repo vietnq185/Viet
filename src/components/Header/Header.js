@@ -33,7 +33,7 @@ export const Header = () => (
         <li>
           <Link to='/subscribe' className='side-nav-item dk-white route--item' activeClassName='route--active dk-yellow'>Free Trial</Link>
         </li>
-        {/* <li><a href="contact"> <span class="side-nav-item dk-white">Contact</span></a></li> */}
+        {/* <li><a href="/contact"> <span class="side-nav-item dk-white">Contact</span></a></li> */}
         {/* <li><a href='javascript: void(0);' data-toggle='modal' data-target='#loginModal'> <span className='side-nav-item dk-white'>Sign Up</span></a></li> */}
         <li className='signin'>
           <a href='https://app.a-smartlearning.com/en/sml/login' className='text-signin'> <span className='side-nav-item dk-white'>Sign In</span></a>
