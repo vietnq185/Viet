@@ -1,0 +1,1 @@
+{"version":3,"sources":["server/routes/plan.route.js"],"names":["planCtrl","router","Router","route","get","list"],"mappings":";;;;;;AAAA;;;;AAEA;;IAAYA,Q;;;;;;AAEZ,IAAMC,SAAS,kBAAQC,MAAR,EAAf,C,CAAiC;;AAEjCD,OAAOE,KAAP,CAAa,GAAb;AACE;AADF,CAEGC,GAFH,CAEOJ,SAASK,IAFhB;;kBAIeJ,M","file":"plan.route.js","sourceRoot":"../../../../.."}

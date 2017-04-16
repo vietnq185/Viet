@@ -1,0 +1,1 @@
+{"version":3,"sources":["server/models/course.model.js"],"names":["CourseModel","table","primaryKey","schema"],"mappings":";;;;;;AAAA;;;;;;;;;;;;AAEA;;;IAGMA,W;;;AACJ;AACA,yBAAc;AAAA;;AACZ,QAAMC,QAAQ,SAAd;AACA,QAAMC,aAAa,KAAnB;AACA,QAAMC,SAAS,EAAf;;AAGA;AANY,qHAONF,KAPM,EAOCC,UAPD,EAOaC,MAPb;AAQb;AACD;;;;;;AAGF;;;;;kBAGeH,W","file":"course.model.js","sourceRoot":"../../../../.."}
