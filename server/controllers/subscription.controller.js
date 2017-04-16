@@ -234,44 +234,40 @@ export const getSubscriptionById = (req, res, next) => {
   const cModel = new CourseModel();
   const pModel = new PlanModel();
   const ccModel = new CCListModel();
-  const uModel = new UserModel;
-  const iModel = new ItemModel;
+  const uModel = new UserModel();
+  const iModel = new ItemModel();
   return new SubscriptionModel().select(`t1.*,
       ARRAY(SELECT t2.title FROM ${cModel.getTable()} AS t2 
             INNER JOIN ${pModel.getTable()} AS t3 ON t2._id = ANY(ARRAY[t3."courseIds"])
             WHERE t3._id=t1."planId") AS "courseTitles", t4.name, t4.ccnum, t4.ccmonth, t4.ccyear, t4.cvv,
       (SELECT t5.user FROM ${iModel.getTable()} AS t5 WHERE t5.order=t1._id Limit 1) AS "studentId"
     `)
-    .join(`${ccModel.getTable()} AS t4`, 't1."cardId"::varchar=t4."_id"::varchar') // eslint-disable-line
-    .where('t1._id::varchar=$1').limit(1).offset(0).findAll([req.params.subscriptionId]).then((subscription) => {
+    .join(`${ccModel.getTable()} AS t4`, 't1."cardId"::varchar=t4."_id"::varchar', 'left') // eslint-disable-line
+    .where('t1._id::varchar=$1').findOne([req.params.subscriptionId]).then((subscription) => { // eslint-disable-line
       if (subscription !== null) {
         const flist = ['name', 'ccnum', 'ccmonth', 'ccyear', 'cvv'];
-        for (let i = 0; i < subscription.length; i++) {  // eslint-disable-line
-          try {
-            for (let j = 0; j < flist.length; j++) { // eslint-disable-line
-              const fn = flist[j];
-              subscription[i][fn] = Utils.aesDecrypt(subscription[i][fn], constants.ccSecret); // eslint-disable-line
-              if (fn === 'ccnum') {
-                subscription[i][fn] = (subscription[i][fn] + '').replace(/.(?=.{4,}$)/g, "*"); // eslint-disable-line
-              }
+        try {
+          for (let j = 0; j < flist.length; j++) { // eslint-disable-line
+            const fn = flist[j];
+            subscription[fn] = Utils.aesDecrypt(subscription[fn], constants.ccSecret); // eslint-disable-line
+            if (fn === 'ccnum') {
+              subscription[fn] = (subscription[fn] + '').replace(/.(?=.{4,}$)/g, "*"); // eslint-disable-line
             }
-          } catch (ex) { } // eslint-disable-line
-        }
-        const items = '',
-          subscriptionData = subscription[0];
-        subscriptionData.items = []
+          }
+        } catch (ex) { } // eslint-disable-line
+        subscription.items = [] // eslint-disable-line
         return new ItemModel()
-        .select('t1.*, t2."firstName", t2."lastName", t2."email", t2."metadata" AS "studentInfo"')
-        .where('t1.order=$1')
-        .join(`${uModel.getTable()} AS t2`, 't1."user"=t2."_id"', 'left outer') // eslint-disable-line
-        .findAll([subscriptionData._id])
+          .select('t1.*, t2."firstName", t2."lastName", t2."email", t2."metadata" AS "studentInfo"')
+          .where('t1.order=$1')
+          .join(`${uModel.getTable()} AS t2`, 't1."user"=t2."_id"', 'left outer') // eslint-disable-line
+          .findAll([subscription._id])
           .then((items) => {
-            subscriptionData.items = items;
-            return res.json(new APIResponse(subscriptionData));
+            subscription.items = items; // eslint-disable-line
+            return res.json(new APIResponse(subscription));
           })
           .catch(e => next(e));
       }
-      return res.json(new APIResponse({ msg: constants.errors.subscriptionNotFound }))
+      return res.json(new APIResponse({ msg: constants.errors.subscriptionNotFound }));
     }).catch(e => next(e));
 };
 
