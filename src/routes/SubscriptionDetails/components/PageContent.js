@@ -5,6 +5,9 @@ import API from '../../../helpers/api'
 import Utils from '../../../helpers/utils'
 import SubscriptionCancelled from './SubscriptionCancelled'
 import SubscriptionTrailing from './SubscriptionTrailing'
+import SubscriptionOverdue from './SubscriptionOverdue'
+import SubscriptionPending from './SubscriptionPending'
+import SubscriptionActive from './SubscriptionActive'
 
 class PageContent extends React.Component {
   constructor(props) {
@@ -36,6 +39,9 @@ class PageContent extends React.Component {
       const viewMap = {}
       viewMap['cancelled'] = (<SubscriptionCancelled key={Utils.guid()} {...this.props} objSubscription={objSubscription} />)
       viewMap['trailing'] = (<SubscriptionTrailing key={Utils.guid()} {...this.props} objSubscription={objSubscription} />)
+      viewMap['overdue'] = (<SubscriptionOverdue key={Utils.guid()} {...this.props} objSubscription={objSubscription} />)
+      viewMap['pending'] = (<SubscriptionPending key={Utils.guid()} {...this.props} objSubscription={objSubscription} />)
+      viewMap['active'] = (<SubscriptionActive key={Utils.guid()} {...this.props} objSubscription={objSubscription} />)
       if (typeof viewMap[objSubscription.status] !== 'undefined') {
         subscriptionDetails = viewMap[objSubscription.status]
       } else {
@@ -48,7 +54,7 @@ class PageContent extends React.Component {
       <div className='subscribe-wrapper'>
         <div className='breadcrumb'>
           <a href='/' className='passed'>Home</a> <i className='fa fa-chevron-right' />
-          <a href='/' className='passed'>My Subscription</a> <i className='fa fa-chevron-right' />
+          <a href='/subscriptions' className='passed'>My Subscription</a> <i className='fa fa-chevron-right' />
           <a href='javascript:void(0)' className='active'>Subscription Details</a>
         </div>
         {subscriptionDetails}

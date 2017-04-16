@@ -1,11 +1,11 @@
-/* seslint-disable */
+/* eslint-disable */
 import React from 'react'
 
 import '../../../styles/subscribe.css'
 
 const moment = require('moment')
 
-class SubscriptionTrailing extends React.Component {
+class SubscriptionOverdue extends React.Component {
   render() {
     const { objSubscription } = this.props
     var studentInfo = (
@@ -21,13 +21,13 @@ class SubscriptionTrailing extends React.Component {
       var studentData = objSubscription.items[0],
         sYearOfBirth = studentData.studentInfo.yearOfBirth || '',
         sClass = studentData.studentInfo.class || '',
-        sSchool = studentData.studentInfo.school || '',
-        mailTo = 'mailto:' + studentData.email;
+        sSchool = studentData.studentInfo.school || '';
+
       studentInfo = (
         <div className='row'>
           <div className='col-sm-6 col-xs-12'>
             <div>Name: {studentData.firstName} {studentData.lastName}</div>
-            <div>Email: <a href={mailTo}>{studentData.email}</a></div>
+            <div>Email: <a href='mailto:{studentData.email}'>{studentData.email}</a></div>
             <div>Year of Birth: {sYearOfBirth}</div>
           </div>
           <div className='col-sm-6 col-xs-12'>
@@ -37,22 +37,9 @@ class SubscriptionTrailing extends React.Component {
         </div>
       )
     }
-    var expiryDate = moment(moment.unix(objSubscription.expiryDate / 1000).format('YYYY-MM-DD')),
-      expiryDateFrom = moment(moment.unix(objSubscription.expiryDateFrom / 1000).format('YYYY-MM-DD')),
-      trialExpiryTxt = '';
-    if (expiryDate.diff(expiryDateFrom, 'days') > 1) {
-      trialExpiryTxt = (
-        <span className='trail-near-expire'>Your trial will expire in {expiryDate.diff(expiryDateFrom, 'days')} days</span>
-      )
-    } else {
-      trialExpiryTxt = (
-        <span className='trail-near-expire'>Your trial will expire in {moment.unix(objSubscription.expiryDate / 1000).format('HH:mm:ss')}</span>
-      )
-    }
-
     return (
       <div className='subscribe-details'>
-        <h1>{objSubscription.courseTitles.join(' & ')} <span className='status status-trailing'>Trailing</span>{trialExpiryTxt}<a href='' className='cancel-link'>Cancel</a><a href='' className='upgrade-link'>Upgrade</a></h1>
+        <h1>{objSubscription.courseTitles.join(' & ')} <span className='status status-overdue'>Overdue</span></h1>
         <h3>Subscription details</h3>
         <div className='info'>
           <div className='row'>
@@ -64,7 +51,7 @@ class SubscriptionTrailing extends React.Component {
             <div className='col-sm-6 col-xs-12'>
               <div>Current period: {moment.unix(objSubscription.expiryDateFrom / 1000).format('MMM D, YYYY')} to {moment.unix(objSubscription.expiryDate / 1000).format('MMM D, YYYY')}</div>
               <div>Created: {moment.unix(objSubscription.dateCreated / 1000).format('MMM D, YYYY')}</div>
-              <div>Trialing until: {moment.unix(objSubscription.expiryDate / 1000).format('MMM D, YYYY')}</div>
+              <div>Latest failed charge: {objSubscription.lastPaymentDate !== null ? (moment.unix(objSubscription.lastPaymentDate / 1000).format('MMM D, YYYY')) : ''}</div>
             </div>
           </div>
         </div>
@@ -102,7 +89,7 @@ class SubscriptionTrailing extends React.Component {
   }
 }
 
-SubscriptionTrailing.propTypes = {
+SubscriptionOverdue.propTypes = {
 }
 
-export default SubscriptionTrailing
+export default SubscriptionOverdue
