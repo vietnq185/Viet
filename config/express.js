@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import express from 'express';
 import logger from 'morgan';
 import bodyParser from 'body-parser';
@@ -39,7 +41,7 @@ app.use(cors());
 
 // enable detailed API logging in dev env
 if (config.env === 'development') {
-  //expressWinston.requestWhitelist.push('body');
+  // expressWinston.requestWhitelist.push('body');
   // expressWinston.responseWhitelist.push('body');
   // app.use(expressWinston.logger({
   //   winstonInstance,
@@ -52,10 +54,49 @@ if (config.env === 'development') {
 // mount all routes on /api path
 app.use('/api', routes);
 
+
+// -------------------------------------------------------------------------------
+// START - using web server on the same host with API
+// -------------------------------------------------------------------------------
+
+app.use(express.static(path.join(__dirname, '../web')));
+
+app.get('*', (req, res, next) => {
+  try {
+    // check if want to go to API
+    if (req.url.substring(0, 5) === '/api/') {
+      return next();
+    }
+    // other wise, render index
+    const filepath = path.join(__dirname, '../web/index.html');
+    const content = fs.readFileSync(filepath, { encoding: 'utf8' });
+    return res.status(200).send(content);
+  } catch (err) {
+    return next(err);
+  }
+});
+
+// error handler middleware
+const errorHandler = (err, req, res, next) => { // eslint-disable-line
+  // check if is error from API
+  if (req.url.substring(0, 5) === '/api/') {
+    return next(err);
+  }
+  // not belong to API error, render 404 page not found html
+  res.status(httpStatus.NOT_FOUND);
+  return res.send('<!doctype html><html lang="en"><head><title>A-SLS</title><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body><divstyle="height: 100%">Not found</div></body></html>');
+};
+// app.use(errorHandler);
+
+// -------------------------------------------------------------------------------
+// END - using web server on the same host with API
+// -------------------------------------------------------------------------------
+
+
 // if error is not an instanceOf APIError, convert it.
 app.use((err, req, res, next) => {
   debug('********** ORIGINAL ERROR ********** ', err);
-  //res.status(httpStatus.OK).json(new APIErrorResponse(err))
+  // res.status(httpStatus.OK).json(new APIErrorResponse(err))
   if (err instanceof expressValidation.ValidationError) {
     // validation error contains errors which is an array of error each containing message[]
     const unifiedErrorMessage = err.errors.map(error => error.messages.join('. ')).join(' and ');
