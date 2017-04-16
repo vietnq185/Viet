@@ -50,6 +50,8 @@ class SubscriptionTrailing extends React.Component {
       )
     }
 
+    let theRate = (objSubscription.expirationType === 'annually' ? 12 : 1)
+
     return (
       <div className='subscribe-details'>
         <h1>{objSubscription.courseTitles.join(' & ')} <span className='status status-trailing'>Trailing</span>{trialExpiryTxt}<a href='' className='cancel-link'>Cancel</a><a href='' className='upgrade-link'>Upgrade</a></h1>
@@ -58,7 +60,7 @@ class SubscriptionTrailing extends React.Component {
           <div className='row'>
             <div className='col-sm-6 col-xs-12'>
               <div>ID: {objSubscription._id}</div>
-              <div>Plan: <span className='dk-blue'>{objSubscription.courseTitles.join(' & ')} (${parseFloat(objSubscription.fee).toFixed(2)}/{objSubscription.expirationType == 'annually' ? 'month' : 'year'})</span></div>
+              <div>Plan: <span className='dk-blue'>{objSubscription.courseTitles.join(' & ')} (${parseFloat((objSubscription.fee - objSubscription.discount) * theRate).toFixed(2)}/{objSubscription.expirationType == 'annually' ? 'year' : 'month'})</span></div>
               <div>Payment method: {objSubscription.channel == 'bank' ? 'Bank Transfer' : 'VISA ******' + objSubscription.ccnum}</div>
             </div>
             <div className='col-sm-6 col-xs-12'>
