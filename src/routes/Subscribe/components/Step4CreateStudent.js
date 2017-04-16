@@ -122,7 +122,7 @@ class Step4CreateStudent extends React.Component {
         <div className='alert alert-success'>
           <p>Congrats! You have successfully subscribed to a plan. Now please create a <strong>Student Account</strong> for your child to start enjoyning it.</p>
           <br />
-          <p>You can also do it later by accessing to <a href=''>My Subscription</a> page</p>
+          <p>You can also do it later by accessing to <a href='javascript: void(0);' onClick={() => Utils.redirect('subscription')}>My Subscription</a> page</p>
         </div>
         <div className='subscription-assign-student'>
           <div className='row'>

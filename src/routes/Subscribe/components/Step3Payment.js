@@ -156,6 +156,22 @@ class Step3Payment extends React.Component {
       ccyearList.push(selected ? <option key={'ccyear' + val} value={val} selected>{val}</option> : <option key={'ccyear' + val} value={val}>{val}</option>)
     }
 
+    let bankTransferOption = (
+      <li onClick={() => this.setState({ paymentMethod: BANK_TRANSFER })}>
+        {this.state.paymentMethod === BANK_TRANSFER ? (<input type='radio' name='payment_method' id='bank' value={BANK_TRANSFER} defaultChecked />) : (<input type='radio' name='payment_method' id='bank' value={BANK_TRANSFER} />)}
+        <label htmlFor='bank'><i className='fa fa-money' aria-hidden='true' />Bank Transfer</label>
+      </li>
+    )
+
+    if (frequency === MONTHLY) {
+      bankTransferOption = (
+        <li>
+          <input type='radio' name='payment_method' id='bank' value={BANK_TRANSFER} disabled />
+          <label htmlFor='bank'><i className='fa fa-money' aria-hidden='true' />Bank Transfer</label>
+        </li>
+      )
+    }
+
     return (
       <div className='subscription-complete-payment'>
         <div className='row'>
@@ -182,10 +198,7 @@ class Step3Payment extends React.Component {
                   {this.state.paymentMethod === CREDIT_CARD ? (<input type='radio' name='payment_method' id='cc' value={CREDIT_CARD} defaultChecked />) : (<input type='radio' name='payment_method' id='cc' value={CREDIT_CARD} />)}
                   <label htmlFor='cc'><i className='fa fa-credit-card' aria-hidden='true' />Credit/Debit Card</label>
                 </li>
-                <li onClick={() => this.setState({ paymentMethod: BANK_TRANSFER })}>
-                  {this.state.paymentMethod === BANK_TRANSFER ? (<input type='radio' name='payment_method' id='bank' value={BANK_TRANSFER} defaultChecked />) : (<input type='radio' name='payment_method' id='bank' value={BANK_TRANSFER} />)}
-                  <label htmlFor='bank'><i className='fa fa-money' aria-hidden='true' />Bank Transfer</label>
-                </li>
+                {bankTransferOption}
               </ul>
               <div className={this.state.paymentMethod === CREDIT_CARD ? 'cc-container' : 'hide'}>
                 <ul className='list-inline'>
