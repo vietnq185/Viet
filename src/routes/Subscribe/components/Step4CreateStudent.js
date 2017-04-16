@@ -112,6 +112,11 @@ class Step4CreateStudent extends React.Component {
   }
 
   render () {
+    const currentYear = new Date().getFullYear()
+    const yearList = []
+    for (let year = currentYear; year > currentYear - 50; year--) { // eslint-disable-line
+      yearList.push(<option key={`year${year}`} value={year}>{year}</option>)
+    }
     return (
       <div className='subscription-assign-student-container'>
         <div className='alert alert-success'>
@@ -176,10 +181,7 @@ class Step4CreateStudent extends React.Component {
                   <div className='form-group'>
                     <label htmlFor='contact-name'>Year of Birth</label>
                     <select className='form-control' name='year_of_birth' id='year_of_birth' required='' ref='yearOfBirth'>
-                      <option value='2017'>2017</option>
-                      <option value='2018'>2018</option>
-                      <option value='2019'>2019</option>
-                      <option value='2020'>2020</option>
+                      {yearList}
                     </select>
                   </div>
                 </div>
