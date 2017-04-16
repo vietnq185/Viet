@@ -5,7 +5,7 @@ import '../../../styles/subscribe.css'
 
 const moment = require('moment')
 
-class SubscriptionTrailing extends React.Component {
+class SubscriptionActive extends React.Component {
   render() {
     const { objSubscription } = this.props
     var studentInfo = (
@@ -37,22 +37,10 @@ class SubscriptionTrailing extends React.Component {
         </div>
       )
     }
-    var expiryDate = moment(moment.unix(objSubscription.expiryDate / 1000).format('YYYY-MM-DD')),
-      expiryDateFrom = moment(moment.unix(objSubscription.expiryDateFrom / 1000).format('YYYY-MM-DD')),
-      trialExpiryTxt = '';
-    if (expiryDate.diff(expiryDateFrom, 'days') > 1) {
-      trialExpiryTxt = (
-        <span className='trail-near-expire'>Your trial will expire in {expiryDate.diff(expiryDateFrom, 'days')} days</span>
-      )
-    } else {
-      trialExpiryTxt = (
-        <span className='trail-near-expire'>Your trial will expire in {moment.unix(objSubscription.expiryDate / 1000).format('HH:mm:ss')}</span>
-      )
-    }
-
+    
     return (
       <div className='subscribe-details'>
-        <h1>{objSubscription.courseTitles.join(' & ')} <span className='status status-trailing'>Trailing</span>{trialExpiryTxt}<a href='' className='cancel-link'>Cancel</a><a href='' className='upgrade-link'>Upgrade</a></h1>
+        <h1>{objSubscription.courseTitles.join(' & ')} <span className='status status-active'>Active</span><a href='' className='cancel-link'>Cancel</a><a href='' className='upgrade-link'>Upgrade</a></h1>
         <h3>Subscription details</h3>
         <div className='info'>
           <div className='row'>
@@ -64,7 +52,6 @@ class SubscriptionTrailing extends React.Component {
             <div className='col-sm-6 col-xs-12'>
               <div>Current period: {moment.unix(objSubscription.expiryDateFrom / 1000).format('MMM D, YYYY')} to {moment.unix(objSubscription.expiryDate / 1000).format('MMM D, YYYY')}</div>
               <div>Created: {moment.unix(objSubscription.dateCreated / 1000).format('MMM D, YYYY')}</div>
-              <div>Trialing until: {moment.unix(objSubscription.expiryDate / 1000).format('MMM D, YYYY')}</div>
             </div>
           </div>
         </div>
@@ -102,7 +89,7 @@ class SubscriptionTrailing extends React.Component {
   }
 }
 
-SubscriptionTrailing.propTypes = {
+SubscriptionActive.propTypes = {
 }
 
-export default SubscriptionTrailing
+export default SubscriptionActive
