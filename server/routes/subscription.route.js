@@ -36,4 +36,8 @@ router.route('/changeStatus/:subscriptionId/:newStatus')
   /** GET /api/subscriptions/changeStatus/:subscriptionId/:newStatus - Get subscription details */
   .get(/* authCtrl.verifyAccessToken, */subscriptionCtrl.changeStatus);
 
+router.route('/pay/:subscriptionId')
+  /** GET /api/subscriptions/pay/:subscriptionId - Pay subscription */
+  .get(/* authCtrl.verifyAccessToken, */subscriptionCtrl.paySubscription);
+
 export default router;
