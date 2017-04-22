@@ -109,7 +109,7 @@ const paymentResult = (result) => {
 
 const COMPLETE_SUBSCRIPTION = 'COMPLETE_SUBSCRIPTION'
 
-export const subscriptionResult = (result) => {
+export const updateSubscriptionResult = (result) => {
   return {
     type: COMPLETE_SUBSCRIPTION,
     result
@@ -135,6 +135,7 @@ export const assignStudent = (result) => {
 
 export const completeSubscription = (data) => (dispatch, getState) => {
   return new Promise((resolve, reject) => {
+    dispatch(updateSubscriptionResult({ success: false, result: null, error: null })) // restart
     dispatch(paymentResult(data))
     return authActions.checkAccessToken().then(() => {
       const state = getState()
@@ -166,11 +167,11 @@ export const completeSubscription = (data) => (dispatch, getState) => {
       return API.createSubscription(jwt.accessToken, subData).then((result) => {
         console.info('createSubscription => result: ', result)
         dispatch(restart())
-        dispatch(subscriptionResult({ success: true, result, error: null }))
+        dispatch(updateSubscriptionResult({ success: true, result, error: null }))
         dispatch(assignStudent({ subscriptionId: result._id }))
         dispatch(changeStep(STEPS.linkStudent))
       }).catch((error) => {
-        dispatch(subscriptionResult({ success: false, result: null, error }))
+        dispatch(updateSubscriptionResult({ success: false, result: null, error }))
         console.info('createSubscription => error: ', error)
       })
     }).catch((error) => {
@@ -242,7 +243,7 @@ export default (state = initialState, action) => {
       })
       break // eslint-disable-line
     case COMPLETE_SUBSCRIPTION:
-      return Utils.merge(state, { subscriptionResult: action.result })
+      return Utils.merge(state, { subscriptionResult: { ...state.subscriptionResult, ...action.result } })
       break // eslint-disable-line
     case RESTART_SUBSCRIPTION:
       return Utils.copy(initialState)

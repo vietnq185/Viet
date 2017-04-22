@@ -38,7 +38,7 @@ class PageContent extends React.Component {
 
   assignSubscription(item) {
     this.props.restart()
-    this.props.subscriptionResult({ success: false, result: item, err: null })
+    this.props.updateSubscriptionResult({ success: false, result: item, err: null })
     this.props.assignStudent({ subscriptionId: item._id })
     this.props.changeStep(this.props.subscribe.steps.linkStudent)
     Utils.redirect('/subscribe')

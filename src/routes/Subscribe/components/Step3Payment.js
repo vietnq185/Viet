@@ -43,6 +43,16 @@ class Step3Payment extends React.Component {
     }
   }
 
+  componentWillReceiveProps(nextProps) {
+    console.info('Subscribe => PageContent => Payment component => componentWillReceiveProps => nextProps: ', nextProps)
+    this.setState({
+      paymentMethod: nextProps.paymentMethod,
+      selectedCardId: nextProps.selectedCardId || '',
+      newCC: nextProps.newCC || {},
+      showFailedDialog: (nextProps.subscriptionResult.success === false && nextProps.subscriptionResult.error !== null)
+    });
+  }
+
   resetErrors() {
     this.errors = Utils.copy(this.initialErrors)
     this.setState({ hasError: false })
