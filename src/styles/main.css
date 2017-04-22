@@ -79,6 +79,9 @@ body {
 .mt2 {
 	margin-top: 20px;
 }
+.mb5 {
+	margin-bottom: 5px;
+}
 .fleft {
 	float: left;
 }
@@ -751,4 +754,14 @@ body {
 .section3-testimonial.active {
 	opacity: 1;
 	transform: translateX(0);
+}
+#modalFreeTrialConfirm,
+#modalFreeTrialConfirmStudent{
+	color: #000;
+}
+#modalFreeTrialConfirm .modalFreeTrialConfirmTitle,
+#modalFreeTrialConfirmStudent .modalFreeTrialConfirmTitle,{
+	display: inline-block;
+    font-size: 25px;
+    font-weight: 600;
 }
