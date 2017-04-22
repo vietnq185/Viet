@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from 'react'
 
 import API from '../../../helpers/api'
@@ -5,7 +6,7 @@ import Utils from '../../../helpers/utils'
 import validate from '../../../helpers/validate'
 
 class Step4CreateStudent extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.initialErrors = {
       firstName: '',
@@ -21,22 +22,26 @@ class Step4CreateStudent extends React.Component {
     }
   }
 
-  resetErrors () {
+  resetErrors() {
     this.errors = Utils.copy(this.initialErrors)
     this.setState({ hasError: false, errMsg: '' })
   }
 
-  setErrors (errors) {
+  setErrors(errors) {
     this.errors = errors
     this.setState({ hasError: true, errMsg: '' })
   }
 
-  extractdata () {
+  extractdata() {
     const data = {}
     for (let field in this.refs) {
       if (this.refs.hasOwnProperty(field)) {
         data[field] = this.refs[field].value || ''
       }
+    }
+    const { userId, isParent } = this.props.auth.jwt || {} // eslint-disable-line
+    if (userId && isParent) {
+      data.parentId = userId
     }
     data.status = ['student']
     data.metadata = {
@@ -47,7 +52,7 @@ class Step4CreateStudent extends React.Component {
     return data
   }
 
-  submitForm () {
+  submitForm() {
     const self = this
 
     this.resetErrors()
@@ -80,7 +85,7 @@ class Step4CreateStudent extends React.Component {
       // can submit
       console.info('can submit form')
       API.register(this.extractdata()).then((jsonResponse) => {
-        const { accessToken, userId } = self.props.auth.jwt // eslint-disable-line
+        const { accessToken, userId } = self.props.auth.jwt || {} // eslint-disable-line
         // do assignment
         API.assignStudent(accessToken, {
           subscriptionId: self.props.assignment.subscriptionId,
@@ -111,7 +116,7 @@ class Step4CreateStudent extends React.Component {
     }
   }
 
-  render () {
+  render() {
     const requiredLabel = (<abbr className='dk-red-text'>&nbsp;*</abbr>)
     const currentYear = new Date().getFullYear()
     const yearList = []

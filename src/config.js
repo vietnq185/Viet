@@ -43,6 +43,7 @@ config.api = {
   countSubscriptions: '/api/subscriptions/countSubscriptions', // GET
   assignStudent: '/api/subscriptions/AssignStudent', // POST
   getSubscriptionList: '/api/subscriptions/list/:userId/:page', // GET
+  linkStudent: '/api/users/linkStudent', // POST
 }
 config.api = concatHost(config.apiServer, config.api)
 
