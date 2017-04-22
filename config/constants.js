@@ -27,6 +27,7 @@ export default {
     subscriptionPaidSuccessful: 'SUBSCRIPTION_PAID_SUCCESSFUL',
     subscriptionPaidUnSuccessful: 'SUBSCRIPTION_PAID_UNSUCCESSFUL',
     subscriptionUpgradeSuccessful: 'SUBSCRIPTION_UPGRADE_SUCCESSFUL',
-    subscriptionUpgradeUnSuccessful: 'SUBSCRIPTION_UPGRADE_UNSUCCESSFUL'
+    subscriptionUpgradeUnSuccessful: 'SUBSCRIPTION_UPGRADE_UNSUCCESSFUL',
+    invalidCard: 'INVALID_CARD',
   },
 };

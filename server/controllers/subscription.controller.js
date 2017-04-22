@@ -31,7 +31,19 @@ const createCard = (req) => {
       cvv: Utils.aesEncrypt(req.body.cvv, constants.ccSecret),
       dateCreated: new Date().getTime()
     };
-    return new CCListModel().insert(cardData).then(resolve).catch(reject);
+    var stripe = require("stripe")(constants.StripeSecretKey)
+    stripe.tokens.create({
+      card: {
+        "number": req.body.ccnum,
+        "exp_month": req.body.ccmonth,
+        "exp_year": req.body.ccyear,
+        "cvc": req.body.cvv
+      }
+    }, function (err, token) {
+      if (token)  return new CCListModel().insert(cardData).then(resolve).catch(reject);
+      return reject(new APIError(constants.errors.invalidCard, httpStatus.OK, true));
+    });
+    
   });
 }
 
