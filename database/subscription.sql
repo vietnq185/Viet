@@ -55,6 +55,9 @@ ALTER TABLE subscriptions ADD COLUMN "fee" double precision DEFAULT 0;
 ALTER TABLE subscriptions ADD COLUMN "lastPaymentDate" bigint;
 ALTER TABLE subscriptions ADD COLUMN "expiryDateFrom" bigint;
 
+ALTER TABLE subscriptions ADD COLUMN "stripeCustomerId" character varying(255) COLLATE pg_catalog."default";
+ALTER TABLE subscriptions ADD COLUMN "stripeSubscriptionId" character varying(255) COLLATE pg_catalog."default";
+
 CREATE TABLE payment_history (
     _id uuid NOT NULL,
     "subscriptionId" uuid NOT NULL,
