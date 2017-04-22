@@ -34,7 +34,7 @@ export const getSubscriptionList = (page) => (dispatch, getState) => {
   }).catch((error) => {
     console.info('getSubscriptionList => checkAccessToken => error: ', error)
     const nextAction = () => {
-      Utils.redirect('subscribe')
+      Utils.redirect('/subscribe')
     }
     dispatch(authActions.logout(nextAction))
   })

@@ -27,6 +27,14 @@ class PageContent extends React.Component {
     })
   }
 
+  assignSubscription(item) {
+    this.props.restart()
+    this.props.subscriptionResult({ success: false, result: item, err: null })
+    this.props.assignStudent({ subscriptionId: item._id })
+    this.props.changeStep(this.props.subscribe.steps.linkStudent)
+    Utils.redirect('/subscribe')
+  }
+
   render() {
     var objSubscription = this.state.subscription
     console.log(objSubscription)
@@ -37,11 +45,11 @@ class PageContent extends React.Component {
       )
     } else {
       const viewMap = {}
-      viewMap['cancelled'] = (<SubscriptionCancelled key={Utils.guid()} {...this.props} objSubscription={objSubscription} />)
-      viewMap['trailing'] = (<SubscriptionTrailing key={Utils.guid()} {...this.props} objSubscription={objSubscription} />)
-      viewMap['overdue'] = (<SubscriptionOverdue key={Utils.guid()} {...this.props} objSubscription={objSubscription} />)
+      viewMap['cancelled'] = (<SubscriptionCancelled key={Utils.guid()} {...this.props} objSubscription={objSubscription} assignSubscription={() => this.assignSubscription(objSubscription)} />)
+      viewMap['trailing'] = (<SubscriptionTrailing key={Utils.guid()} {...this.props} objSubscription={objSubscription} assignSubscription={() => this.assignSubscription(objSubscription)} />)
+      viewMap['overdue'] = (<SubscriptionOverdue key={Utils.guid()} {...this.props} objSubscription={objSubscription} assignSubscription={() => this.assignSubscription(objSubscription)} />)
       viewMap['pending'] = (<SubscriptionPending key={Utils.guid()} {...this.props} objSubscription={objSubscription} />)
-      viewMap['active'] = (<SubscriptionActive key={Utils.guid()} {...this.props} objSubscription={objSubscription} />)
+      viewMap['active'] = (<SubscriptionActive key={Utils.guid()} {...this.props} objSubscription={objSubscription} assignSubscription={() => this.assignSubscription(objSubscription)} />)
       if (typeof viewMap[objSubscription.status] !== 'undefined') {
         subscriptionDetails = viewMap[objSubscription.status]
       } else {

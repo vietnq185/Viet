@@ -16,7 +16,7 @@ class PageHeader extends React.Component {
     const self = this
     setTimeout(function () {
       const nextAction = () => {
-        Utils.redirect('subscribe')
+        Utils.redirect('/subscribe')
       }
       self.props.logout(nextAction)
     }, 500);

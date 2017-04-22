@@ -1,6 +1,7 @@
 import { connect } from 'react-redux'
 import * as actions from '../modules/subscription'
 import * as authActions from '../../../store/auth'
+import * as subscribeActions from '../../Subscribe/modules/subscribe'
 
 /*  This is a container component. Notice it does not contain any JSX,
     nor does it import React. This component is **only** responsible for
@@ -15,12 +16,14 @@ import Subscription from '../components/Subscription'
 
 const mapDispatchToProps = {
   ...actions,
-  ...authActions
+  ...authActions,
+  ...subscribeActions
 }
 
 const mapStateToProps = (state) => ({
   ...state.subscription,
-  auth: state.auth
+  auth: state.auth,
+  subscribe: state.subscribe
 })
 
 /*  Note: mapStateToProps is where you should use `reselect` to create selectors, ie:

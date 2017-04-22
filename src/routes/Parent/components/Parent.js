@@ -16,7 +16,7 @@ class Parent extends React.Component {
     return (
       <div style={{ margin: '0 auto' }} >
         <PageHeader scrollTo={() => this.scrollTo()} />
-        <PageContent ref='pageContent' />
+        <PageContent ref='pageContent' {...this.props} />
         <Footer />
       </div>
     )

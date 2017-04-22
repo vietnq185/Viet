@@ -29,8 +29,8 @@ const merge = (src, dst) => { // eslint-disable-line
 const config = {}
 
 // API
-//config.apiServer = 'http://localhost:4040'
-config.apiServer = 'https://asls.herokuapp.com'
+config.apiServer = 'http://localhost:4040'
+//config.apiServer = 'https://asls.herokuapp.com'
 config.api = {
   getSubscriptionDetails: '/api/subscriptions/details/:subscriptionId', // GET
   signIn: '/api/auth/login', // POST

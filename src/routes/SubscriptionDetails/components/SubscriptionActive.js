@@ -1,4 +1,4 @@
-/* seslint-disable */
+/* eslint-disable */
 import React from 'react'
 
 import '../../../styles/subscribe.css'
@@ -13,7 +13,7 @@ class SubscriptionActive extends React.Component {
         <div className='col-xs-12 text-center'>
           No student account is assigned to this plan yet.
 							<br />
-          <a href='' className='assign-now-link'>Assign Now</a>
+          <a href='javascript: void(0);' onClick={() => this.props.assignSubscription()} className='assign-now-link'>Assign Now</a>
         </div>
       </div>
     )

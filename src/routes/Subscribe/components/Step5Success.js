@@ -16,7 +16,7 @@ class Step1SignIn extends React.Component {
 
   showSubscription() {
     this.props.restart()
-    Utils.redirect('subscription')
+    Utils.redirect('/subscription')
   }
 
   render() {

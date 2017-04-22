@@ -11,7 +11,8 @@ import ParentItem5Image from '../../../styles/images/parent-item5.png'
 class PageContent extends React.Component {
 
   onCreateParent () {
-    Utils.redirect('subscribe/signUp')
+    this.props.changeStep(this.props.subscribe.steps.signUp) // eslint-disable-line
+    Utils.redirect('/subscribe')
   }
   render () {
     return (

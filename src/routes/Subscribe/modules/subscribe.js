@@ -109,7 +109,7 @@ const paymentResult = (result) => {
 
 const COMPLETE_SUBSCRIPTION = 'COMPLETE_SUBSCRIPTION'
 
-const subscriptionResult = (result) => {
+export const subscriptionResult = (result) => {
   return {
     type: COMPLETE_SUBSCRIPTION,
     result

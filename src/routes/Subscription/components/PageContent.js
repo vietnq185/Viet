@@ -36,8 +36,12 @@ class PageContent extends React.Component {
 
   }
 
-  assignSubscription(id) {
-
+  assignSubscription(item) {
+    this.props.restart()
+    this.props.subscriptionResult({ success: false, result: item, err: null })
+    this.props.assignStudent({ subscriptionId: item._id })
+    this.props.changeStep(this.props.subscribe.steps.linkStudent)
+    Utils.redirect('/subscribe')
   }
 
   render() {
@@ -56,7 +60,7 @@ class PageContent extends React.Component {
               Total {this.props.list.subscriptions.length} subscription(s)
           </div>
             <div className='col-sm-6 col-xs-12 text-right'>
-              <a href='javascript: void(0);' className='btn dk-bg-light-green dk-white' onClick={() => Utils.redirect('subscribe')}>+ Subscribe More</a>
+              <a href='javascript: void(0);' className='btn dk-bg-light-green dk-white' onClick={() => Utils.redirect('/subscribe')}>+ Subscribe More</a>
             </div>
           </div><br />
           <div className='table-responsive'>
@@ -84,12 +88,12 @@ class PageContent extends React.Component {
                     }
                     buttonsPanel.push(<a key={Utils.guid()} className='link-cancel-subscription' href='javascript: void(0);' onClick={() => this.cancelSubscription(item._id)}>Cancel</a>)
                     if ((item.studentId || '').length === 0) {
-                      buttonsPanel.push(<a key={Utils.guid()} className='link-assign-student' href='javascript: void(0);' onClick={() => this.assignSubscription(item._id)}>Assign</a>)
+                      buttonsPanel.push(<a key={Utils.guid()} className='link-assign-student' href='javascript: void(0);' onClick={() => this.assignSubscription(item)}>Assign</a>)
                     }
                   }
                   return (
                     <tr key={item._id}>
-                      <td className={'dk-blue-text'}><a className={'dk-blue-text'} href='javascript: void(0);' onClick={() => Utils.redirect(`subscription-details/${item._id}`)}>#{item._id.substring(0, 7)}...</a></td>
+                      <td className={'dk-blue-text'}><a className={'dk-blue-text'} href='javascript: void(0);' onClick={() => Utils.redirect(`/subscription-details/${item._id}`)}>#{item._id.substring(0, 7)}...</a></td>
                       <td>{item.courseTitles.join(' & ')}</td>
                       <td>${item.fee * theRate}/{theLabel} <span className='payment-method'>via {item.channel === constants.paymentMethod.creditCard ? 'Credit Card' : item.channel}</span></td>
                       <td>{moment.unix(item.dateCreated / 1000).format('MMM D, YYYY')}</td>

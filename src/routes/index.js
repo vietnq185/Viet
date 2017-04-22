@@ -5,7 +5,7 @@ import CounterRoute from './Counter'
 import ProgrammeRoute from './Programme'
 import StudentRoute from './Student'
 import ParentRoute from './Parent'
-import SubscribeRoute, { signUpRoute } from './Subscribe'
+import SubscribeRoute from './Subscribe'
 import SubscriptionRoute from './Subscription'
 import SubscriptionDetailsRoute from './SubscriptionDetails'
 import NotFoundRoute from './NotFound'
@@ -25,7 +25,6 @@ export const createRoutes = (store) => ({
     SubscribeRoute(store),
     SubscriptionRoute(store),
     SubscriptionDetailsRoute(store),
-    signUpRoute(store),
     NotFoundRoute(store)
   ]
 })
