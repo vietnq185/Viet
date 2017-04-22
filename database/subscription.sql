@@ -74,3 +74,5 @@ ALTER TABLE items DROP CONSTRAINT items_creator_fkey CASCADE;
 ALTER TABLE items DROP CONSTRAINT items_order_fkey CASCADE;
 ALTER TABLE items DROP CONSTRAINT "items_parentItem_fkey" CASCADE;
 ALTER TABLE items DROP CONSTRAINT items_user_fkey CASCADE;
+
+ALTER TABLE subscriptions ADD COLUMN refid SERIAL UNIQUE;

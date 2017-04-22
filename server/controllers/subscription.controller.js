@@ -1,3 +1,4 @@
+/* eslint-disable */
 import httpStatus from 'http-status';
 
 import * as authCtrl from './auth.controller';
@@ -206,7 +207,7 @@ export const getSubscriptionsByUser = (req, res, next) => {
     const pModel = new PlanModel();
     const cModel = new CourseModel();
     new SubscriptionModel().where('t1."parentId"::varchar=$1')
-      .select(`t1."_id", t1."parentId", t1."planId", t1."expirationType", t1."type", 
+      .select(`t1."_id", t1."parentId", t1."planId", t1."expirationType", t1."type", t1.refid,
         t1."expiryDate", t1.discount, t1.fee, t1.status, t1."dateCreated", t1.channel, t1."cardId", 
         ARRAY(SELECT t2.title FROM ${cModel.getTable()} AS t2 
           INNER JOIN ${pModel.getTable()} AS t3 ON t2._id = ANY(ARRAY[t3."courseIds"])
