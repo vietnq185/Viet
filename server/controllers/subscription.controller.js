@@ -12,9 +12,28 @@ import APIResponse from '../helpers/APIResponse';
 import APIError from '../helpers/APIError';
 import Utils from '../helpers/Utils';
 import constants from '../../config/constants';
+import stripePackage from 'stripe';
 
 const debug = require('debug')('rest-api:subscription.controller'); // eslint-disable-line
 
+const createCard = (req) => {
+  return new Promise((resolve, reject) => {
+    const parentId = req.body.parentId || '';
+    const channel = req.body.channel || '';
+    if (channel === 'bank' || typeof req.body.addCard === 'undefined') return resolve(null);
+    var cardData = {
+      _id: Utils.uuid(),
+      userId: parentId,
+      name: Utils.aesEncrypt(req.body.card_name, constants.ccSecret),
+      ccnum: Utils.aesEncrypt(req.body.ccnum, constants.ccSecret),
+      ccmonth: Utils.aesEncrypt(req.body.ccmonth, constants.ccSecret),
+      ccyear: Utils.aesEncrypt(req.body.ccyear, constants.ccSecret),
+      cvv: Utils.aesEncrypt(req.body.cvv, constants.ccSecret),
+      dateCreated: new Date().getTime()
+    };
+    return new CCListModel().insert(cardData).then(resolve).catch(reject);
+  });
+}
 
 /**
  * Create new subscription
@@ -88,29 +107,18 @@ export const create = (req, res, next) => {
     } else {
       data.frequency = 'yearly';
     }
-    // insert
-    return new SubscriptionModel().insert(data).then((savedSubscription) => {
+    // create card (if any)
+    return createCard(req).then(savedCard => {
+      if (savedCard !== null) {
+        data.cardId = savedCard._id;
+      }
+      return new SubscriptionModel().insert(data)
+    }).then((savedSubscription) => {
       if (savedSubscription === null) {
         return Promise.reject(new APIError(constants.errors.createSubscriptionError, httpStatus.OK, true));
       }
       return Promise.resolve(savedSubscription)
     }).then((savedSubscription) => {
-      if (channel !== 'bank' && typeof req.body.addCard !== 'undefined') {
-        var cardData = {
-          _id: Utils.uuid(),
-          userId: parentId,
-          name: Utils.aesEncrypt(req.body.card_name, constants.ccSecret),
-          ccnum: Utils.aesEncrypt(req.body.ccnum, constants.ccSecret),
-          ccmonth: Utils.aesEncrypt(req.body.ccmonth, constants.ccSecret),
-          ccyear: Utils.aesEncrypt(req.body.ccyear, constants.ccSecret),
-          cvv: Utils.aesEncrypt(req.body.cvv, constants.ccSecret),
-          dateCreated: new Date().getTime()
-        };
-        const savedCard = new CCListModel().insert(cardData).then(savedCard);
-        if (savedCard !== null) {
-          new SubscriptionModel().where('t1._id::varchar=$1').update({ cardId: cardData._id }, [savedSubscription._id]);
-        }
-      }
       const planItems = [];
       for (var i = 0; i < planData.courseIds.length; i++) {
         var dataItem = {
@@ -129,7 +137,15 @@ export const create = (req, res, next) => {
       }
       savedSubscription.planItems = planItems;
       return Promise.resolve(savedSubscription);
-    }).then(savedSubscription => res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)))).catch(e => next(e)); // eslint-disable-line;
+    }).then((savedSubscription) => {
+      processPayment(savedSubscription).then((dataResp) => {
+        savedSubscription.stripeVerified = 'OK';
+        return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
+      }).catch((err) => {
+        savedSubscription.stripeVerified = 'FAILED';
+        return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
+      });
+    }).catch(e => next(e)); // eslint-disable-line;
   })).catch(e => next(e)); // eslint-disable-line
   //
 };
@@ -315,4 +331,129 @@ export const changeStatus = (req, res, next) => {
   }));
 };
 
-export default { getSubscriptionsByUser, create, assignStudent, UpdateCardIdForSubscription, countSubscriptions, getSubscriptionById };
+var processPayment = function (subscription) {
+  const ccModel = new CCListModel();
+  const uModel = new UserModel();
+  return new Promise((resolve, reject) => {
+    if (!subscription) return resolve({ isVerified: false });
+
+    return new SubscriptionModel().select(`t1.*, t2.name, t2.ccnum, t2.ccmonth, t2.ccyear, t2.cvv,
+      t3."firstName" AS "parentFirstName", t3."lastName" AS "parentLastName",t3."email" AS "parentEmail"
+    `)
+      .join(`${ccModel.getTable()} AS t2`, 't1."cardId"::varchar=t2."_id"::varchar', 'left') // eslint-disable-line
+      .join(`${uModel.getTable()} AS t3`, 't1."parentId"::varchar=t3."_id"::varchar', 'left') // eslint-disable-line
+      .where('t1._id::varchar=$1').findOne([subscription._id]).then((subscriptionData) => { // eslint-disable-line
+        if (!subscriptionData) return resolve({ isVerified: false });
+        const flist = ['name', 'ccnum', 'ccmonth', 'ccyear', 'cvv'];
+        try {
+          for (let j = 0; j < flist.length; j++) { // eslint-disable-line
+            const fn = flist[j];
+            subscriptionData[fn] = Utils.aesDecrypt(subscriptionData[fn], constants.ccSecret); // eslint-disable-line
+          }
+        } catch (ex) { } // eslint-disable-line
+
+        var stripe = require("stripe")(constants.StripeSecretKey),
+          planSubscription = 'subscription-asls-monthly-fee';
+        if (subscriptionData.expirationType == 'yearly') {
+          planSubscription = 'subscription-asls-yearly-fee';
+        };
+        /* check if plans do not exists then create */
+        stripe.plans.retrieve(
+          "subscription-asls-monthly-fee",
+          function (err, plan) {
+            if (!plan) {
+              var planMonthly = stripe.plans.create({
+                name: "Subscription - ASLS Monthly Fee",
+                id: "subscription-asls-monthly-fee",
+                interval: "month",
+                currency: "usd",
+                amount: parseInt(subscriptionData.fee) * 100,
+              }, function (err, plan) {
+
+              });
+            }
+          }
+        );
+
+        stripe.plans.retrieve(
+          "subscription-asls-yearly-fee",
+          function (err, plan) {
+            if (!plan) {
+              var planYearly = stripe.plans.create({
+                name: "Subscription - ASLS Yearly Fee",
+                id: "subscription-asls-yearly-fee",
+                interval: "year",
+                currency: "usd",
+                amount: parseInt(subscriptionData.fee) * 12 * 100,
+              }, function (err, plan) {
+
+              });
+            }
+          }
+        );
+        /* end check if plans do not exists then create */
+
+        /* check if customer does not exists in stripe the create new customer */
+        if (subscriptionData.stripeCustomerId != null && subscriptionData.stripeSubscriptionId != null) {
+          console.log(subscriptionData.stripeCustomerId + " " + subscriptionData.stripeSubscriptionId);
+          stripe.subscriptions.update(
+            subscriptionData.stripeSubscriptionId,
+            { plan: planSubscription },
+            function (err, subscriptionResp) {
+              if (!subscriptionResp) return resolve({ isVerified: false });
+              return resolve({ isVerified: true });
+            }
+          );
+        } else {
+          stripe.customers.create({
+            email: subscriptionData.parentEmail
+          }).then(function (customer) {
+            return stripe.customers.createSource(customer.id, {
+              source: {
+                object: 'card',
+                exp_month: subscriptionData.ccmonth,
+                exp_year: subscriptionData.ccyear,
+                number: subscriptionData.ccnum,
+                cvc: subscriptionData.cvv,
+                name: subscriptionData.parentFirstName + " " + subscriptionData.parentLastName
+              }
+            });
+          }).then(function (source) {
+            stripe.subscriptions.create({
+              customer: source.customer,
+              plan: planSubscription,
+              trial_period_days: 14
+            }, function (err, subscriptionResp) {
+              if (subscriptionResp) {
+                return new SubscriptionModel().where('t1._id::varchar=$1').update({ stripeCustomerId: subscriptionResp.customer, stripeSubscriptionId: subscriptionResp.id }, [subscriptionData._id]).then(dataUpdated => {
+                  if (!dataUpdated) return resolve({ isVerified: false });
+                  return resolve({ isVerified: true });
+                });
+              }
+            }
+            );
+          });
+        }
+      });
+  })
+};
+
+export const paySubscription = (req, res, next) => {
+  const cModel = new CourseModel();
+  const pModel = new PlanModel();
+  const ccModel = new CCListModel();
+  const iModel = new ItemModel();
+  const uModel = new UserModel();
+  return new SubscriptionModel().select(`t1.*`)
+    .where('t1._id::varchar=$1').findOne([req.params.subscriptionId]).then((subscription) => { // eslint-disable-line
+      if (subscription !== null) {
+        processPayment(subscription).then((dataResp) => {
+          return res.json(new APIResponse({ status: 'OK', msg: constants.errors.subscriptionPaidSuccessful }));
+        }).catch((err) => {
+          return res.json(new APIResponse({ status: 'FAILED', msg: constants.errors.subscriptionPaidUnSuccessful }));
+        });
+      }
+    }).catch(e => next(e));
+};
+
+export default { getSubscriptionsByUser, create, assignStudent, UpdateCardIdForSubscription, countSubscriptions, getSubscriptionById, paySubscription };
