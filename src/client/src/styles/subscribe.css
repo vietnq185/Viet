@@ -717,9 +717,76 @@ a{
 	text-transform: uppercase;
 	margin-right: 10px;
 }
+
+.subscribe-wrapper .subscribe-details .upgrade-plan-container{
+	border: 1px solid #ddd;
+}
+.subscribe-wrapper .subscribe-details .upgrade-plan-container .plan-details,
+.subscribe-wrapper .subscribe-details .upgrade-plan-container .payment-method{
+	margin-left: 20px;
+}
+.subscribe-wrapper .subscribe-details .upgrade-plan-container table{
+	width: 50%;
+	font-weight: 600;
+	font-size: 20px;
+}
+.subscribe-wrapper .subscribe-details .upgrade-plan-container table thead th{
+	border-bottom: none;
+	font-size: 15px;
+}
+.subscribe-wrapper .subscribe-details .upgrade-plan-container table tr.upgrade td{
+	color: #009e0f;
+}
+.subscribe-wrapper .subscribe-details .upgrade-plan-container table tr th:first-child,
+.subscribe-wrapper .subscribe-details .upgrade-plan-container table tr td:first-child{
+	border-right: 1px solid #ddd;
+	font-size: 15px;
+	color: #000;
+}
+.subscribe-wrapper .subscribe-details .upgrade-plan-container .payment-method-form{
+	font-size: 14px;
+}
+.subscribe-wrapper .subscribe-details .upgrade-plan-container .payment-method-form li label{
+	font-weight: normal;
+	cursor: pointer;
+}
+.subscribe-wrapper .subscribe-details .upgrade-plan-container .payment-method-form li i.fa{
+	display: inline-block;
+    font-size: 20px;
+    font-weight: 600;
+    padding: 0 5px;
+    vertical-align: bottom;
+}
+.subscribe-wrapper .subscribe-details .upgrade-plan-container .payment-method-form li i.fa-money{
+	font-size: 24px;
+}
+.subscribe-wrapper .subscribe-details .upgrade-plan-container .payment-method-form .cc-container{
+	padding: 15px;
+}
+.subscribe-wrapper .subscribe-details .upgrade-plan-container .payment-method-form .cc-container li{
+	display: block;
+	padding-bottom: 10px;
+	font-size: 13px;
+}
+.subscribe-wrapper .subscribe-details .upgrade-plan-container .payment-method-form .secure-server{
+	color: #999999;
+    display: inline-block;
+    font-size: 16px;
+    padding-left: 10px;
+    vertical-align: middle;
+}
+.subscribe-wrapper .subscribe-details .upgrade-plan-container .payment-method-form .secure-server i.fa{
+	font-size: 25px;
+    padding-right: 5px;
+    vertical-align: middle;
+}
+
 @media (max-width: 1199px){
 	.subscription-plan .subscription-plan-item{
 		min-height: 509px;
+	}
+	.banner-discount-container .banner-discount{
+		width: 95%;
 	}
 }
 @media (max-width: 991px){
@@ -737,6 +804,11 @@ a{
 	}
 	.subcribe-contact-info .subcribe-contact-info-desc .contact-email{
 		padding-left: 10px;
+	}
+}
+@media (max-width: 767px){
+	.subscribe-wrapper .subscribe-details .upgrade-plan-container .table-responsive{
+		border: none;
 	}
 }
 @media (max-width: 659px){
@@ -767,5 +839,13 @@ a{
 	}
 	.subcribe-contact-info .subcribe-contact-info-desc .subcribe-contact-info-desc-options li{
 		width: 98%;
+	}
+	.subscribe-wrapper .subscribe-details .upgrade-plan-container table{
+		width: 100%;
+	}
+	.subscribe-wrapper .subscribe-details .upgrade-plan-container table tr th,
+	.subscribe-wrapper .subscribe-details .upgrade-plan-container table tr td,
+	.subscribe-wrapper .subscribe-details .upgrade-plan-container table tr td:first-child{
+		font-size: 14px;
 	}
 }
