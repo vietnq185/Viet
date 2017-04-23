@@ -5,7 +5,9 @@ import { StyleSheet, css } from 'aphrodite'
 
 import constants from '../../../constants'
 import Utils from '../../../helpers/utils'
+import API from '../../../helpers/api'
 import validate from '../../../helpers/validate'
+import * as authActions from '../../../store/auth'
 import FailImage from '../../../styles/images/icon-failed.png'
 
 const MONTHLY = constants.frequency.monthly
@@ -22,8 +24,24 @@ const styles = StyleSheet.create({
 })
 
 class UpgradeSubscriptionDetails extends React.Component {
+  constructor (props) {
+    super(props)
+    this.ccList = {}
+    this.state = {
+      ccResults: Utils.copy(this.ccList)
+    }
+  }
+
+  componentDidMount () {
+    var self = this
+    // API.getCCList(auth.jwt.accessToken || '', auth.jwt.userId || '').then((ccResults) => this.setState({ ccResults })).catch((error) => {
+    //   self.setState({ ccResults: Utils.copy(self.ccList) })
+    // })
+  }
+
   render () {
     const { objSubscription } = this.props
+    console.log(this.state.ccResults)
     return (
       <div className='subscribe-details'>
           <div className='alert alert-success'>

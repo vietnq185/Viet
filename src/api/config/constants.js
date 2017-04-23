@@ -1,7 +1,7 @@
 export default {
   ccSecret: '1234567890',  // Use to encrypt and decrypt credit card information
-  //StripeSecretKey: 'sk_test_xiQN7kQYSgMWSnrrmn40yRHi',  // Viet Stripe secret key
-  StripeSecretKey : 'sk_test_UPYeBtZ0jabqHTdjYrrNJQQr', // Thuan
+  StripeSecretKey: 'sk_test_xiQN7kQYSgMWSnrrmn40yRHi',  // Viet Stripe secret key
+  //StripeSecretKey : 'sk_test_UPYeBtZ0jabqHTdjYrrNJQQr', // Thuan
   auth: {
     accessTokenOpts: {
       expiresIn: 24 * 60 * 60, // in seconds, after this time, user MUST login again
