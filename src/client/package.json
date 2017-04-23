@@ -28,6 +28,7 @@
     "redux-logger": "^3.0.1"
   },
   "scripts": {
+    "preinstall": "npm install create-react-app yarn -g",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
