@@ -255,4 +255,25 @@ export default class API {
     })
   }
 
+  static changeSubscriptionStatus = (accessToken, subscriptionId, newStatus) => {
+    return new Promise((resolve, reject) => {
+      return fetch(config.api.changeSubscriptionStatus.replace(/:subscriptionId/g, subscriptionId).replace(/:newStatus/g, newStatus), {
+        method: 'GET',
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        }
+      }).then((response) => response.json()).then((jsonResponse) => {
+        if (jsonResponse && jsonResponse.success) {
+          return resolve(jsonResponse.result)
+        }
+        const msg = jsonResponse.error.message || ''
+        return reject(msg)
+      }).catch((error) => {
+        const msg = error.message || ''
+        return reject(msg)
+      })
+    })
+  }
+
 }

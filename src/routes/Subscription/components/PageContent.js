@@ -5,6 +5,8 @@ import moment from 'moment'
 
 import constants from '../../../constants'
 import Utils from '../../../helpers/utils'
+import API from '../../../helpers/api'
+import * as authActions from '../../../store/auth'
 
 const MONTHLY = constants.frequency.monthly
 const ANNUALLY = constants.frequency.annually
@@ -16,6 +18,7 @@ class PageContent extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      page: 1
     }
   }
 
@@ -25,6 +28,7 @@ class PageContent extends React.Component {
 
   getList(page) {
     this.props.getSubscriptionList(page)
+    this.setState({ page: page })
     this.props.scrollTo()
   }
 
@@ -33,7 +37,15 @@ class PageContent extends React.Component {
   }
 
   cancelSubscription(id) {
-
+    return authActions.checkAccessToken().then((jwt) => {
+      return API.changeSubscriptionStatus(jwt.accessToken || '', id, 'cancelled').then((result) => {
+        this.getList(this.state.page)
+      }).catch((error) => {
+        console.info('changeSubscriptionStatus: ', error)
+      })
+    }).catch((error) => {
+      console.info('changeSubscriptionStatus => checkAccessToken => error: ', error)
+    })
   }
 
   assignSubscription(item) {
@@ -111,7 +123,7 @@ class PageContent extends React.Component {
               <ul className='list-inline subscriptions-paging'>
                 {Utils.range(1, this.props.list.totalPages).map(page => { // eslint-disable-line
                   return (
-                    <li key={`page${page}`} className='active'><a href='javascript: void(0);' onClick={() => this.getList(page)}>{page}</a></li>
+                    <li key={`page${page}`} className={this.state.page == page ? 'active' : ''}><a href='javascript: void(0);' onClick={() => this.getList(page)}>{page}</a></li>
                   )
                 })}
               </ul>

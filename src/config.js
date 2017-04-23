@@ -32,6 +32,7 @@ const config = {}
 config.apiServer = 'http://localhost:4040'
 //config.apiServer = 'https://asls.herokuapp.com'
 config.api = {
+  changeSubscriptionStatus: '/api/subscriptions/changeStatus/:subscriptionId/:newStatus', // GET
   getSubscriptionDetails: '/api/subscriptions/details/:subscriptionId', // GET
   signIn: '/api/auth/login', // POST
   checkToken: '/api/auth/checkToken', // GET
