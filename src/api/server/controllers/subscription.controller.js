@@ -40,10 +40,10 @@ const createCard = (req) => {
         "cvc": req.body.cvv
       }
     }, function (err, token) {
-      if (token)  return new CCListModel().insert(cardData).then(resolve).catch(reject);
+      if (token) return new CCListModel().insert(cardData).then(resolve).catch(reject);
       return reject(new APIError(constants.errors.invalidCard, httpStatus.OK, true));
     });
-    
+
   });
 }
 
@@ -150,6 +150,9 @@ export const create = (req, res, next) => {
       savedSubscription.planItems = planItems;
       return Promise.resolve(savedSubscription);
     }).then((savedSubscription) => {
+      if (!savedSubscription.cardId) {
+        return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
+      }
       processPayment(savedSubscription).then((dataResp) => {
         savedSubscription.stripeVerified = 'OK';
         return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
