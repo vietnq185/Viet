@@ -1,21 +1,35 @@
+/* eslint-disable */
 import React from 'react'
 import { IndexLink, Link } from 'react-router'
 import { fadeIn } from 'react-animations'
 import { StyleSheet, css } from 'aphrodite'
+import API from '../../helpers/api'
+import Utils from '../../helpers/utils'
 import './Footer.scss'
 import LeftBGSpecialOffer from '../../styles/images/left-bg-special-offer.png'
 
 export default class Footer extends React.Component {
   constructor(props) {
     super(props)
+    this.numberOfsubscriptions = 0
     this.state = {
-      show: true
+      show: true,
+      cntSubscriptions: Utils.copy(this.numberOfsubscriptions)
     }
   }
+  componentDidMount() {
+    var self = this
+    API.countSubscriptions().then((cntSubscriptions) => this.setState({ cntSubscriptions })).catch((error) => {
+      self.setState({ cntSubscriptions: Utils.copy(self.numberOfsubscriptions) })
+    })
+  }
   render() {
+    if (this.state.cntSubscriptions > 20) {
+      this.state.show = false
+    }
     return (
-      <div className='page-footer text-left'>
-        <div className='container-fluid'>
+      <div className={['page-footer text-left', (this.state.show ? 'mb6' : '')].join(' ')}>
+        < div className= 'container-fluid' >
           <div className='row'>
             <div className='col-md-6 col-xs-12 col-md-push-6 footer-follow'>
               {/* <span>
@@ -49,8 +63,8 @@ export default class Footer extends React.Component {
               </div>
             </nav>
           </div>
-        </div>
-      </div>
+        </div >
+      </div >
     )
   }
 }

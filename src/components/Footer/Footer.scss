@@ -35,8 +35,16 @@
 .ml2 {
 	margin-left: 20px;
 }
+.mb6{
+  margin-bottom: 60px;
+}
 @media (max-width: 1199px){
 	.banner-discount-container .banner-discount{
-		width: 95%;
+		width: 92%;
+	}
+}
+@media (max-width: 767px){
+	.page-footer.mb6{
+		margin-bottom: 0;
 	}
 }
