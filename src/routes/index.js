@@ -8,6 +8,7 @@ import ParentRoute from './Parent'
 import SubscribeRoute from './Subscribe'
 import SubscriptionRoute from './Subscription'
 import SubscriptionDetailsRoute from './SubscriptionDetails'
+import UpgradeSubscriptionRoute from './UpgradeSubscription'
 import NotFoundRoute from './NotFound'
 
 /*  Note: Instead of using JSX, we recommend using react-router
@@ -25,6 +26,7 @@ export const createRoutes = (store) => ({
     SubscribeRoute(store),
     SubscriptionRoute(store),
     SubscriptionDetailsRoute(store),
+    UpgradeSubscriptionRoute(store),
     NotFoundRoute(store)
   ]
 })

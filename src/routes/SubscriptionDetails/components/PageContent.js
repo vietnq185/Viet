@@ -22,7 +22,6 @@ class PageContent extends React.Component {
   componentDidMount() {
     var self = this
     API.getSubscriptionDetails(this.state.id).then((subscription) => this.setState({ subscription })).catch((error) => {
-      console.info('what the error: ', error)
       self.setState({ subscription: Utils.copy(self.initialSubscription) })
     })
   }
@@ -37,7 +36,6 @@ class PageContent extends React.Component {
 
   render() {
     var objSubscription = this.state.subscription
-    console.log(objSubscription)
     let subscriptionDetails = ''
     if (objSubscription.msg != undefined && objSubscription.msg == 'SUBSCRIPTION_NOT_FOUND') {
       subscriptionDetails = (
