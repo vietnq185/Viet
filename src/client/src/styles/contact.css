@@ -1,0 +1,50 @@
+.contact-header {
+  background: url(https://cdn.zenquiz.net/uploaded/sls/about-header.jpeg);
+  background-size: cover;
+  position: relative;
+}
+.contact-header:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,.5);
+}
+
+.contact-header .img-holder {
+  position: relative;
+  height: 400px;
+  overflow: hidden;
+}
+
+
+.contact-header h1 {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  margin-top: 100px;
+  font-weight: 600;
+  font-size: 48px;
+}
+
+.contact-container {
+  box-shadow: 0px 0px 20px 0px rgba(128,128,128,1);
+  border-top: 4px solid #009688;
+  padding: 20px;
+  margin-top: -60px;
+  z-index: 1;
+  position: relative;
+  background: white;
+  color: #5f6f7e;
+}
+.contact-container h3 {
+  margin-bottom: 20px;
+}
+.contact-container form .form-control {
+  border-radius: 0;
+}
+.contact-container form label {
+  font-weight: 600;
+}

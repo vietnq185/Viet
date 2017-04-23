@@ -1,0 +1,93 @@
+.programme-header {
+	background-image: url(https://cdn.zenquiz.net/uploaded/sls/programme-header.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+.programme-header:after {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(155,155,155,1);
+	mix-blend-mode: multiply;
+}
+
+.programme-title {
+	/*line-height: 61px;*/
+	font-size: 48px;
+	/*letter-spacing: 1.3px;*/
+	margin: 0 auto;
+}
+.programme-hr {
+	width: 413px;
+}
+.programme-sub-title {
+	font-size: 32px;
+	line-height: 38px;
+	letter-spacing: 0.8px;
+	font-weight: 400;
+}
+.programme-btn {
+	margin-top: 30px;
+}
+
+.programme-section1 {
+	background: #f3f7fb;
+	padding: 50px 200px;
+}
+
+.discription-tittle {
+	line-height: 23px;
+	font-size: 20px;
+	font-weight: 600;
+	letter-spacing: 0.5px;
+}
+.discription-sub {
+	font-weight: 600;
+}
+.discription-group-item {
+	margin-top: 30px;
+}
+.discription-item {
+	line-height: 24px;
+	font-weight: 400;
+	font-size: 16px;
+}
+.mb {
+	margin-bottom: 25px;
+}
+.programme-section2 {
+	padding: 50px 200px;
+}
+.programme-product {
+	line-height: 23px;
+	font-size: 18px;
+	font-weight: 600;
+	color: #02407E;
+}
+.product-icon {
+	width: 50px;
+}
+.programme-description {
+	margin: 10px 0 30px 0;
+	font-size: 15px;
+}
+.programme-section3 {
+	padding: 20px 0 30px 0;
+    background-color: #f3f7fb;
+}
+
+@media screen and (max-width: 767px) {
+	.programme-section1 {
+		padding-left: 30px;
+		padding-right: 30px;
+	}
+	.programme-section2 {
+		padding-left: 30px;
+		padding-right: 30px;
+	}
+}
