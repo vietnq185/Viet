@@ -569,6 +569,7 @@ a{
 	border: 1px solid #666666;
     padding: 0;
     color: #666;
+	margin-left: 5px;
 }
 .subscribe-wrapper .my-subscription .subscriptions-paging li.active{
 	background: #ccc;
@@ -578,6 +579,12 @@ a{
 	width: 100%;
 	height: 100%;
 	padding: 3px 8px;
+}
+.subscribe-wrapper .my-subscription .subscriptions-paging li a:active,
+.subscribe-wrapper .my-subscription .subscriptions-paging li a:visited,
+.subscribe-wrapper .my-subscription .subscriptions-paging li a:hover{
+	outline: 0;
+	text-decoration: none;
 }
 .subscribe-wrapper .my-subscription .subscriptions-paging li a:hover{
 	text-decoration: none;
