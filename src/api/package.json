@@ -6,9 +6,8 @@
   "main": "index.js",
   "private": false,
   "engines": {
-    "node": ">=6.9.1",
-    "npm": ">=3.10.8",
-    "yarn": ">=0.21.3"
+    "node": ">=6.10.2",
+    "npm": ">=3.10.10"
   },
   "scripts": {
     "start": "pm2 start --attach index.js",
