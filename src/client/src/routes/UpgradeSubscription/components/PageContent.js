@@ -1,4 +1,4 @@
-/* eslint-disabls */
+/* eslint-disable */
 import React from 'react'
 import Utils from '../../../helpers/utils'
 import API from '../../../helpers/api'
@@ -24,7 +24,7 @@ class PageContent extends React.Component {
   render () {
     var objSubscription = this.state.subscription
     let subscriptionDetails = ''
-    if (objSubscription.msg != undefined && objSubscription.msg == 'SUBSCRIPTION_NOT_FOUND') {
+    if (objSubscription.msg !== undefined && objSubscription.msg === 'SUBSCRIPTION_NOT_FOUND') {
       subscriptionDetails = (
         <div className='subscribe-details'><h3>Subscription not found!</h3></div>
       )
@@ -46,9 +46,6 @@ class PageContent extends React.Component {
 
 }
 
-PageContent.propTypes = {
-  step: React.PropTypes.string.isRequired,
-  steps: React.PropTypes.object.isRequired
-}
+PageContent.propTypes = {}
 
 export default PageContent

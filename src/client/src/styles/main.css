@@ -761,3 +761,6 @@ body {
     font-size: 25px;
     font-weight: 600;
 }
+.btn:focus, .btn:active:focus, .btn.active:focus, .btn.focus, .btn:active.focus, .btn.active.focus {
+    outline: 0;
+}
