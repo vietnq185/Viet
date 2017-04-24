@@ -1,1 +1,0 @@
-{"version":3,"sources":["server/models/item.model.js"],"names":["ItemModel","table","primaryKey","schema"],"mappings":";;;;;;AAAA;;;;;;;;;;;;AAEA;;;IAGMA,S;;;AACJ;AACA,uBAAc;AAAA;;AACZ,QAAMC,QAAQ,OAAd;AACA,QAAMC,aAAa,KAAnB;AACA,QAAMC,SAAS,EAAf;;AAGA;AANY,iHAONF,KAPM,EAOCC,UAPD,EAOaC,MAPb;AAQb;AACD;;;;;;AAGF;;;;;kBAGeH,S","file":"item.model.js","sourceRoot":"../../../../.."}

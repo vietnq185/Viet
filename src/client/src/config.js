@@ -29,8 +29,7 @@ const merge = (src, dst) => { // eslint-disable-line
 const config = {}
 
 // API
-config.apiServer = 'http://localhost:4040'
-//config.apiServer = 'https://asls.herokuapp.com'
+config.apiServer = process.env.NODE_ENV === 'development' ? '' : process.env.REACT_APP_API_URL;
 config.api = {
   changeSubscriptionStatus: '/api/subscriptions/changeStatus/:subscriptionId/:newStatus', // GET
   getSubscriptionDetails: '/api/subscriptions/details/:subscriptionId', // GET
