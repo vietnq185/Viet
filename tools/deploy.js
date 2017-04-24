@@ -7,6 +7,8 @@ import clean from './clean';
 import build from './build';
 import copy from './copy';
 
+import pkg from '../package.json';
+
 // GitHub Pages
 // const remote = {
 //   name: 'github',
@@ -17,12 +19,13 @@ import copy from './copy';
 // };
 
 // Heroku
-const remote = {
-  name: 'heroku',
-  url: 'https://git.heroku.com/asls.git',
-  branch: 'master',
-  website: 'https://asls.herokuapp.com',
-};
+const remote = pkg.deploy.heroku;
+// const remote = {
+//   name: 'heroku',
+//   url: 'https://git.heroku.com/asls.git',
+//   branch: 'master',
+//   website: 'https://asls.herokuapp.com',
+// };
 
 // Azure Web Apps
 // const remote = {

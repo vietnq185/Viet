@@ -12,6 +12,14 @@
     "url": "https://github.com/mrdamtn/Viet/issues"
   },
   "homepage": "https://github.com/mrdamtn/Viet#readme",
+  "deploy": {
+    "heroku": {
+      "name": "heroku",
+      "url": "https: //git.heroku.com/asls.git",
+      "branch": "master",
+      "website": "https: //asls.herokuapp.com"
+    }
+  },
   "main": "index.js",
   "scripts": {
     "clean": "babel-node tools/run clean",
