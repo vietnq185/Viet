@@ -19,6 +19,6 @@ export default (store) => ({
       cb(null, SubscriptionDetails)
 
     /* Webpack named bundle   */
-    }, 'subscription-details/:id')
+    }, 'subscription-details-id')
   }
 })

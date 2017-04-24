@@ -19,6 +19,6 @@ export default (store) => ({
       cb(null, UpgradeSubscription)
 
     /* Webpack named bundle   */
-    }, 'upgrade-subscription/:id')
+    }, 'upgrade-subscription-id')
   }
 })
