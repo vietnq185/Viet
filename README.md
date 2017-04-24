@@ -32,6 +32,16 @@
 - Before run build command, check and correct the information in src/api/.env.production file.
 - Before run deploy command: check and correct information from deploy.heroku section in package.json file.
 
+**DEPLOYMENT ISSUE:**
+When deploy to heroku, we may see error message below. To fix this, run command to force push into heroku then run deploy command again.
+
+<code>To https://git.heroku.com/asls.git
+ ! [remote rejected] master -> master (pre-receive hook declined)
+error: failed to push some refs to 'https://git.heroku.com/asls.git'
+Error: git push heroku master:master --set-upstream => 1 (error)</code>
+
+<code>git push heroku master --force</code>
+
 
 ## B./ Manually deploy on heroku
 
