@@ -16,9 +16,9 @@ router.route('/AssignStudent')
   /** POST /api/subscriptions/AssignStudent - Assign student */
   .post(/* authCtrl.verifyAccessToken, */subscriptionCtrl.assignStudent);
 
-router.route('/UpdateCardIdForSubscription')
-  /** POST /api/subscriptions/UpdateCardIdForSubscription - Update card id for subscription */
-  .post(/* authCtrl.verifyAccessToken, */subscriptionCtrl.UpdateCardIdForSubscription);
+router.route('/upgrade')
+  /** POST /api/subscriptions/upgrade - Update card id for subscription */
+  .post(/* authCtrl.verifyAccessToken, */subscriptionCtrl.upgrade);
 
 router.route('/list/:userId/:page')
   /** GET /api/subscriptions/:userId - Get subscriptions */

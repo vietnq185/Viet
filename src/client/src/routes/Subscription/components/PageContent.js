@@ -33,7 +33,7 @@ class PageContent extends React.Component {
   }
 
   updateSubscription(id) {
-
+    Utils.redirect(`/upgrade-subscription/${id}`)
   }
 
   cancelSubscription(id) {

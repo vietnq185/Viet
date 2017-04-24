@@ -276,4 +276,26 @@ export default class API {
     })
   }
 
+  static upgradeSubscription = (accessToken, data) => {
+    return new Promise((resolve, reject) => {
+      return fetch(config.api.upgradeSubscription, {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify(data)
+      }).then((response) => response.json()).then((jsonResponse) => {
+        if (jsonResponse && jsonResponse.success) {
+          return resolve(jsonResponse.result)
+        }
+        const msg = jsonResponse.error.message || ''
+        return reject(msg)
+      }).catch((error) => {
+        const msg = error.message || ''
+        return reject(msg)
+      })
+    })
+  }
+
 }

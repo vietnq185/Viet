@@ -114,11 +114,11 @@ export const create = (req, res, next) => {
     if (cardId !== '') {
       data.cardId = cardId;
     }
-    if (expirationType == 'annually') {
+    /*if (expirationType == 'annually') {
       data.frequency = 'monthly';
     } else {
       data.frequency = 'yearly';
-    }
+    }*/
     // create card (if any)
     return createCard(req).then(savedCard => {
       if (savedCard !== null) {
@@ -189,28 +189,45 @@ export const assignStudent = (req, res, next) => {
   }).catch(e => next(e));
 };
 
-export const UpdateCardIdForSubscription = (req, res, next) => {
-  const subscriptionId = req.body.subscriptionId || '';
-  const cardId = req.body.cardId || '';
-
-  // validate subscription
-  const validateSubscription = new SubscriptionModel().where('t1._id=$1').findCount([subscriptionId]).then((cnt) => {
-    const err = new APIError(constants.errors.subscriptionNotFound, httpStatus.OK, true);
-    return (cnt > 0 ? Promise.resolve() : Promise.reject(err));
-  });
-
-  // validate card
-  const validateCard = new CCListModel().where('t1._id=$1').findCount([cardId]).then((cnt) => {
-    const err = new APIError(constants.errors.cardNotFound, httpStatus.OK, true);
-    return (cnt > 0 ? Promise.resolve() : Promise.reject(err));
-  });
-  //
-  const promises = [validateSubscription, validateCard];
-
-  Promise.all(promises).then((results) => { // eslint-disable-line
-    promises.push(new SubscriptionModel().where('t1._id::varchar=$1').update({ cardId }, [subscriptionId]));
-    return res.json(new APIResponse("Card has been updated for subscription")); // eslint-disable-line
-  }).catch(e => next(e));
+export const upgrade = (req, res, next) => {
+  const { _id = '', channel, cardId } = req.body;
+  return new SubscriptionModel().where('t1._id::varchar=$1').findOne([_id]).then((objSubscription) => {
+    if (objSubscription === null) {
+      return Promise.reject(new APIError(constants.errors.subscriptionNotFound, httpStatus.OK, true));
+    }
+    if (objSubscription.expirationType === 'annually') {
+      return Promise.reject(new APIError(constants.errors.alreadyIsAnnually, httpStatus.OK, true));
+    }
+    return Promise.resolve(objSubscription);
+  }).then((objSubscription) => {
+    const data = {
+      expirationType: 'annually',
+      channel,
+      cardId
+    };
+    return createCard(req).then(savedCard => {
+      const paymentMeta = {
+        newCard: (savedCard !== null),
+        prevPaymentMethod: objSubscription.channel,
+        nextPaymentMethod: channel,
+      }
+      if (savedCard !== null) {
+        data.cardId = savedCard._id;
+      }
+      return new SubscriptionModel().where('t1._id::varchar=$1').update(data, [objSubscription._id]).then((savedSubscription) => {
+        if (savedSubscription.length === 0) {
+          return Promise.reject(new APIError(constants.errors.cannotUpgrade, httpStatus.OK, true));
+        }
+        processPayment(Object.assign({}, savedSubscription[0], paymentMeta)).then((dataResp) => {
+          savedSubscription.stripeVerified = 'OK';
+          return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
+        }).catch((err) => {
+          savedSubscription.stripeVerified = 'FAILED';
+          return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
+        });
+      });
+    })
+  }).catch(e => next(e)); // eslint-disable-line
 };
 
 /**
@@ -369,7 +386,7 @@ var processPayment = function (subscription) {
 
         var stripe = require("stripe")(constants.StripeSecretKey),
           planSubscription = 'subscription-asls-monthly-fee';
-        if (subscriptionData.expirationType == 'yearly') {
+        if (subscriptionData.expirationType == 'annually') {
           planSubscription = 'subscription-asls-yearly-fee';
         };
         /* check if plans do not exists then create */
@@ -471,4 +488,4 @@ export const paySubscription = (req, res, next) => {
     }).catch(e => next(e));
 };
 
-export default { getSubscriptionsByUser, create, assignStudent, UpdateCardIdForSubscription, countSubscriptions, getSubscriptionById, paySubscription };
+export default { getSubscriptionsByUser, create, assignStudent, upgrade, countSubscriptions, getSubscriptionById, paySubscription };
