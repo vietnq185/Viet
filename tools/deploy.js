@@ -13,6 +13,7 @@ import { spawn } from './lib/cp';
 import { makeDir, moveDir, cleanDir } from './lib/fs';
 import run from './run';
 import clean from './clean';
+import build from './build';
 import copy from './copy';
 
 // GitHub Pages
@@ -27,9 +28,9 @@ import copy from './copy';
 // Heroku
 const remote = {
   name: 'heroku',
-  url: 'https://git.heroku.com/ngocdamtest.git',
+  url: 'https://git.heroku.com/asls.git',
   branch: 'master',
-  website: 'https://ngocdamtest.herokuapp.com',
+  website: 'https://asls.herokuapp.com',
 };
 
 // Azure Web Apps
@@ -84,6 +85,8 @@ async function deploy() {
   // -------------------- START SOURCE ---------------------
   // clean current build directory if exist
   await run(clean);
+  // build source before deploy
+  // await run(build);
   // copy API and WEB built source
   await run(copy);
   // -------------------- END SOURCE ---------------------

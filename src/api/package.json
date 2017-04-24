@@ -22,9 +22,7 @@
     "test:watch": "yarn test -- --watch",
     "test:coverage": "cross-env NODE_ENV=test ./node_modules/.bin/istanbul cover _mocha -- --ui bdd --reporter spec --colors --compilers js:babel-core/register server/tests --recursive",
     "test:check-coverage": "yarn test:coverage && istanbul check-coverage",
-    "report-coverage": "coveralls < ./coverage/lcov.info",
-    "client": "node start-client.js",
-    "dev:all": "concurrently \"yarn dev\" \"yarn client\""
+    "report-coverage": "coveralls < ./coverage/lcov.info"
   },
   "repository": {
     "type": "git",
@@ -77,7 +75,6 @@
     "babel-preset-stage-2": "6.22.0",
     "chai": "^3.4.1",
     "commitizen": "^2.9.2",
-    "concurrently": "^3.4.0",
     "coveralls": "^2.11.6",
     "cross-env": "3.2.4",
     "cz-conventional-changelog": "2.0.0",

@@ -16,7 +16,9 @@
   "scripts": {
     "clean": "babel-node tools/run clean",
     "copy": "babel-node tools/run copy",
+    "build": "babel-node tools/run build",
     "deploy": "babel-node tools/run deploy",
+    "dev": "babel-node tools/run dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
