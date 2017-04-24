@@ -15,9 +15,9 @@
   "deploy": {
     "heroku": {
       "name": "heroku",
-      "url": "https: //git.heroku.com/asls.git",
+      "url": "https://git.heroku.com/asls.git",
       "branch": "master",
-      "website": "https: //asls.herokuapp.com"
+      "website": "https://asls.herokuapp.com"
     }
   },
   "main": "index.js",
