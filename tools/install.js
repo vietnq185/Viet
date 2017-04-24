@@ -1,21 +1,21 @@
 import path from 'path';
 import { spawn } from './lib/cp';
 
-async function build() {
+async function dev() {
   const options = {
     stdio: ['ignore', 'inherit', 'inherit'],
     shell: true,
   };
-  // build API
+  // start API server in dev mode
   const apiOptions = {
     cwd: path.resolve(__dirname, '../src/api'),
   };
-  await spawn('yarn', ['build'], Object.assign({}, options, apiOptions));
-  // build web
+  spawn('yarn', ['install'], Object.assign({}, options, apiOptions));
+  // start web server in dev mode
   const webOptions = {
     cwd: path.resolve(__dirname, '../src/client'),
   };
-  await spawn('yarn', ['build'], Object.assign({}, options, webOptions));
+  spawn('yarn', ['install'], Object.assign({}, options, webOptions));
 }
 
-export default build;
+export default dev;
