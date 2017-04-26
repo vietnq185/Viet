@@ -18,7 +18,8 @@ const RequireLoginComponent = (props) => {
 
   const { auth: { isAuthenticated }, component: Component, ...rest } = props;
 
-  const loginPath = '/login';
+  const routePrefix = process.env.REACT_APP_ROUTE_PREFIX;
+  const loginPath = `${routePrefix}/login`;
   const isOnLoginPath = props.location.pathname === loginPath;
 
   // Authenticated
@@ -26,7 +27,7 @@ const RequireLoginComponent = (props) => {
     // Check if we are on Login path
     if (isOnLoginPath) {
       // then redirect to Referrer
-      const from = props.location.state ? props.location.state.from : { pathname: '/' };
+      const from = props.location.state ? props.location.state.from : { pathname: `${routePrefix}/` };
       return (<Redirect to={from} />);
     }
     // otherwise will render Referrer page

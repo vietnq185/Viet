@@ -26,10 +26,15 @@ async function copy() {
   const env = await readFile(`${src}/api/.env.production`);
   await writeFile('build/.env', env);
 
-  // copy web source
+  // create directories for web
   await makeDir('build/web');
+  await makeDir('build/web/client');
+  await makeDir('build/web/admin');
+
+  // copy web client and web admin source
   await Promise.all([
-    copyDir(`${src}/client/build`, 'build/web'),
+    copyDir(`${src}/client/build`, 'build/web/client'),
+    copyDir(`${src}/admin/build`, 'build/web/admin'),
   ]);
 }
 

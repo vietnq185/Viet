@@ -54,27 +54,34 @@ if (config.env === 'development') {
 // mount all routes on /api path
 app.use('/api', routes);
 
-
 // -------------------------------------------------------------------------------
 // START - using web server on the same host with API
 // -------------------------------------------------------------------------------
 
-app.use(express.static(path.join(__dirname, '../web')));
+app.use(express.static(path.join(__dirname, '..', 'web', 'client')));
+app.use(express.static(path.join(__dirname, '..', 'web', 'admin')));
 
-app.get('*', (req, res, next) => {
+// Serve Admin UI
+const adminRouter = express.Router(); // eslint-disable-line new-cap
+adminRouter.get('/*', (req, res, next) => {
   try {
-    // check if want to go to API
-    if (req.url.substring(0, 5) === '/api/') {
-      return next();
-    }
-    // other wise, render index
-    const filepath = path.join(__dirname, '../web/index.html');
-    const content = fs.readFileSync(filepath, { encoding: 'utf8' });
-    return res.status(200).send(content);
+    return res.sendFile(path.join(__dirname, '..', 'web', 'admin', 'index.html'));
   } catch (err) {
     return next(err);
   }
 });
+app.use('/admin', adminRouter);
+
+// Serve Client UI
+const clientRouter = express.Router(); // eslint-disable-line new-cap
+clientRouter.get('/*', (req, res, next) => {
+  try {
+    return res.sendFile(path.join(__dirname, '..', 'web', 'client', 'index.html'));
+  } catch (err) {
+    return next(err);
+  }
+});
+app.use('/', clientRouter);
 
 // error handler middleware
 const errorHandler = (err, req, res, next) => { // eslint-disable-line

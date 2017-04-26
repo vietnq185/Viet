@@ -6,6 +6,7 @@ import './front.default.layout.css';
 
 class Header extends React.Component {
   render() {
+    const routePrefix = process.env.REACT_APP_ROUTE_PREFIX;
     return (
       <Navbar inverse fixedTop>
         <Grid>
@@ -16,10 +17,10 @@ class Header extends React.Component {
             <Navbar.Toggle />
           </Navbar.Header>
           <div className="pull-right">
-            <NavLink className="menu-item" activeClassName="selected-menu-item" to="/" exact>Home</NavLink>
-            <NavLink className="menu-item" activeClassName="selected-menu-item" to="/product">Products</NavLink>
-            <NavLink className="menu-item" activeClassName="selected-menu-item" to="/login">Login</NavLink>
-            <NavLink className="menu-item" activeClassName="selected-menu-item" to="/profile">Profile</NavLink>
+            <NavLink className="menu-item" activeClassName="selected-menu-item" to={`${routePrefix}/`} exact>Home</NavLink>
+            <NavLink className="menu-item" activeClassName="selected-menu-item" to={`${routePrefix}/product`}>Products</NavLink>
+            <NavLink className="menu-item" activeClassName="selected-menu-item" to={`${routePrefix}/login`}>Login</NavLink>
+            <NavLink className="menu-item" activeClassName="selected-menu-item" to={`${routePrefix}/profile`}>Profile</NavLink>
           </div>
         </Grid>
       </Navbar >

@@ -11,11 +11,16 @@ async function build() {
     cwd: path.resolve(__dirname, '../src/api'),
   };
   await spawn('yarn', ['build'], Object.assign({}, options, apiOptions));
-  // build web
-  const webOptions = {
+  // build web client
+  const clientWebOptions = {
     cwd: path.resolve(__dirname, '../src/client'),
   };
-  await spawn('yarn', ['build'], Object.assign({}, options, webOptions));
+  await spawn('yarn', ['build'], Object.assign({}, options, clientWebOptions));
+  // build web admin
+  const adminWebOptions = {
+    cwd: path.resolve(__dirname, '../src/admin'),
+  };
+  await spawn('yarn', ['build'], Object.assign({}, options, adminWebOptions));
 }
 
 export default build;
