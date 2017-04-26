@@ -11,11 +11,16 @@ async function dev() {
     cwd: path.resolve(__dirname, '../src/api'),
   };
   spawn('yarn', ['install'], Object.assign({}, options, apiOptions));
-  // start web server in dev mode
-  const webOptions = {
+  // start client web server in dev mode
+  const clientWebOptions = {
     cwd: path.resolve(__dirname, '../src/client'),
   };
-  spawn('yarn', ['install'], Object.assign({}, options, webOptions));
+  spawn('yarn', ['install'], Object.assign({}, options, clientWebOptions));
+  // start admin web server in dev mode
+  const adminWebOptions = {
+    cwd: path.resolve(__dirname, '../src/admin'),
+  };
+  spawn('yarn', ['install'], Object.assign({}, options, adminWebOptions));
 }
 
 export default dev;

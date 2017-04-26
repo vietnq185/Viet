@@ -27,7 +27,7 @@
     "build": "babel-node tools/run build",
     "deploy": "babel-node tools/run deploy",
     "dev": "babel-node tools/run dev",
-    "install-source": "babel-node tools/run install",
+    "install:all": "babel-node tools/run install",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
