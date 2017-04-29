@@ -16,14 +16,14 @@ import { withRouter } from 'react-router';
 const RequireLoginComponent = (props) => {
   console.info('RequireLoginComponent components => props: ', props);
 
-  const { auth: { isAuthenticated }, component: Component, ...rest } = props;
+  const { auth: { isLoggedIn }, component: Component, ...rest } = props;
 
   const routePrefix = process.env.REACT_APP_ROUTE_PREFIX;
   const loginPath = `${routePrefix}/login`;
   const isOnLoginPath = props.location.pathname === loginPath;
 
   // Authenticated
-  if (isAuthenticated) {
+  if (isLoggedIn) {
     // Check if we are on Login path
     if (isOnLoginPath) {
       // then redirect to Referrer

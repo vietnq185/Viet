@@ -91,7 +91,7 @@ const errorHandler = (err, req, res, next) => { // eslint-disable-line
   }
   // not belong to API error, render 404 page not found html
   res.status(httpStatus.NOT_FOUND);
-  return res.send('<!doctype html><html lang="en"><head><title>A-SLS</title><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body><divstyle="height: 100%">Not found</div></body></html>');
+  return res.send('<!doctype html><html lang="en"><head><title>A-SLS</title><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body><div style="height: 100%">Not found</div></body></html>');
 };
 // app.use(errorHandler);
 

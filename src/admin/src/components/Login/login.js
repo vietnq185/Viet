@@ -1,12 +1,33 @@
 import React from 'react';
-import { Grid, Button, Modal, OverlayTrigger, Popover, Tooltip } from 'react-bootstrap';
+import { Grid, Button, Modal, OverlayTrigger, Popover, Tooltip } from 'react-bootstrap';  // eslint-disable-line
+
+import API from '../../helpers/api'
+import Utils from '../../helpers/utils'
+import validate from '../../helpers/validate'
 
 export default class Login extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
+    this.initialErrors = {
+      email: '',
+      password: ''
+    }
+    this.errors = Utils.copy(this.initialErrors)
     this.state = {
-      showModal: true
-    };
+      showModal: true,
+      hasError: false,
+      errMsg: ''
+    }
+  }
+
+  resetErrors() {
+    this.errors = Utils.copy(this.initialErrors)
+    this.setState({ hasError: false })
+  }
+
+  setErrors(errors) {
+    this.errors = errors
+    this.setState({ hasError: true })
   }
 
   close() {
@@ -18,75 +39,96 @@ export default class Login extends React.Component {
   }
 
   login = () => {
-    this.props.authenticate();
+    const self = this
+
+    this.resetErrors()
+
+    const rules = {
+      email: {
+        required: 'Email is required',
+        email: 'Invalid email address'
+      },
+      password: {
+        required: 'Password is required'
+      }
+    }
+
+    const result = validate(rules, this.refs)  // result === null -> valid, result === error object -> invalid
+
+    if (result === null) {
+      // can submit
+      API.login({ username: self.refs.email.value, password: self.refs.password.value }).then((result) => {
+        self.props.loginSuccess(result)
+      }).catch((errMsg) => {
+        switch (errMsg) {
+          case 'UNREGISTERED_USER':
+            this.setState({ errMsg: 'Email not found.' })
+            break
+          case 'WRONG_PASSWORD':
+            this.setState({ errMsg: 'Incorrect password.' })
+            break
+          default:
+            this.setState({ errMsg })
+        }
+      })
+      //
+    } else {
+      this.setErrors(result)
+    }
   }
 
   render() {
     return (
-      <div>
-        {this.renderOnPage()}
+      <Grid>
+        {/*{this.renderOnPage()}*/}
         {this.renderDialog()}
-      </div>
+      </Grid>
+    );
+  }
+
+  renderLoginForm() {
+    console.info('Login component => props: ', this.props);
+
+    const requiredLabel = (<abbr className='dk-red-text'>&nbsp;*</abbr>)
+    return (
+      <form className='form'>
+        <div className={['form-group', this.errors.email ? 'has-error' : ''].join(' ')}>
+          <label htmlFor='contact-name'>Email address{requiredLabel}</label>
+          <input className='form-control' name='email' id='email' required='' type='text' ref='email' />
+          <span className={[this.errors.email ? 'help-block' : 'hide'].join(' ')}>{this.errors.email}</span>
+        </div>
+        <div className={['form-group', this.errors.password ? 'has-error' : ''].join(' ')}>
+          <label htmlFor='contact-name'>Password{requiredLabel}</label>
+          <input className='form-control' name='password' id='password' required='' type='password' ref='password' />
+          {/*<span className='forgot-password'><a href='javascript: void(0);'>Forgot password?</a></span>*/}
+          <span className={[this.errors.password ? 'help-block' : 'hide'].join(' ')}>{this.errors.password}</span>
+        </div>
+        <div className={['form-group', this.state.errMsg ? 'has-error' : 'hide'].join(' ')}>
+          <span className='help-block'>{this.state.errMsg}</span>
+        </div>
+        <div className='form-group'>
+          <Button bsStyle="success" onClick={() => this.login()}>Log in</Button>
+        </div>
+      </form>
     );
   }
 
   renderOnPage() {
-    console.info('Login component => props: ', this.props);
-
-    const { location } = this.props;
-    const from = location && location.state ? location.state.from : { pathname: '/' };
-
-    return (
-      <Grid>
-        <p>You must log in to view the page at {from.pathname}</p>
-        <Button bsStyle="success" onClick={this.login}>Log in</Button>
-      </Grid>
-    )
+    return this.renderLoginForm();
   }
 
   renderDialog() {
-    console.info('Login component => props: ', this.props);
-
-    const { location } = this.props;
-    const from = location && location.state ? location.state.from : { pathname: '/' };
-
-    const popover = (
-      <Popover id="modal-popover" title="popover">
-        very popover. such engagement
-      </Popover>
-    );
-    const tooltip = (
-      <Tooltip id="modal-tooltip">
-        wow.
-      </Tooltip>
-    );
-
     return (
-      <Modal show={this.state.showModal} onHide={() => this.close()}>
-        <Modal.Header closeButton>
-          <Modal.Title>Modal heading</Modal.Title>
+      <Modal show={this.state.showModal} autoFocus={true} keyboard={false}>
+        <Modal.Header closeButton={false}>
+          <Modal.Title>LOGIN</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <h4>Text in a modal</h4>
-          <p>Duis mollis, est non commodo luctus, nisi erat porttitor ligula.</p>
-
-          <h4>Popover in a modal</h4>
-          <p>there is a <OverlayTrigger overlay={popover}><a href="#">popover</a></OverlayTrigger> here</p>
-
-          <h4>Tooltips in a modal</h4>
-          <p>there is a <OverlayTrigger overlay={tooltip}><a href="#">tooltip</a></OverlayTrigger> here</p>
-
-          <hr />
-
-          <Grid>
-            <p>You must log in to view the page at {from.pathname}</p>
-            <Button bsStyle="success" onClick={() => this.login()}>Log in</Button>
-          </Grid>
-
+          {this.renderLoginForm()}
         </Modal.Body>
-        <Modal.Footer>
+        {/*<Modal.Footer>
           <Button onClick={() => this.close()}>Close</Button>
-        </Modal.Footer>
+        </Modal.Footer>*/}
       </Modal>
     );
   }

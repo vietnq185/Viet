@@ -1,15 +1,23 @@
 import React from 'react';
-import { Switch } from 'react-router-dom';
+import { Route, Redirect, Switch } from 'react-router-dom';
 
 import DefaultRoute from './default.route';
 import AuthRoute from './auth.route';
 
 import { FrontLayouts } from '../components/Layouts';
 
+const routePrefix = process.env.REACT_APP_ROUTE_PREFIX;
+
+const RedirectToAdmin = ({ component: Component, ...rest }) => {
+  return (
+    <Route {...rest} render={props => (<Redirect to={`${routePrefix}`} {...props} />)} />
+  )
+};
+
 export default (props) => {
-  const routePrefix = process.env.REACT_APP_ROUTE_PREFIX;
   return (
     <Switch>
+      <RedirectToAdmin exact path="/" component={FrontLayouts.Home} />
       <DefaultRoute exact path={`${routePrefix}`} component={FrontLayouts.Home} />
       <DefaultRoute exact path={`${routePrefix}/`} component={FrontLayouts.Home} />
       <DefaultRoute exact path={`${routePrefix}/product`} component={FrontLayouts.Product} />

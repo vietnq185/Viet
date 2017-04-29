@@ -1,10 +1,16 @@
 import React from 'react';
 import { Grid, Button } from 'react-bootstrap';
 
+const routePrefix = process.env.REACT_APP_ROUTE_PREFIX;
+
 export default class Profile extends React.Component {
 
-  signout = () => {
-    this.props.signout();
+  logout = () => {
+    var self = this;
+    const nextAction = () => {
+      self.props.history.push(`${routePrefix}`);
+    }
+    self.props.logout(nextAction);
   }
 
   render() {
@@ -16,7 +22,7 @@ export default class Profile extends React.Component {
         <p>
           Profile page
         </p>
-        <Button bsStyle="success" onClick={this.signout}>Signout</Button>
+        <Button bsStyle="success" onClick={this.logout}>Signout</Button>
       </Grid>
     );
   }
