@@ -6,8 +6,10 @@
   "dependencies": {
     "bootstrap": "3",
     "font-awesome": "^4.7.0",
+    "moment": "^2.18.1",
     "react": "^15.5.4",
     "react-bootstrap": "^0.30.9",
+    "react-data-grid": "^2.0.33",
     "react-dom": "^15.5.4",
     "react-helmet": "^5.0.3",
     "react-redux": "^5.0.4",

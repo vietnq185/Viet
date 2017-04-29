@@ -10,6 +10,8 @@ import configureStore from './store/configureStore';
 
 import Utils from './helpers/utils';
 
+import * as authActions from './reducers/auth';
+
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
 import 'font-awesome/css/font-awesome.css';
@@ -19,6 +21,8 @@ import './index.css';
 import Routes from './routes';
 
 const store = configureStore();
+
+store.dispatch(authActions.checkTokensAtStartUp());
 
 // -------------------------------------------------------------------
 

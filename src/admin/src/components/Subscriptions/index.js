@@ -4,6 +4,9 @@
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 
+import * as actions from '../../reducers/subscription'
+import * as authActions from '../../reducers/auth'
+
 import Component from './component';
 
 const mapStateToProps = (state) => ({
@@ -11,6 +14,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = {
+  ...actions,
+  ...authActions,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Component));
