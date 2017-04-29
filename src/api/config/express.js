@@ -137,4 +137,6 @@ app.use((err, req, res, next) => // eslint-disable-line no-unused-vars
   }))
 );
 
+console.log('API TEST');
+
 export default app;

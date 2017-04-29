@@ -54,3 +54,6 @@ Error: git push heroku master:master --set-upstream => 1 (error)</code>
 <code>git remote add heroku https://git.heroku.com/asls.git</code>
 
 <code>git push heroku master</code>
+
+## C./ View logs on heroku in console
+heroku logs --tail --app asls
