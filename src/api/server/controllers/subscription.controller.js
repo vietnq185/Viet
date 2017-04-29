@@ -696,7 +696,7 @@ export const stripeConfirmation = (req, res, next) => {
   console.log('get into stripeConfirmation');
   var stripe = require("stripe")(constants.StripeSecretKey)
   //var event_json = JSON.parse(req.body);
-  console.log('event_json: ', event_json)
+  console.log('event_json: ', req.body)
   return res.json(new APIResponse("Assigned student")); // eslint-disable-line
 };
 
