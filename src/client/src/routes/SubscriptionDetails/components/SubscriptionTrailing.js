@@ -67,7 +67,7 @@ class SubscriptionTrailing extends React.Component {
     return (
       <div className='subscribe-details'>
         <h1>{objSubscription.courseTitles.join(' & ')} <span className='status status-trailing'>Trailing</span>{trialExpiryTxt}
-          <a href='' className='cancel-link'>Cancel</a>
+          <a href={['/cancel-subscription/', objSubscription._id].join('')} className='cancel-link'>Cancel</a>
           {buttonUpgrade}
         </h1>
         <h3>Subscription details</h3>

@@ -692,4 +692,11 @@ export const paySubscription = (req, res, next) => {
     }).catch(e => next(e));
 };
 
-export default { getSubscriptionsByUser, create, assignStudent, upgrade, countSubscriptions, getSubscriptionById, paySubscription };
+export const stripeConfirmation = (req, res, next) => {
+  var stripe = require("stripe")(constants.StripeSecretKey)
+  var event_json = JSON.parse(req.body);
+  console.log(event_json)
+  return res.json(new APIResponse("Assigned student")); // eslint-disable-line
+};
+
+export default { getSubscriptionsByUser, create, assignStudent, upgrade, countSubscriptions, getSubscriptionById, paySubscription, stripeConfirmation };
