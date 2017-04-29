@@ -4,12 +4,13 @@
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 
-import ProductDetail from './detail';
+import Component from './component';
 
 const mapStateToProps = (state) => ({
+  ...state
 });
 
 const mapDispatchToProps = {
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ProductDetail));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Component));

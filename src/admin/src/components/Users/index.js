@@ -4,16 +4,13 @@
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 
-import * as authActions from '../../reducers/auth';
-
-import Profile from './profile';
+import Component from './component';
 
 const mapStateToProps = (state) => ({
   ...state
 });
 
 const mapDispatchToProps = {
-  ...authActions
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Profile));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Component));

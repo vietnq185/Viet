@@ -2,10 +2,16 @@
 
 const uuidV4 = require('uuid/v4');
 
+const routePrefix = process.env.REACT_APP_ROUTE_PREFIX;
+
 /**
  * Constructor
  */
 var Utils = function () { };
+
+Utils.adminLink = (path = '/') => {
+  return `${routePrefix}${path}`;
+}
 
 Utils.range = (low, hi) => {
   function rangeRec(low, hi, vals) {

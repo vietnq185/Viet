@@ -7,6 +7,8 @@
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 
+import Utils from '../helpers/utils';
+
 // ------------------------------------------------------------------------------------------------------
 
 // Wrap the component and check if need authentication or not
@@ -18,8 +20,7 @@ const RequireLoginComponent = (props) => {
 
   const { auth: { isLoggedIn }, component: Component, ...rest } = props;
 
-  const routePrefix = process.env.REACT_APP_ROUTE_PREFIX;
-  const loginPath = `${routePrefix}/login`;
+  const loginPath = Utils.adminLink('/login');
   const isOnLoginPath = props.location.pathname === loginPath;
 
   // Authenticated
@@ -27,7 +28,7 @@ const RequireLoginComponent = (props) => {
     // Check if we are on Login path
     if (isOnLoginPath) {
       // then redirect to Referrer
-      const from = props.location.state ? props.location.state.from : { pathname: `${routePrefix}/` };
+      const from = props.location.state ? props.location.state.from : { pathname: Utils.adminLink('/') };
       return (<Redirect to={from} />);
     }
     // otherwise will render Referrer page

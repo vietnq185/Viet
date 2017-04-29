@@ -4,7 +4,7 @@
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 
-import Home from './home';
+import Component from './component';
 
 const mapStateToProps = (state) => ({
   ...state
@@ -13,4 +13,4 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = {
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Home));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Component));

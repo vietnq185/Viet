@@ -6,7 +6,7 @@ import { withRouter } from 'react-router';
 
 import * as authActions from '../../reducers/auth';
 
-import Login from './login';
+import Component from './component';
 
 const mapStateToProps = (state) => ({
   ...state
@@ -16,4 +16,4 @@ const mapDispatchToProps = {
   ...authActions
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Login));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Component));

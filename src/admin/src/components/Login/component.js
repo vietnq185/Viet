@@ -5,7 +5,7 @@ import API from '../../helpers/api'
 import Utils from '../../helpers/utils'
 import validate from '../../helpers/validate'
 
-export default class Login extends React.Component {
+export default class Component extends React.Component {
   constructor(props) {
     super(props)
     this.initialErrors = {

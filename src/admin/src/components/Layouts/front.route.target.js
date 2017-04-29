@@ -1,14 +1,13 @@
 import React from 'react';
 
 import DefaultLayout from './front.default.layout';
-import LoginLayout from './front.login.layout';
 
 import NotFoundComponent from '../NotFound';
 import HomeComponent from '../Home';
-import ProductComponent from '../Product';
-import ProductDetailComponent from '../ProductDetail';
 import LoginComponent from '../Login';
-import ProfileComponent from '../Profile';
+
+import SubscriptionsComponent from '../Subscriptions';
+import UsersComponent from '../Users';
 
 // ------------------------------------------------------------------------------------------------------
 
@@ -32,40 +31,29 @@ export const Home = (props) => {
 
 // ------------------------------------------------------------------------------------------------------
 
-export const Product = (props) => {
-  return (
-    <DefaultLayout>
-      <ProductComponent />
-    </DefaultLayout>
-  );
-};
-
-// ------------------------------------------------------------------------------------------------------
-
-export const ProductDetail = (props) => {
-  return (
-    <DefaultLayout>
-      <ProductDetailComponent />
-    </DefaultLayout>
-  );
-};
-
-// ------------------------------------------------------------------------------------------------------
-
 export const Login = (props) => {
   return (
-    <LoginLayout>
+    <DefaultLayout>
       <LoginComponent />
-    </LoginLayout>
+    </DefaultLayout>
+  );
+};
+// ------------------------------------------------------------------------------------------------------
+
+export const Subscriptions = (props) => {
+  return (
+    <DefaultLayout>
+      <SubscriptionsComponent />
+    </DefaultLayout>
   );
 };
 
 // ------------------------------------------------------------------------------------------------------
 
-export const Profile = (props) => {
+export const Users = (props) => {
   return (
     <DefaultLayout>
-      <ProfileComponent />
+      <UsersComponent />
     </DefaultLayout>
   );
 };
