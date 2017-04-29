@@ -81,3 +81,8 @@ ALTER TABLE items DROP CONSTRAINT items_user_fkey CASCADE;
 ALTER TABLE subscriptions ADD COLUMN refid SERIAL UNIQUE;
 
 ALTER TABLE users ADD COLUMN "linkCode" SERIAL UNIQUE;
+
+ALTER TABLE subscriptions ADD COLUMN "nextPeriodStart" bigint;
+ALTER TABLE subscriptions ADD COLUMN "nextPeriodEnd" bigint;
+ALTER TABLE subscriptions ADD COLUMN "nextChannel" character varying(255) COLLATE pg_catalog."default";
+ALTER TABLE subscriptions ADD COLUMN "nextExpirationType" character varying(255) COLLATE pg_catalog."default";

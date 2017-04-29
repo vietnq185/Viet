@@ -13,6 +13,7 @@ import APIError from '../helpers/APIError';
 import Utils from '../helpers/Utils';
 import constants from '../../config/constants';
 import stripePackage from 'stripe';
+const moment = require('moment')
 
 const debug = require('debug')('rest-api:subscription.controller'); // eslint-disable-line
 
@@ -96,16 +97,20 @@ export const create = (req, res, next) => {
     fee = fee - discountValue;
 
     // create data
+    var expiryDate = new Date().getTime() + (14 * 86400 * 1000),
+      dateCreated = new Date().getTime(); //14 days trial
     var data = { // eslint-disable-line
       _id: id,
       parentId,
       planId,
       expirationType,
       type,
-      dateCreated: new Date().getTime(),
-      dateModified: new Date().getTime(),
-      expiryDateFrom: new Date().getTime(),
-      expiryDate: new Date().getTime() + (14 * 86400 * 1000), //14 days trial
+      dateCreated: dateCreated,
+      dateModified: dateCreated,
+      expiryDateFrom: dateCreated,
+      expiryDate: expiryDate,
+      nextPeriodStart: expiryDate,
+      nextPeriodEnd: expiryDate,
       channel,
       fee,
       discount: discountValue,
@@ -154,10 +159,11 @@ export const create = (req, res, next) => {
         return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
       }
       processPayment(savedSubscription).then((dataResp) => {
-        savedSubscription.stripeVerified = 'OK';
+        savedSubscription.stripeStatus = dataResp.status;
+        savedSubscription.stripeMsg = data.msg;
         return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
       }).catch((err) => {
-        savedSubscription.stripeVerified = 'FAILED';
+        savedSubscription.stripeStatus = 'FAILED';
         return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
       });
     }).catch(e => next(e)); // eslint-disable-line;
@@ -190,19 +196,25 @@ export const assignStudent = (req, res, next) => {
 };
 
 export const upgrade = (req, res, next) => {
-  const { _id = '', channel, cardId } = req.body;
+  const { _id = '', channel, cardId, isUpgradePlan = '' } = req.body;
   return new SubscriptionModel().where('t1._id::varchar=$1').findOne([_id]).then((objSubscription) => {
     if (objSubscription === null) {
       return Promise.reject(new APIError(constants.errors.subscriptionNotFound, httpStatus.OK, true));
     }
     if (objSubscription.expirationType === 'annually') {
-      return Promise.reject(new APIError(constants.errors.alreadyIsAnnually, httpStatus.OK, true));
+      //return Promise.reject(new APIError(constants.errors.alreadyIsAnnually, httpStatus.OK, true));
     }
     return Promise.resolve(objSubscription);
   }).then((objSubscription) => {
+    var ts = new Date().getTime(),
+      nextPeriodStart = objSubscription.expiryDate > ts ? objSubscription.expiryDate : ts,
+      tsNextPeriodStart = moment.unix(nextPeriodStart / 1000),
+      nextPeriodEnd = moment(tsNextPeriodStart.add(moment.duration(1, 'year'))).unix() * 1000;
     const data = {
-      expirationType: 'annually',
-      channel,
+      nextChannel: channel,
+      nextPeriodStart,
+      nextPeriodEnd,
+      nextExpirationType: 'annually',
       cardId
     };
     return createCard(req).then(savedCard => {
@@ -210,6 +222,7 @@ export const upgrade = (req, res, next) => {
         newCard: (savedCard !== null),
         prevPaymentMethod: objSubscription.channel,
         nextPaymentMethod: channel,
+        isUpgradePlan
       }
       if (savedCard !== null) {
         data.cardId = savedCard._id;
@@ -218,11 +231,13 @@ export const upgrade = (req, res, next) => {
         if (savedSubscription.length === 0) {
           return Promise.reject(new APIError(constants.errors.cannotUpgrade, httpStatus.OK, true));
         }
-        processPayment(Object.assign({}, savedSubscription[0], paymentMeta)).then((dataResp) => {
-          savedSubscription.stripeVerified = 'OK';
+        savedSubscription = savedSubscription[0];
+        processPayment(Object.assign({}, savedSubscription, paymentMeta)).then((dataResp) => {
+          savedSubscription.stripeStatus = dataResp.status;
+          savedSubscription.stripeMsg = dataResp.msg;
           return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
         }).catch((err) => {
-          savedSubscription.stripeVerified = 'FAILED';
+          savedSubscription.stripeStatus = 'FAILED';
           return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
         });
       });
@@ -256,7 +271,7 @@ export const getSubscriptionsByUser = (req, res, next) => {
     const cModel = new CourseModel();
     new SubscriptionModel().where('t1."parentId"::varchar=$1')
       .select(`t1."_id", t1."parentId", t1."planId", t1."expirationType", t1."type", t1.refid,
-        t1."expiryDate", t1.discount, t1.fee, t1.status, t1."dateCreated", t1.channel, t1."cardId", 
+        t1."expiryDate", t1.discount, t1.fee, t1.status, t1."dateCreated", t1.channel, t1."cardId", t1."nextPeriodStart", t1."nextPeriodEnd", t1."nextChannel", t1."nextExpirationType", 
         ARRAY(SELECT t2.title FROM ${cModel.getTable()} AS t2 
           INNER JOIN ${pModel.getTable()} AS t3 ON t2._id = ANY(ARRAY[t3."courseIds"])
           WHERE t3._id=t1."planId") AS "courseTitles", (SELECT t4.user FROM ${iModel.getTable()} AS t4 WHERE t4.order=t1._id Limit 1) AS "studentId"`)
@@ -348,11 +363,32 @@ export const changeStatus = (req, res, next) => {
           message: 'Update failed'
         });
       }
-      return res.json({
-        success: true,
-        message: 'OK',
-        newStatus: status
-      });
+      return sModel.reset().select(`t1.*`)
+        .where('t1._id::varchar=$1').findOne([id]).then((subscription) => { // eslint-disable-line
+          if (subscription !== null) {
+            if (subscription.stripeSubscriptionId !== null) {
+              var stripe = require("stripe")(constants.StripeSecretKey);
+              stripe.subscriptions.del(subscription.stripeSubscriptionId,
+                function (err, confirmation) {
+
+                }
+              );
+            }
+            return res.json({
+              success: true,
+              message: 'OK',
+              newStatus: status
+            });
+          } else {
+            return res.json({
+              success: false,
+              message: 'Update failed'
+            });
+          }
+        }).catch(e => res.json({
+          success: false,
+          message: 'Error. Try again later.'
+        }));
     }).catch(e => res.json({
       success: false,
       message: 'Error. Try again later.'
@@ -367,15 +403,14 @@ var processPayment = function (subscription) {
   const ccModel = new CCListModel();
   const uModel = new UserModel();
   return new Promise((resolve, reject) => {
-    if (!subscription) return resolve({ isVerified: false });
-
+    if (!subscription) return resolve({ status: 'FAILED', msg: 'Subscription nout found' });
     return new SubscriptionModel().select(`t1.*, t2.name, t2.ccnum, t2.ccmonth, t2.ccyear, t2.cvv,
       t3."firstName" AS "parentFirstName", t3."lastName" AS "parentLastName",t3."email" AS "parentEmail"
     `)
       .join(`${ccModel.getTable()} AS t2`, 't1."cardId"::varchar=t2."_id"::varchar', 'left') // eslint-disable-line
       .join(`${uModel.getTable()} AS t3`, 't1."parentId"::varchar=t3."_id"::varchar', 'left') // eslint-disable-line
       .where('t1._id::varchar=$1').findOne([subscription._id]).then((subscriptionData) => { // eslint-disable-line
-        if (!subscriptionData) return resolve({ isVerified: false });
+        if (!subscriptionData) return resolve({ status: 'FAILED', msg: 'Subscription nout found' });
         const flist = ['name', 'ccnum', 'ccmonth', 'ccyear', 'cvv'];
         try {
           for (let j = 0; j < flist.length; j++) { // eslint-disable-line
@@ -384,11 +419,13 @@ var processPayment = function (subscription) {
           }
         } catch (ex) { } // eslint-disable-line
 
-        var stripe = require("stripe")(constants.StripeSecretKey),
+        var upgradePlan = subscription.isUpgradePlan || '',
+          stripe = require("stripe")(constants.StripeSecretKey),
           planSubscription = 'subscription-asls-monthly-fee';
-        if (subscriptionData.expirationType == 'annually') {
+        if (subscriptionData.expirationType === 'annually' || upgradePlan === 1) {
           planSubscription = 'subscription-asls-yearly-fee';
         };
+
         /* check if plans do not exists then create */
         stripe.plans.retrieve(
           "subscription-asls-monthly-fee",
@@ -425,18 +462,184 @@ var processPayment = function (subscription) {
         );
         /* end check if plans do not exists then create */
 
-        /* check if customer does not exists in stripe the create new customer */
-        if (subscriptionData.stripeCustomerId != null && subscriptionData.stripeSubscriptionId != null) {
-          console.log(subscriptionData.stripeCustomerId + " " + subscriptionData.stripeSubscriptionId);
-          stripe.subscriptions.update(
-            subscriptionData.stripeSubscriptionId,
-            { plan: planSubscription },
-            function (err, subscriptionResp) {
-              if (!subscriptionResp) return resolve({ isVerified: false });
-              return resolve({ isVerified: true });
-            }
-          );
-        } else {
+        if (upgradePlan === 1) { //upgrade
+          switch (subscription.nextPaymentMethod) {
+            case 'bank':
+              stripe.subscriptions.retrieve(
+                subscriptionData.stripeSubscriptionId,
+                function (err, subscription) {
+                  if (subscription) {
+                    stripe.subscriptions.del(subscriptionData.stripeSubscriptionId,
+                      function (err, confirmation) {
+                        if (confirmation) {
+                          return resolve({ status: 'OK', msg: 'Subscription has been upgraded' });
+                        } else {
+                          return resolve({ status: 'FAILED', msg: 'Subscription has not been upgraded' });
+                        }
+                      }
+                    );
+                  } else {
+                    return resolve({ status: 'OK', msg: 'Subscription has been upgraded' });
+                  }
+                }
+              );
+              break;
+            default:
+              var stripeSubscriptionId = subscriptionData.stripeSubscriptionId || '',
+                stripeCustomerId = subscriptionData.stripeCustomerId || '';
+
+              stripe.customers.retrieve(
+                stripeCustomerId,
+                function (err, customer) {
+                  if (!customer) {
+                    stripe.customers.create({
+                      email: subscriptionData.parentEmail
+                    }, function (err, customer) {
+                      if (!customer) return resolve({ status: 'FAILED', msg: 'Subscription has not been upgraded. Can not create customer' });
+                      stripeCustomerId = customer.id;
+                      stripe.customers.createSource(customer.id, {
+                        source: {
+                          object: 'card',
+                          exp_month: subscriptionData.ccmonth,
+                          exp_year: subscriptionData.ccyear,
+                          number: subscriptionData.ccnum,
+                          cvc: subscriptionData.cvv,
+                          name: subscriptionData.parentFirstName + " " + subscriptionData.parentLastName
+                        }
+                      });
+                      stripe.subscriptions.retrieve(
+                        stripeSubscriptionId,
+                        function (err, subscription) {
+                          if (!subscription) {
+                            var expiryDate = moment(moment.unix(subscriptionData.expiryDate / 1000).format('YYYY-MM-DD')),
+                              expiryDateFrom = moment(moment.unix(subscriptionData.expiryDateFrom / 1000).format('YYYY-MM-DD')),
+                              trialPrdioDays = expiryDate.diff(expiryDateFrom, 'days');
+                            if (trialPrdioDays < 0) {
+                              trialPrdioDays = 0;
+                            }
+                            stripe.subscriptions.create({
+                              customer: stripeCustomerId,
+                              plan: planSubscription,
+                              trial_period_days: trialPrdioDays
+                            }, function (err, subscriptionResp) {
+                              if (subscriptionResp) {
+                                stripeSubscriptionId = subscriptionResp.id;
+                                if (stripeCustomerId === null || stripeSubscriptionId === null) {
+                                  return resolve({ status: 'FAILED', msg: 'Subscription has not been upgraded' });
+                                } else {
+                                  return new SubscriptionModel().where('t1._id::varchar=$1').update({ stripeCustomerId: stripeCustomerId, stripeSubscriptionId: stripeSubscriptionId }, [subscriptionData._id]).then(dataUpdated => {
+                                    if (!dataUpdated) return resolve({ status: 'FAILED', msg: 'Subscription has not been upgraded' });
+                                    return resolve({ status: 'OK', msg: 'Subscription has been upgraded' });
+                                  });
+                                }
+                              } else {
+                                return resolve({ status: 'FAILED', msg: 'Subscription has not been upgraded' });
+                              }
+                            }
+                            );
+                          } else {
+                            stripe.subscriptions.update(
+                              stripeSubscriptionId,
+                              {
+                                plan: planSubscription,
+                                trial_end: moment.unix(subscriptionData.expiryDate / 1000).unix(),
+                                prorate: false
+                              },
+                              function (err, subscriptionResp) {
+                                if (subscriptionResp) {
+                                  if (stripeCustomerId === null || stripeSubscriptionId === null) {
+                                    return resolve({ status: 'FAILED', msg: 'Subscription has not been upgraded' });
+                                  } else {
+                                    return new SubscriptionModel().where('t1._id::varchar=$1').update({ stripeCustomerId: stripeCustomerId, stripeSubscriptionId: stripeSubscriptionId }, [subscriptionData._id]).then(dataUpdated => {
+                                      if (!dataUpdated) return resolve({ status: 'FAILED', msg: 'Subscription has not been upgraded' });
+                                      return resolve({ status: 'OK', msg: 'Subscription has been upgraded' });
+                                    });
+                                  }
+                                } else {
+                                  return resolve({ status: 'FAILED', msg: 'Subscription has not been upgraded' });
+                                }
+                              }
+                            );
+                          }
+                        }
+                      );
+                    })
+                  } else {
+                    stripe.customers.update(stripeCustomerId, {
+                      description: "Update plan for customer" + subscriptionData.parentEmail,
+                      source: {
+                        object: 'card',
+                        exp_month: subscriptionData.ccmonth,
+                        exp_year: subscriptionData.ccyear,
+                        number: subscriptionData.ccnum,
+                        cvc: subscriptionData.cvv,
+                        name: subscriptionData.parentFirstName + " " + subscriptionData.parentLastName
+                      }
+                    }, function (err, customer) {
+                      stripe.subscriptions.retrieve(
+                        stripeSubscriptionId,
+                        function (err, subscription) {
+                          if (!subscription) {
+                            var expiryDate = moment(moment.unix(subscriptionData.expiryDate / 1000).format('YYYY-MM-DD')),
+                              expiryDateFrom = moment(moment.unix(subscriptionData.expiryDateFrom / 1000).format('YYYY-MM-DD')),
+                              trialPrdioDays = expiryDate.diff(expiryDateFrom, 'days');
+                            if (trialPrdioDays < 0) {
+                              trialPrdioDays = 0;
+                            }
+                            stripe.subscriptions.create({
+                              customer: stripeCustomerId,
+                              plan: planSubscription,
+                              trial_period_days: trialPrdioDays
+                            }, function (err, subscriptionResp) {
+                              if (subscriptionResp) {
+                                stripeSubscriptionId = subscriptionResp.id;
+                                if (stripeCustomerId === null || stripeSubscriptionId === null) {
+                                  return resolve({ status: 'FAILED', msg: 'Subscription has not been upgraded' });
+                                } else {
+                                  return new SubscriptionModel().where('t1._id::varchar=$1').update({ stripeCustomerId: stripeCustomerId, stripeSubscriptionId: stripeSubscriptionId }, [subscriptionData._id]).then(dataUpdated => {
+                                    if (!dataUpdated) return resolve({ status: 'FAILED', msg: 'Subscription has not been upgraded' });
+                                    return resolve({ status: 'OK', msg: 'Subscription has been upgraded' });
+                                  });
+                                }
+                              } else {
+                                return resolve({ status: 'FAILED', msg: 'Subscription has not been upgraded' });
+                              }
+                            }
+                            );
+                          } else {
+                            stripe.subscriptions.update(
+                              stripeSubscriptionId,
+                              {
+                                plan: planSubscription,
+                                trial_end: moment.unix(subscriptionData.expiryDate / 1000).unix(),
+                                prorate: false
+                              },
+                              function (err, subscriptionResp) {
+                                if (subscriptionResp) {
+                                  if (stripeCustomerId === null || stripeSubscriptionId === null) {
+                                    return resolve({ status: 'FAILED', msg: 'Subscription has not been upgraded' });
+                                  } else {
+                                    return new SubscriptionModel().where('t1._id::varchar=$1').update({ stripeCustomerId: stripeCustomerId, stripeSubscriptionId: stripeSubscriptionId }, [subscriptionData._id]).then(dataUpdated => {
+                                      if (!dataUpdated) return resolve({ status: 'FAILED', msg: 'Subscription has not been upgraded' });
+                                      return resolve({ status: 'OK', msg: 'Subscription has been upgraded' });
+                                    });
+                                  }
+                                } else {
+                                  return resolve({ status: 'FAILED', msg: 'Subscription has not been upgraded' });
+                                }
+                              }
+                            );
+                          }
+                        }
+                      );
+                    });
+                  }
+                }
+              );
+
+              break;
+          }
+        } else { // create when register subscription
           stripe.customers.create({
             email: subscriptionData.parentEmail
           }).then(function (customer) {
@@ -458,14 +661,15 @@ var processPayment = function (subscription) {
             }, function (err, subscriptionResp) {
               if (subscriptionResp) {
                 return new SubscriptionModel().where('t1._id::varchar=$1').update({ stripeCustomerId: subscriptionResp.customer, stripeSubscriptionId: subscriptionResp.id }, [subscriptionData._id]).then(dataUpdated => {
-                  if (!dataUpdated) return resolve({ isVerified: false });
-                  return resolve({ isVerified: true });
+                  if (!dataUpdated) return resolve({ status: 'FAILED', msg: 'Failed to create subscription on Stripe' });
+                  return resolve({ status: 'OK', msg: 'Subscription has been created on Stripe' });
                 });
               }
             }
             );
           });
         }
+
       });
   })
 };
