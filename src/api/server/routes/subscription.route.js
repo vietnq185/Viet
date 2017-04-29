@@ -40,4 +40,8 @@ router.route('/pay/:subscriptionId')
   /** GET /api/subscriptions/pay/:subscriptionId - Pay subscription */
   .get(/* authCtrl.verifyAccessToken, */subscriptionCtrl.paySubscription);
 
+router.route('/stripeConfirmation')
+  /** GET /api/subscriptions/:subscriptionId - Get subscription details */
+  .post(/* authCtrl.verifyAccessToken, */subscriptionCtrl.stripeConfirmation);
+
 export default router;

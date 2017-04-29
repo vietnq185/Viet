@@ -2,7 +2,9 @@
 import React from 'react'
 import Utils from '../../../helpers/utils'
 import API from '../../../helpers/api'
-import UpgradeSubscriptionDetails from './UpgradeSubscriptionDetails'
+import Step1 from './Step1'
+import Step2 from './Step2'
+import Step3 from './Step3'
 
 class PageContent extends React.Component {
   constructor (props) {
@@ -29,16 +31,10 @@ class PageContent extends React.Component {
         <div className='subscribe-details'><h3>Subscription not found!</h3></div>
       )
     } else {
-      subscriptionDetails = (<UpgradeSubscriptionDetails key={Utils.guid()} {...this.props} objSubscription={objSubscription} />)
+      subscriptionDetails = (<Step1 key={Utils.guid()} {...this.props} objSubscription={objSubscription} />)
     }
     return (
       <div className='subscribe-wrapper'>
-        <div className='breadcrumb'>
-          <a href='/' className='passed'>Home</a> <i className='fa fa-chevron-right' />
-          <a href='/subscription' className='passed'>My Subscription</a> <i className='fa fa-chevron-right' />
-          <a href='javascript:void(0)' onClick={() => Utils.redirect(`/subscription-details/${objSubscription._id}`)} className='passed'>Subscription Details</a> <i className='fa fa-chevron-right' />
-          <a href='javascript:void(0)' className='active'>Upgrade</a>
-        </div>
         <div className='container'>{subscriptionDetails}</div>
       </div>
     )

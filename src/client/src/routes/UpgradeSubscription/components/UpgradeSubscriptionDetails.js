@@ -9,6 +9,7 @@ import API from '../../../helpers/api'
 import validate from '../../../helpers/validate'
 import * as authActions from '../../../store/auth'
 import FailImage from '../../../styles/images/icon-failed.png'
+import SuccessImage from '../../../styles/images/icon-success.png'
 
 const MONTHLY = constants.frequency.monthly
 const ANNUALLY = constants.frequency.annually
@@ -44,6 +45,7 @@ class UpgradeSubscriptionDetails extends React.Component {
       hasError: false,
       errMsg: '',
       showFailedDialog: false,
+      showSuccessDialog: false,
     }
   }
 
@@ -55,6 +57,10 @@ class UpgradeSubscriptionDetails extends React.Component {
   setErrors(errors) {
     this.errors = errors
     this.setState({ hasError: true })
+  }
+
+  viewSubscriptionDetails(id) {
+    Utils.redirect(`/subscription-details/${id}`)
   }
 
   setNewCC(key, value) {
@@ -73,6 +79,7 @@ class UpgradeSubscriptionDetails extends React.Component {
       _id: objSubscription._id,
       channel: paymentMethod,
       parentId: jwt.userId,
+      isUpgradePlan: 1
     }
     if (paymentMethod !== BANK_TRANSFER) {
       subData.cardId = selectedCardId
@@ -89,13 +96,23 @@ class UpgradeSubscriptionDetails extends React.Component {
     //
     API.upgradeSubscription(jwt.accessToken || '', subData).then(result => {
       console.info('upgrade result: ', result);
-      this.setState({
-        showFailedDialog: false
-      })
+      if (result.stripeStatus === 'OK') {
+        this.setState({
+          showFailedDialog: false,
+          showSuccessDialog: true
+        })
+      } else {
+        this.setState({
+          showFailedDialog: true,
+          showSuccessDialog: false
+        })
+      }
+
     }).catch(errMsg => {
       console.info('upgrade error: ', errMsg);
       this.setState({
-        showFailedDialog: true
+        showFailedDialog: true,
+        showSuccessDialog: false
       })
     });
   }
@@ -154,7 +171,7 @@ class UpgradeSubscriptionDetails extends React.Component {
     return (
       <div className='subscribe-details' >
         <div className='alert alert-success'>
-          <p>Looks like you've already enjoyed monthly Math plan. Your plan will be upgraded from <strong>Monthly Plan</strong> to <strong>Annually Plan</strong>. Thus, please review your upgrade plan and select a payment method, or contact us at (65) 231-21221 for help.</p>
+          <p>Looks like you've already enjoyed monthly {(objSubscription.courseTitles || []).join(' & ')} plan. Your plan will be upgraded from <strong>Monthly Plan</strong> to <strong>Annually Plan</strong>. Thus, please review your upgrade plan and select a payment method, or contact us at (65) 231-21221 for help.</p>
           <br />
           <p>For the plan which is on trial, it will be applied right after you upgrade successfully.</p>
           <p>For the plan which is active, it will be applied right after the current subscription ends its current cycle.</p>
@@ -175,13 +192,13 @@ class UpgradeSubscriptionDetails extends React.Component {
                 <tbody>
                   <tr>
                     <td>Current Plan</td>
-                    <td>Math</td>
+                    <td>{(objSubscription.courseTitles || []).join(' & ')}</td>
                     <td>Monthly</td>
                     <td>${objSubscription.fee}</td>
                   </tr>
                   <tr className='upgrade'>
                     <td>Upgrade</td>
-                    <td>Math</td>
+                    <td>{(objSubscription.courseTitles || []).join(' & ')}</td>
                     <td>Annually</td>
                     <td>${objSubscription.fee * 12}</td>
                   </tr>
@@ -199,7 +216,7 @@ class UpgradeSubscriptionDetails extends React.Component {
 
   renderPaymentForm() {
     const self = this
-
+    const { objSubscription } = this.props
     console.info('Upgrade details component => props: ', this.props)
     console.info('Upgrade details component => state: ', this.state)
 
@@ -255,8 +272,8 @@ class UpgradeSubscriptionDetails extends React.Component {
     }
 
     let bankTransferOption = (
-      <li onClick={() => this.setState({ paymentMethod: BANK_TRANSFER })}>
-        {this.state.paymentMethod === BANK_TRANSFER ? (<input type='radio' name='payment_method' id='bank' value={BANK_TRANSFER} defaultChecked />) : (<input type='radio' name='payment_method' id='bank' value={BANK_TRANSFER} />)}
+      <li>
+        <input type='radio' name='payment_method' id='bank' disabled value={BANK_TRANSFER} />
         <label htmlFor='bank'><i className='fa fa-money' aria-hidden='true' />Bank Transfer</label>
       </li>
     )
@@ -344,6 +361,23 @@ class UpgradeSubscriptionDetails extends React.Component {
                   <h1>FAILED!</h1>
                   <p>Sorry, an error has occured.<br />Please check your payment detail and try again. Thank you!</p>
                   <div><button className='btn dk-bg-green dk-white btn-close-modal' type='button' data-dismiss='modal' onClick={() => this.setState({ showFailedDialog: false })}>Try Again</button></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div id='modalPaymentSuccess' className={['modal fade', this.state.showSuccessDialog ? 'in' : '', css(styles.fadeIn)].join(' ')} role='dialog' style={this.state.showSuccessDialog ? { display: 'block' } : { display: 'none' }}>
+            <div className='modal-dialog'>
+
+              {/* <!-- Modal content--> */}
+              <div className='modal-content'>
+                <div className='modal-body text-center'>
+                  <div><img src={SuccessImage} /></div>
+                  <h1>SUCCESS!</h1>
+                  <p>You have successfully upgraded the plan.</p>
+                  <p>You can view the new subscription in the link below</p>
+                  <div><button className='btn dk-bg-green dk-white' type='button' onClick={() => this.viewSubscriptionDetails(objSubscription._id)}>View Subscription Details</button></div>
                 </div>
               </div>
 

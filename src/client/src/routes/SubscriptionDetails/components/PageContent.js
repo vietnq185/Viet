@@ -65,7 +65,7 @@ class PageContent extends React.Component {
           <a href='/subscription' className='passed'>My Subscription</a> <i className='fa fa-chevron-right' />
           <a href='javascript:void(0)' className='active'>Subscription Details</a>
         </div>
-        {subscriptionDetails}
+        <div className='container'>{subscriptionDetails}</div>
       </div>
     )
   }

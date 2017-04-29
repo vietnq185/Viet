@@ -781,6 +781,35 @@ a{
     vertical-align: middle;
 }
 
+.subscribe-wrapper .subscribe-cancellation{
+	min-height: 300px;
+	font-size: 17px;
+}
+.subscribe-wrapper .subscribe-cancellation h2{
+	border-bottom: medium dashed;
+    font-size: 25px;
+    font-weight: 600;
+    padding-bottom: 20px;
+	margin-bottom: 30px;
+}
+.subscribe-wrapper .subscribe-cancellation .face-sad{
+	display: inline-block;
+    padding-left: 30px;
+    vertical-align: middle;
+}
+.subscribe-wrapper .subscribe-cancellation .face-sad .fa{
+	color: #999;
+}
+.subscribe-wrapper .subscribe-cancellation div.checkbox{
+	line-height: 30px;
+}
+.subscribe-wrapper .subscribe-cancellation div.checkbox label {
+	line-height: 30px;
+}
+.subscribe-wrapper .subscribe-cancellation div.checkbox label input{
+	margin-top: 8px;
+}
+
 @media (max-width: 1199px){
 	.subscription-plan .subscription-plan-item{
 		min-height: 509px;
