@@ -761,4 +761,9 @@ export const checkToShowBannerDiscount = (req, res, next) => new SubscriptionMod
   }
 }).catch(e => next(e));
 
+export const cronUpdateSubscriptionStatus = (req) => {
+  var now = new Date().getTime();
+  return new SubscriptionModel().where('t1."expiryDate" < $1 AND t1.status NOT IN($2, $3)').update({ status: 'overdue' }, [now, 'cancelled', 'pending']);
+}
+
 export default { getSubscriptionsByUser, create, assignStudent, upgrade, countSubscriptions, getSubscriptionById, paySubscription, stripeConfirmation, checkToShowBannerDiscount };
