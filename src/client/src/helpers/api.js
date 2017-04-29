@@ -298,4 +298,22 @@ export default class API {
     })
   }
 
+  static checkToShowBannerDiscount = () => {
+    return new Promise((resolve, reject) => {
+      return fetch(config.api.checkToShowBannerDiscount, {
+        method: 'GET',
+        headers: {
+          'Content-type': 'application/json'
+        }
+      }).then((response) => response.json()).then((jsonResponse) => {
+        if (jsonResponse && jsonResponse.success) {
+          return resolve(jsonResponse.result)
+        }
+        return resolve(0)
+      }).catch(() => {
+        return resolve(0)
+      })
+    })
+  }
+
 }

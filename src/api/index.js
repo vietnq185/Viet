@@ -1,6 +1,7 @@
 // config should be imported before importing any other file
 import config from './config/config';
 import app from './config/express';
+import * as subscriptionCtrl from './server/controllers/subscription.controller';
 
 const debug = require('debug')('rest-api:index');
 
@@ -21,6 +22,20 @@ if (!module.parent) {
   // listen on port config.port
   app.listen(config.port, () => {
     debug(`server started on port ${config.port} (${config.env})`);
+
+    var cron = require('cron');
+
+    var job1 = new cron.CronJob({
+      cronTime: '0 0 * * *',
+      onTick: function () {
+        subscriptionCtrl.cronUpdateSubscriptionStatus()
+      },
+      start: false,
+      timeZone: 'America/Los_Angeles'
+    });
+
+    job1.start(); // job 1 started
+
   });
 }
 
