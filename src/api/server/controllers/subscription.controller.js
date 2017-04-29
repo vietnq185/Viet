@@ -750,4 +750,15 @@ export const stripeConfirmation = (req, res, next) => {
   });
 };
 
-export default { getSubscriptionsByUser, create, assignStudent, upgrade, countSubscriptions, getSubscriptionById, paySubscription, stripeConfirmation };
+export const checkToShowBannerDiscount = (req, res, next) => new SubscriptionModel().findCount().then((total) => {
+  var isDisabled = false,
+    limit = 500,
+    discount = 20;
+  if (isDisabled || (!isDisabled && total >= limit)) {
+    return res.json(new APIResponse({ showBanner: 0, discount: 0, limit: 0 }));
+  } else {
+    return res.json(new APIResponse({ showBanner: 1, discount: discount, limit: limit }));
+  }
+}).catch(e => next(e));
+
+export default { getSubscriptionsByUser, create, assignStudent, upgrade, countSubscriptions, getSubscriptionById, paySubscription, stripeConfirmation, checkToShowBannerDiscount };

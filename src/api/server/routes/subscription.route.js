@@ -41,7 +41,11 @@ router.route('/pay/:subscriptionId')
   .get(/* authCtrl.verifyAccessToken, */subscriptionCtrl.paySubscription);
 
 router.route('/stripeConfirmation')
-  /** GET /api/subscriptions/stripeConfirmation -  */
+  /** POST /api/subscriptions/stripeConfirmation  */
   .post(/* authCtrl.verifyAccessToken, */subscriptionCtrl.stripeConfirmation);
+
+router.route('/checkToShowBannerDiscount')
+  /** GET /api/subscriptions/checkToShowBannerDiscount */
+  .get(/* authCtrl.verifyAccessToken, */subscriptionCtrl.checkToShowBannerDiscount);
 
 export default router;

@@ -14,22 +14,23 @@ import LeftBGSpecialOffer from '../../styles/images/left-bg-special-offer.png'
 export default class Footer extends React.Component {
   constructor(props) {
     super(props)
-    this.numberOfsubscriptions = 0
+    this.showBannerDiscount = {}
     this.state = {
       show: true,
-      cntSubscriptions: Utils.copy(this.numberOfsubscriptions)
+      showBannerDiscount: Utils.copy(this.showBannerDiscount)
     }
   }
   componentDidMount() {
     var self = this
-    API.countSubscriptions().then((cntSubscriptions) => this.setState({ cntSubscriptions })).catch((error) => {
-      self.setState({ cntSubscriptions: Utils.copy(self.numberOfsubscriptions) })
+    API.checkToShowBannerDiscount().then((showBannerDiscount) => this.setState({ showBannerDiscount })).catch((error) => {
+      self.setState({ showBannerDiscount: Utils.copy(self.showBannerDiscount) })
     })
   }
   render() {
-    if (this.state.cntSubscriptions > 20) {
+    if (this.state.showBannerDiscount.showBanner === 0) {
       this.state.show = false
     }
+    
     return (
       <div className={['page-footer text-left', (this.state.show ? 'mb6' : '')].join(' ')}>
         < div className= 'container-fluid' >
@@ -59,7 +60,7 @@ export default class Footer extends React.Component {
               <div className='banner-discount'>
                 <span className='left-bg-special-offer'><img src={LeftBGSpecialOffer} /></span>
                 <span className='banner-discount-info'>
-                  Discount 20% for the first 200 subscriptions
+                  Discount {this.state.showBannerDiscount.discount}% for the first {this.state.showBannerDiscount.limit} subscriptions
 								<Link to='/subscribe' className='btn dk-bg-green dk-white ml2'>Subscribe Now</Link>
                 </span>
                 <span><a className='close' onClick={() => this.setState({ show: false })}>&times;</a></span>
