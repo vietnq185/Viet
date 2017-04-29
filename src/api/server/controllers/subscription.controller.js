@@ -8,6 +8,7 @@ import PlanModel from '../models/plan.model';
 import ItemModel from '../models/item.model';
 import CourseModel from '../models/course.model';
 import UserModel from '../models/user.model';
+import PaymentHistory from '../models/paymentHistory.model';
 import APIResponse from '../helpers/APIResponse';
 import APIError from '../helpers/APIError';
 import Utils from '../helpers/Utils';
@@ -111,6 +112,8 @@ export const create = (req, res, next) => {
       expiryDate: expiryDate,
       nextPeriodStart: expiryDate,
       nextPeriodEnd: expiryDate,
+      nextChannel: channel,
+      nextExpirationType: expirationType,
       channel,
       fee,
       discount: discountValue,
@@ -211,9 +214,9 @@ export const upgrade = (req, res, next) => {
       tsNextPeriodStart = moment.unix(nextPeriodStart / 1000),
       nextPeriodEnd = moment(tsNextPeriodStart.add(moment.duration(1, 'year'))).unix() * 1000;
     const data = {
-      nextChannel: channel,
       nextPeriodStart,
       nextPeriodEnd,
+      nextChannel: channel,
       nextExpirationType: 'annually',
       cardId
     };
@@ -693,11 +696,58 @@ export const paySubscription = (req, res, next) => {
 };
 
 export const stripeConfirmation = (req, res, next) => {
-  console.log('get into stripeConfirmation');
-  var stripe = require("stripe")(constants.StripeSecretKey)
-  //var event_json = JSON.parse(req.body);
-  console.log('event_json: ', req.body)
-  return res.json(new APIResponse("Assigned student")); // eslint-disable-line
+  var stripe = require("stripe")(constants.StripeSecretKey),
+    stripeResp = req.body;
+  // Verify the event by fetching it from Stripe
+  stripe.events.retrieve(stripeResp.id, function (err, event) {
+    if (!event) return res.json(new APIResponse("Stripe - Event not found")); // eslint-disable-line
+
+    var invoice = event.data.object,
+      stripeCustomerId = invoice.customer;
+    return new SubscriptionModel().select(`t1.*`)
+      .where('t1."stripeCustomerId"::varchar=$1').limit(1).findOne([stripeCustomerId]).then((subscription) => { // eslint-disable-line
+        if (subscription === null) return res.json(new APIResponse("Stripe - Subscription not found")); // eslint-disable-line
+
+        const dataHistory = {
+          _id: Utils.uuid(),
+          subscriptionId: subscription._id,
+          paymentMethod: 'stripe',
+          txnid: invoice.balance_transaction,
+          paymentStatus: invoice.status,
+          paymentDate: new Date().getTime()
+        };
+
+        if (stripeResp.type === 'charge.succeeded') {
+          var period = subscription.nextExpirationType == 'monthly' ? 'month' : 'year',
+            ts = new Date().getTime(),
+            expiryDateFrom = subscription.expiryDate > ts ? subscription.expiryDate : ts,
+            tsExpiryDateFrom = moment.unix(expiryDateFrom / 1000),
+            expiryDate = moment(tsExpiryDateFrom.add(moment.duration(1, period))).unix() * 1000,
+            tsExpiryDate = moment.unix(expiryDate / 1000),
+            nextPeriodEnd = moment(tsExpiryDate.add(moment.duration(1, period))).unix() * 1000;
+          const dataUpdate = {
+            status: 'active',
+            expiryDateFrom,
+            expiryDate,
+            // nextPeriodStart: expiryDate,
+            // nextPeriodEnd
+          }
+          return new SubscriptionModel().where('t1._id::varchar=$1').update(dataUpdate, [subscription._id]).then(dataUpdated => {
+            return new PaymentHistory().insert(dataHistory).then(savedHistory => {
+              return res.json(new APIResponse({ status: 'OK', msg: 'Payment successful - subscription has been activated' }));
+            });
+          });
+        } else if (stripeResp.type === 'charge.failed') {
+          return new SubscriptionModel().where('t1._id::varchar=$1').update({ status: 'overdue' }, [subscription._id]).then(dataUpdated => {
+            return new PaymentHistory().insert(dataHistory).then(savedHistory => {
+              return res.json(new APIResponse({ status: 'OK', msg: 'Payment failed - subscription status has been changed to overdue' }));
+            });
+          });
+        } else {
+          return res.json(new APIResponse("Stripe - Do not update any because type is not 'charge.succeeded' or 'charge.failed'.")); // eslint-disable-line
+        }
+      }).catch(e => next(e));
+  });
 };
 
 export default { getSubscriptionsByUser, create, assignStudent, upgrade, countSubscriptions, getSubscriptionById, paySubscription, stripeConfirmation };
