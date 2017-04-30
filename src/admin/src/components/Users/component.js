@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDataGrid from 'react-data-grid';
+const { Row } = ReactDataGrid;
 import moment from 'moment';
 
 import { Button, Modal, Pagination } from 'react-bootstrap';
@@ -11,12 +12,40 @@ const EmptyRowsView = () => {
   return (<div>No data found</div>);
 };
 
+class RowRenderer extends React.Component {
+
+  setScrollLeft(scrollBy) {
+    // if you want freeze columns to work, you need to make sure you implement this as apass through
+    this.row.setScrollLeft(scrollBy);
+  }
+
+  getRowStyle() {
+    return {
+      //color: this.getRowBackground()
+      cursor: 'pointer'
+    };
+  }
+
+  getRowBackground() {
+    return this.props.idx % 2 ? 'green' : 'blue';
+  }
+
+  onViewDetails() {
+    this.props.viewDetails(this.row.props.idx);
+  }
+
+  render() {
+    console.info('RowRenderer props: ', this.props);
+    return (<div onClick={() => this.onViewDetails()} style={this.getRowStyle()}><Row ref={node => this.row = node} {...this.props} /></div>);
+  }
+}
+
 export default class Component extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       columns: [
-        //{ key: '_id', name: 'ID' },
+        //{ key: '_id', name: 'ID'},
         { key: 'firstName', name: 'FirstName' },
         { key: 'lastName', name: 'Last Name' },
         { key: 'role', name: 'Role' },
@@ -63,8 +92,15 @@ export default class Component extends React.Component {
     this.setState({ objDetails: null });
   }
 
-  open(item) {
+  open(i) {
+    console.info('open => index: ', i);
+    const item = this.props.user.list.data[i];
+    console.info('open => item: ', item);
     this.setState({ objDetails: item, updateMsg: '' });
+  }
+
+  onRowClick() {
+    console.info('onRowClick: ', arguments);
   }
 
   render() {
@@ -80,6 +116,8 @@ export default class Component extends React.Component {
           rowGetter={(i) => this.rowGetter(i)}
           rowsCount={this.props.user.list.data.length}
           minHeight={500}
+          onRowClick={this.onRowClick.bind(this)}
+          rowRenderer={<RowRenderer viewDetails={this.open.bind(this)} />}
           emptyRowsView={EmptyRowsView} />
 
         <div className="text-center">
