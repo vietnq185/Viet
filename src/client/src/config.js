@@ -46,6 +46,7 @@ config.api = {
   linkStudent: '/api/users/linkStudent', // POST
   upgradeSubscription: '/api/subscriptions/upgrade',  // POST
   checkToShowBannerDiscount: '/api/subscriptions/checkToShowBannerDiscount', // GET
+  cancelSubscription: '/api/subscriptions/cancelSubscription', // GET
 }
 config.api = concatHost(config.apiServer, config.api)
 

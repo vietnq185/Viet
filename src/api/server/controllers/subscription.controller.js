@@ -344,27 +344,32 @@ export const changeStatus = (req, res, next) => {
 
   const sModel = new SubscriptionModel();
 
-  return sModel.reset().where('t1._id::varchar=$1').findCount([id]).then(cnt => {
-    if (cnt === 0) {
-      return res.json({
-        success: false,
-        message: 'Subscription not found'
-      });
+  return sModel.reset().where('t1._id::varchar=$1').findOne([id]).then(subscriptionData => {
+    if (subscriptionData === null) {
+      return next(new APIError('SUBSCRIPTION_NOT_FOUND', httpStatus.OK, true));
     }
     const allowList = ['pending', 'trailing', 'active', 'overdue', 'cancelled'];
     if (allowList.indexOf(status) === -1) {
-      return res.json({
-        success: false,
-        message: 'Not allow status',
-        allowList
-      });
+      return next(new APIError('NOT_ALLOW_STATUS', httpStatus.OK, true));
     }
-    return sModel.reset().where('t1._id::varchar=$1').update({ status }, [id]).then(result => {
+
+    const authData = authCtrl.getJwtInfo(req),
+      dataUpdate = {
+        status
+      };
+
+    if (authData.isAdmin && status === 'active' && subscriptionData.status !== 'active') {
+      var period = subscriptionData.nextExpirationType == 'monthly' ? 'month' : 'year',
+        ts = new Date().getTime(),
+        expiryDateFrom = subscriptionData.expiryDate > ts ? subscriptionData.expiryDate : ts,
+        tsExpiryDateFrom = moment.unix(expiryDateFrom / 1000),
+        expiryDate = moment(tsExpiryDateFrom.add(moment.duration(1, period))).unix() * 1000;
+      dataUpdate.expiryDateFrom = expiryDateFrom;
+      dataUpdate.expiryDate = expiryDate;
+    }
+    return sModel.reset().where('t1._id::varchar=$1').update(dataUpdate, [id]).then(result => {
       if (result === null) {
-        return res.json({
-          success: false,
-          message: 'Update failed'
-        });
+        return next(new APIError('UPDATE_FAILED', httpStatus.OK, true));
       }
       return sModel.reset().select(`t1.*`)
         .where('t1._id::varchar=$1').findOne([id]).then((subscription) => { // eslint-disable-line
@@ -373,33 +378,17 @@ export const changeStatus = (req, res, next) => {
               var stripe = require("stripe")(constants.StripeSecretKey);
               stripe.subscriptions.del(subscription.stripeSubscriptionId,
                 function (err, confirmation) {
-
+                  return res.json(new APIResponse({ newStatus: status }));
                 }
               );
             }
-            return res.json({
-              success: true,
-              message: 'OK',
-              newStatus: status
-            });
+            return res.json(new APIResponse({ newStatus: status }));
           } else {
-            return res.json({
-              success: false,
-              message: 'Update failed'
-            });
+            return next(new APIError('UPDATE_FAILED', httpStatus.OK, true));
           }
-        }).catch(e => res.json({
-          success: false,
-          message: 'Error. Try again later.'
-        }));
-    }).catch(e => res.json({
-      success: false,
-      message: 'Error. Try again later.'
-    }))
-  }).catch(e => res.json({
-    success: false,
-    message: 'Error. Try again later.'
-  }));
+        }).catch(e => next(e));
+    }).catch(e => next(e))
+  }).catch(e => next(e));
 };
 
 var processPayment = function (subscription) {
@@ -766,4 +755,36 @@ export const cronUpdateSubscriptionStatus = (req) => {
   return new SubscriptionModel().where('t1."expiryDate" < $1 AND t1.status NOT IN($2, $3)').update({ status: 'overdue' }, [now, 'cancelled', 'pending']);
 }
 
-export default { getSubscriptionsByUser, create, assignStudent, upgrade, countSubscriptions, getSubscriptionById, paySubscription, stripeConfirmation, checkToShowBannerDiscount };
+export const cancelSubscription = (req, res, next) => {
+  const authData = authCtrl.getJwtInfo(req);
+  return new UserModel().where('t1._id::varchar=$1').findOne([authData.userId]).then((user) => {
+    if (user === null) {
+      return res.json(new APIResponse({ status: 'ERR', msg: 'UNREGISTERED_USER' }));
+    }
+    if (user.hashedPassword !== Utils.encrypt(req.body.password, user.salt)) {
+      return res.json(new APIResponse({ status: 'ERR', msg: 'WRONG_PASSWORD' }));
+    }
+    const dataUpdate = {
+      cancelMetadata: req.body.cancellationData
+    }
+    if (req.body.subscriptionChannel === 'stripe') {
+      dataUpdate.status = 'cancelled';
+    }
+    return new SubscriptionModel().where('t1._id::varchar=$1').update(dataUpdate, [req.body.subscriptionId]).then(result => {
+      if (result === null) {
+        return res.json(new APIResponse({ status: 'ERR', msg: 'UPDATE_FAILED' }));
+      }
+      if (req.body.stripeSubscriptionId !== null) {
+        var stripe = require("stripe")(constants.StripeSecretKey);
+        stripe.subscriptions.del(req.body.stripeSubscriptionId,
+          function (err, confirmation) {
+            return res.json(new APIResponse({ status: 'OK', msg: 'UPDATE_SUCCESSFUL' }));
+          }
+        );
+      }
+      return res.json(new APIResponse({ status: 'OK', msg: 'UPDATE_SUCCESSFUL' }));
+    }).catch(e => next(e));
+  }).catch(e => next(e));
+};
+
+export default { getSubscriptionsByUser, create, assignStudent, upgrade, countSubscriptions, getSubscriptionById, paySubscription, stripeConfirmation, checkToShowBannerDiscount, cancelSubscription };
