@@ -14,31 +14,31 @@ router.route('/')
 
 router.route('/AssignStudent')
   /** POST /api/subscriptions/AssignStudent - Assign student */
-  .post(/*authCtrl.verifyAccessToken, */subscriptionCtrl.assignStudent);
+  .post(authCtrl.verifyAccessToken, subscriptionCtrl.assignStudent);
 
 router.route('/upgrade')
   /** POST /api/subscriptions/upgrade - Update card id for subscription */
-  .post(/*authCtrl.verifyAccessToken, */subscriptionCtrl.upgrade);
+  .post(authCtrl.verifyAccessToken, subscriptionCtrl.upgrade);
 
 router.route('/list/:userId/:page')
   /** GET /api/subscriptions/:userId - Get subscriptions */
-  .get(/*authCtrl.verifyAccessToken, */subscriptionCtrl.getSubscriptionsByUser);
+  .get(authCtrl.verifyAccessToken, subscriptionCtrl.getSubscriptionsByUser);
 
 router.route('/countSubscriptions')
   /** GET /api/subscriptions/countSubscriptions - Count subscriptions */
-  .get(/* authCtrl.verifyAccessToken, */subscriptionCtrl.countSubscriptions);
+  .get(subscriptionCtrl.countSubscriptions);
 
 router.route('/details/:subscriptionId')
   /** GET /api/subscriptions/:subscriptionId - Get subscription details */
-  .get(/*authCtrl.verifyAccessToken, */subscriptionCtrl.getSubscriptionById);
+  .get(authCtrl.verifyAccessToken, subscriptionCtrl.getSubscriptionById);
 
 router.route('/changeStatus/:subscriptionId/:newStatus')
   /** GET /api/subscriptions/changeStatus/:subscriptionId/:newStatus - Get subscription details */
-  .get(/*authCtrl.verifyAccessToken, */subscriptionCtrl.changeStatus);
+  .get(authCtrl.verifyAccessToken, subscriptionCtrl.changeStatus);
 
 router.route('/pay/:subscriptionId')
   /** GET /api/subscriptions/pay/:subscriptionId - Pay subscription */
-  .get(/*authCtrl.verifyAccessToken, */subscriptionCtrl.paySubscription);
+  .get(authCtrl.verifyAccessToken, subscriptionCtrl.paySubscription);
 
 router.route('/stripeConfirmation')
   /** POST /api/subscriptions/stripeConfirmation  */

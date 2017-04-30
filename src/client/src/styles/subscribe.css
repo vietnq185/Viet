@@ -809,7 +809,15 @@ a{
 .subscribe-wrapper .subscribe-cancellation div.checkbox label input{
 	margin-top: 8px;
 }
-
+.subscribe-wrapper .subscribe-cancellation a{
+color: #007fff;
+}
+.pageNotFoundImage{
+	text-align: center;
+}
+.pageNotFoundImage img{
+	max-width: 100%;
+}
 @media (max-width: 1199px){
 	.subscription-plan .subscription-plan-item{
 		min-height: 509px;

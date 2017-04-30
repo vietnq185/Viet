@@ -2,13 +2,13 @@ import config from '../config'
 
 export default class API {
 
-  static getSubscriptionDetails = (id) => {
+  static getSubscriptionDetails = (accessToken, id) => {
     return new Promise((resolve, reject) => {
       return fetch(config.api.getSubscriptionDetails.replace(/:subscriptionId/g, id), {
         method: 'GET',
         headers: {
-          'Content-type': 'application/json'/*,
-          'Authorization': `Bearer ${accessToken}`*/
+          'Content-type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
         }
       }).then((response) => response.json()).then((jsonResponse) => {
         if (jsonResponse && jsonResponse.success) {
