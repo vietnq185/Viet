@@ -38,7 +38,7 @@ class Step1 extends React.Component {
 				<p>Your are cancelling your subscription.</p>
 				<p>We would be very grateful if you could let you know the reason why you wish to unsubscribe, so that we can improve our service in feature.</p>
 				<p>Thank you.</p>
-				<p>(If you are cancelling your subscription by mistake, please turn back to <a href="">your subscription</a> and remedy it)
+				<p>(If you are cancelling your subscription by mistake, please turn back to <a href={['/subscription-details/', objSubscription._id].join('')}>your subscription</a> and remedy it)
 				</p>
 				<form action='' method='post'>
 					<div className="checkbox">

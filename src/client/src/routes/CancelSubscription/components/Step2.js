@@ -119,7 +119,7 @@ class Step2 extends React.Component {
 						<span className='help-block'>{this.state.errMsg}</span>
 					</div>
 					<div className="form-group">
-						(If you are cancelling your subscription by mistake, please turn back to <a href="">your subscription</a> and remedy it)
+						(If you are cancelling your subscription by mistake, please turn back to <a href={['/subscription-details/', objSubscription._id].join('')}>your subscription</a> and remedy it)
 					</div>
 					<p>&nbsp;</p>
 					<div className="form-group text-center">
