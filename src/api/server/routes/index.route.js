@@ -4,6 +4,7 @@ import authRoutes from './auth.route';
 import planRoutes from './plan.route';
 import testRoutes from './test.route';
 import subscriptionRoutes from './subscription.route';
+import optionRoutes from './option.route';
 
 const router = express.Router(); // eslint-disable-line new-cap
 
@@ -21,8 +22,11 @@ router.use('/users', userRoutes);
 // mount auth routes at /auth
 router.use('/auth', authRoutes);
 
-// mount subscriptions routes at /auth
+// mount subscriptions routes at /subscriptions
 router.use('/subscriptions', subscriptionRoutes);
+
+// mount subscriptions routes at /options
+router.use('/options', optionRoutes);
 
 // mount test routes at /test
 router.use('/test', testRoutes);

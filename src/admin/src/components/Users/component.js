@@ -35,7 +35,6 @@ class RowRenderer extends React.Component {
   }
 
   render() {
-    console.info('RowRenderer props: ', this.props);
     return (<div onClick={() => this.onViewDetails()} style={this.getRowStyle()}><Row ref={node => this.row = node} {...this.props} /></div>);
   }
 }
@@ -93,9 +92,7 @@ export default class Component extends React.Component {
   }
 
   open(i) {
-    console.info('open => index: ', i);
     const item = this.props.user.list.data[i];
-    console.info('open => item: ', item);
     this.setState({ objDetails: item, updateMsg: '' });
   }
 

@@ -8,6 +8,7 @@ import LoginComponent from '../Login';
 
 import SubscriptionsComponent from '../Subscriptions';
 import UsersComponent from '../Users';
+import OptionsComponent from '../Options';
 
 // ------------------------------------------------------------------------------------------------------
 
@@ -57,3 +58,14 @@ export const Users = (props) => {
     </DefaultLayout>
   );
 };
+
+// ------------------------------------------------------------------------------------------------------
+
+export const Options = (props) => {
+  return (
+    <DefaultLayout>
+      <OptionsComponent />
+    </DefaultLayout>
+  );
+};
+

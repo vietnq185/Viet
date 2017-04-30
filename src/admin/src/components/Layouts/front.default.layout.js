@@ -49,9 +49,10 @@ class HeaderComponent extends React.Component {
           <Navbar.Toggle />
         </Navbar.Header>
         <ul className="nav navbar-nav pull-right">
-          <li><NavLink className="menu-item" activeClassName="selected-menu-item" to={`${Utils.adminLink('/')}`} exact>Home</NavLink></li>
+          {/*<li><NavLink className="menu-item" activeClassName="selected-menu-item" to={`${Utils.adminLink('/')}`} exact>Home</NavLink></li>*/}
           <li><NavLink className="menu-item" activeClassName="selected-menu-item" to={`${Utils.adminLink('/subscriptions')}`} exact>Subscriptions</NavLink></li>
           <li><NavLink className="menu-item" activeClassName="selected-menu-item" to={`${Utils.adminLink('/users')}`} exact>Users</NavLink></li>
+          <li><NavLink className="menu-item" activeClassName="selected-menu-item" to={`${Utils.adminLink('/options')}`} exact>Options</NavLink></li>
           {theLink}
         </ul>
       </Navbar >

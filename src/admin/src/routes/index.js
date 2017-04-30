@@ -23,6 +23,7 @@ export default (props) => {
       <AuthRoute path={`${Utils.adminLink('/login')}`} component={FrontLayouts.Login} />
       <AuthRoute exact path={`${Utils.adminLink('/subscriptions')}`} component={FrontLayouts.Subscriptions} />
       <AuthRoute exact path={`${Utils.adminLink('/users')}`} component={FrontLayouts.Users} />
+      <AuthRoute exact path={`${Utils.adminLink('/options')}`} component={FrontLayouts.Options} />
       <DefaultRoute component={FrontLayouts.NotFound} />
     </Switch>
   );

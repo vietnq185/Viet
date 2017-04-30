@@ -33,11 +33,7 @@ export const getUserList = (page) => (dispatch, getState) => {
       }))
     })
   }).catch((error) => {
-    console.info('getUserList => checkAccessToken => error: ', error)
-    const nextAction = () => {
-      Utils.redirect('/subscribe')
-    }
-    dispatch(authActions.logout(nextAction))
+    dispatch(authActions.logout())
   })
 }
 

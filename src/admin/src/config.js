@@ -46,6 +46,8 @@ config.api = {
   getSubscriptionList: '/api/subscriptions/list/:userId/:page', // GET
   linkStudent: '/api/users/linkStudent', // POST
   upgradeSubscription: '/api/subscriptions/upgrade',  // POST
+  getOptionList: '/api/options',  // GET
+  updateOption: '/api/options', // POST
 }
 config.api = concatHost(config.apiServer, config.api)
 
