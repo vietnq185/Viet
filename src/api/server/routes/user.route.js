@@ -8,11 +8,12 @@ import * as userCtrl from '../controllers/user.controller';
 const router = express.Router(); // eslint-disable-line new-cap
 
 router.route('/')
-  /** GET /api/users - Get list of users */
-  .get(authCtrl.verifyAccessToken, authCtrl.adminOrEditorAuth, userCtrl.list)
-
   /** POST /api/users - Create new user */
   .post(validate(paramValidation.createUser), userCtrl.create);
+
+router.route('/:page/:limit')
+  /** GET /api/users - Get list of users */
+  .get(authCtrl.verifyAccessToken, /*authCtrl.adminOrEditorAuth, */userCtrl.list);
 
 router.route('/:userId')
   /** GET /api/users/:userId - Get user */

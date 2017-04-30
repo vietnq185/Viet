@@ -214,12 +214,34 @@ export const update = (req, res, next) => {
  * @returns {UserModel[]}
  */
 export const list = (req, res, next) => {
-  const { limit = 50, offset = 0 } = req.query;
-  new UserModel().select('t1."_id", t1."firstName", t1."lastName", t1."email", t1."phone", t1."metadata", t1."status"')
-    .limit(limit).offset(offset)
-    .findAll()
-    .then(users => res.json(new APIResponse(users)))
-    .catch(e => next(e));
+  const uModel = new UserModel();
+  return uModel.reset().findCount().then((total) => {
+    let { page = 1, limit = 10 } = req.params; // eslint-disable-line
+    const offset = (parseInt(page, 10) - 1) * limit;
+    const pages = Math.ceil(total / limit);
+
+    if (page > pages) {
+      page = pages;
+    }
+
+    if (total === 0) {
+      return res.json(new APIResponse({
+        data: [],
+        page,
+        totalPages: pages
+      }));
+    }
+
+    return uModel.reset()
+      .limit(limit).offset(offset)
+      .findAll().then((data) => { // eslint-disable-line
+        return res.json(new APIResponse({
+          data,
+          page,
+          totalPages: pages
+        }));
+      });
+  }).catch(e => next(e));
 };
 
 /**

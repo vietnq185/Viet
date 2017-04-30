@@ -2,6 +2,27 @@ import config from '../config'
 
 export default class API {
 
+  static getUserList = (accessToken, page) => {
+    return new Promise((resolve, reject) => {
+      return fetch(config.api.getUserList.replace(/:page/g, page).replace(/:limit/g, 20), {
+        method: 'GET',
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        }
+      }).then((response) => response.json()).then((jsonResponse) => {
+        if (jsonResponse && jsonResponse.success) {
+          return resolve(jsonResponse.result)
+        }
+        const msg = jsonResponse.error.message || ''
+        return reject(msg)
+      }).catch((error) => {
+        const msg = error.message || ''
+        return reject(msg)
+      })
+    })
+  }
+
   static getSubscriptionDetails = (id) => {
     return new Promise((resolve, reject) => {
       return fetch(config.api.getSubscriptionDetails.replace(/:subscriptionId/g, id), {
