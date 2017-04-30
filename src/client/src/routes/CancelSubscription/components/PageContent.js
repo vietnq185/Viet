@@ -7,7 +7,7 @@ import Step2 from './Step2'
 import Step3 from './Step3'
 
 class PageContent extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.initialSubscription = {}
     this.state = {
@@ -27,33 +27,36 @@ class PageContent extends React.Component {
     })
   }
 
-  componentDidMount () {
+  componentDidMount() {
     var self = this
     API.getSubscriptionDetails(this.state.id).then((subscription) => this.setState({ subscription })).catch((error) => {
       self.setState({ subscription: Utils.copy(self.initialSubscription) })
     })
   }
 
-  render () {
-    const {step} = this.state;
+  render() {
+    const { step } = this.state;
     let content = Step1;
-    console.log('step data: ', this.state)
-    switch(step){
+    switch (step) {
       case 1:
-      content = <Step1 stepData={this.state.stepData} changeStep={this.changeStep.bind(this)} />;
-      break;
+        content = <Step1 stepData={this.state.stepData} objSubscription={this.state.subscription} changeStep={this.changeStep.bind(this)} />;
+        break;
       case 2:
-      content = <Step2 stepData={this.state.stepData} changeStep={this.changeStep.bind(this)} />;
-      break;
+        content = <Step2 stepData={this.state.stepData} objSubscription={this.state.subscription} changeStep={this.changeStep.bind(this)} />;
+        break;
       case 3:
-      content = <Step3 stepData={this.state.stepData} changeStep={this.changeStep.bind(this)} />;
-      break;
+        content = <Step3 stepData={this.state.stepData} objSubscription={this.state.subscription} changeStep={this.changeStep.bind(this)} />;
+        break;
     }
     var objSubscription = this.state.subscription
     let subscriptionDetails = ''
     if (objSubscription.msg !== undefined && objSubscription.msg === 'SUBSCRIPTION_NOT_FOUND') {
       subscriptionDetails = (
         <div className='subscribe-details'><h3>Subscription not found!</h3></div>
+      )
+    } else if (objSubscription.status === 'cancelled') {
+      subscriptionDetails = (
+        <div className='subscribe-details'><h3>This subscription already unsubscribed!</h3></div>
       )
     } else {
       subscriptionDetails = content
