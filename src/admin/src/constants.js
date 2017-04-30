@@ -1,11 +1,12 @@
 /* eslint-disable */
 export default {
   frequency: {
-      monthly: 'monthly',
-      annually: 'annually',
+    monthly: 'monthly',
+    annually: 'annually',
   },
   paymentMethod: {
     bankTransfer: 'bank',
     creditCard: 'stripe'
-  }
+  },
+  subscriptionStatuses: ["pending", "trailing", "active", "overdue", "cancelled"]
 };

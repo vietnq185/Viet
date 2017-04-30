@@ -20,3 +20,8 @@ body {
 *:after {
   box-sizing: inherit;
 }
+
+
+.admin-details-row {
+  margin-bottom: 10px; 
+}

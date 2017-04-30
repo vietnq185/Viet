@@ -143,6 +143,10 @@ Utils.guid = function () {
   return uuidV4();
 }
 
+Utils.uuid = function () {
+  return uuidV4();
+}
+
 /**
 * Deep compare two object
 * @param {object} obj1

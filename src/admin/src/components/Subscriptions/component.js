@@ -9,11 +9,15 @@ import Utils from '../../helpers/utils'; // eslint-disable-line
 
 import constants from '../../constants';
 
+import * as authActions from '../../reducers/auth';
+
 const MONTHLY = constants.frequency.monthly // eslint-disable-line
 const ANNUALLY = constants.frequency.annually // eslint-disable-line
 
 const BANK_TRANSFER = constants.paymentMethod.bankTransfer // eslint-disable-line
 const CREDIT_CARD = constants.paymentMethod.creditCard // eslint-disable-line
+
+const STATUSES = constants.subscriptionStatuses // eslint-disable-line
 
 const EmptyRowsView = () => {
   return (<div>No data found</div>);
@@ -32,8 +36,10 @@ export default class Component extends React.Component {
         { key: 'status', name: 'Status' },
       ],
       page: 1,
-      objDetails: null
+      objDetails: null,
+      updateMsg: ''
     };
+    this.listMap = {};
   }
 
   componentDidMount() {
@@ -71,6 +77,7 @@ export default class Component extends React.Component {
 
   rowGetter(i) {
     const item = this.props.subscription.list.subscriptions[i];
+    this.listMap[item._id] = i;
     return this.parseData(item);
   }
 
@@ -84,7 +91,7 @@ export default class Component extends React.Component {
   }
 
   open(item) {
-    this.setState({ objDetails: item });
+    this.setState({ objDetails: item, updateMsg: '' });
   }
 
   render() {
@@ -122,19 +129,60 @@ export default class Component extends React.Component {
     );
   }
 
+  // details page - START
+  changeStatus(evt) {
+    const self = this;
+    const { objDetails } = this.state;
+    const newStatus = evt.target.value;
+    console.log('evt.target.value: ', newStatus);
+
+    return authActions.checkAccessToken().then((jwt) => {
+      return API.changeSubscriptionStatus(jwt.accessToken || '', objDetails._id, newStatus).then((result) => {
+        console.info('changeSubscriptionStatus => result: ', result)
+        self.props.subscription.list.subscriptions[self.listMap[objDetails._id]].status = newStatus;
+        objDetails.status = newStatus;
+        self.setState({ objDetails, updateMsg: 'Data updated successfully!' })
+        //this.getList(this.state.page)
+      }).catch((error) => {
+        console.info('changeSubscriptionStatus => error: ', error)
+        self.setState({ updateMsg: error })
+      })
+    }).catch((error) => {
+      console.info('changeSubscriptionStatus => checkAccessToken => error: ', error)
+      self.setState({ updateMsg: error })
+    });
+    //
+  }
+
   renderDetailsDialog() {
-    const showModal = this.state.objDetails !== null;
+    const self = this;
+    const { objDetails } = this.state;
+    const showModal = objDetails !== null;
     if (!showModal) {
       return (<div></div>);
     }
 
-    const renderDetailsRow = (label, value) => {
+    const renderDetailsRow = (label, formattedValue, key = null) => {
+      let valueControl = (<div className="pull-left">{formattedValue}</div>);
+      if (key && key === 'status') {
+        valueControl = (
+          <div className="pull-left">
+            <select className="form-control" ref="status" value={objDetails.status} onChange={(evt) => self.changeStatus(evt)}>
+              {STATUSES.map(stat => {
+                return (
+                  <option key={`status_${stat}`} value={stat}>{Utils.ucfirst(stat)}</option>
+                );
+              })}
+            </select>
+          </div>
+        );
+      }
       return (
-        <div className="row details-row">
+        <div key={Utils.uuid()} className="row admin-details-row">
           <div className="col-xs-12">
             <div className="form-group">
-              <label>{label}: </label>
-              <span className="">{value}</span>
+              <label className="pull-left">{label}:&nbsp;</label>
+              {valueControl}
             </div>
           </div>
         </div>
@@ -149,12 +197,12 @@ export default class Component extends React.Component {
           <Modal.Title>Subscription Details</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {renderDetailsRow('ID', data.id)}
-          {renderDetailsRow('Plan', data.plan)}
-          {renderDetailsRow('Price', data.price)}
-          {renderDetailsRow('Created', data.created)}
-          {renderDetailsRow('Next Payment', data.nextPayment)}
-          {renderDetailsRow('Status', data.status)}
+          {this.state.columns.map(col => {
+            return renderDetailsRow(col.name, data[col.key], col.key);
+          })}
+          <div className={['form-group', this.state.updateMsg ? 'has-error' : 'hide'].join(' ')}>
+            <span className='help-block'>{this.state.updateMsg}</span>
+          </div>
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={() => this.close()}>Close</Button>
@@ -162,4 +210,5 @@ export default class Component extends React.Component {
       </Modal>
     );
   }
+  // details page - END
 }
