@@ -225,6 +225,7 @@ class UpgradeSubscriptionDetails extends React.Component {
     //
     const cardList = []
     let hasChecked = false
+    let numCCList = this.state.cclist.length || 0
     for (let i = 0; i < this.state.cclist.length; i++) {
       const ccitem = this.state.cclist[i]
       hasChecked = this.state.selectedCardId === ccitem._id
@@ -293,7 +294,7 @@ class UpgradeSubscriptionDetails extends React.Component {
               <ul className='list-inline'>
                 {cardList}
               </ul>
-              <div className={this.state.selectedCardId.length === 0 ? 'cc-details' : 'hide'}>
+              <div className={this.state.selectedCardId.length === 0 || numCCList === 0 ? 'cc-details' : 'hide'}>
                 <div className='row'>
                   <div className='col-sm-6 col-xs-12'>
                     <div className={['form-group', this.errors.ccnum ? 'has-error' : ''].join(' ')}>
