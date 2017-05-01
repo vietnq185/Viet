@@ -47,7 +47,7 @@ class Step1SignIn extends React.Component {
     const rules = {
       email: {
         required: 'Email is required',
-        email: 'Invalid email address'
+        email: 'Please enter correct email format'
       },
       linkCode: {
         required: 'Link Code is required'

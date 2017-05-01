@@ -1,4 +1,7 @@
+/* eslint-disable */
+
 import React from 'react'
+import { connect } from 'react-redux'
 
 import Utils from '../../../helpers/utils'
 import { fadeIn } from 'react-animations'
@@ -10,6 +13,8 @@ import ConceptmapImage from '../../../styles/images/conceptmap.png'
 import EstimationImage from '../../../styles/images/estimation.png'
 import WorksheetImage from '../../../styles/images/worksheet.png'
 import ReportImage from '../../../styles/images/report.png'
+
+import * as subscribeActions from '../../Subscribe/modules/subscribe'
 
 const styles = StyleSheet.create({
   fadeIn: {
@@ -27,7 +32,12 @@ class PageContent extends React.Component {
     }
   }
 
-  render () {
+  onCreateParent() {
+    this.props.changeStep(this.props.subscribe.steps.signUp) // eslint-disable-line
+    Utils.redirect('/subscribe')
+  }
+
+  render() {
     return (
       <div>
 
@@ -180,7 +190,7 @@ class PageContent extends React.Component {
               <div className='modal-body'>
                 <p className='text-center'>Thank you for your interest! Please let your parents to create an account and signup ASLS for you!</p><br />
                 <div className='text-center'>
-                  <a className='btn dk-bg-green dk-white' href='/subscribe'>PARENT? SIGNUP FOR A-SLS</a>
+                  <a className='btn dk-bg-green dk-white' href='javascript: void(0);' onClick={() => this.onCreateParent()}>PARENT? SIGNUP FOR A-SLS</a>
                 </div>
               </div>
             </div>
@@ -193,4 +203,12 @@ class PageContent extends React.Component {
 
 PageContent.propTypes = {}
 
-export default PageContent
+const mapDispatchToProps = {
+  ...subscribeActions
+}
+
+const mapStateToProps = (state) => ({
+  subscribe: state.subscribe
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(PageContent)

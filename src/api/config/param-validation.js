@@ -5,9 +5,18 @@ export default {
   createUser: {
     body: {
       email: Joi.string().required().email(),
-      password: Joi.string().required().min(8).max(50),
+      password: Joi.string().required().min(6).max(32),
       firstName: Joi.string().required(),
       lastName: Joi.string().required(),
+      phone: Joi.string().regex(/[0-9]+/).min(10).max(12).options({// eslint-disable-line
+        language: {
+          string: {
+            regex: {
+              base: 'must be number only'
+            }
+          }
+        }
+      }),
       // in case admin, editor or parent create a teacher or student,
       // the parentId field will refer to user field in user_roles table.
       parentId: Joi.string().guid(),
@@ -19,7 +28,7 @@ export default {
   updateUser: {
     body: {
       email: Joi.string().email(), // optional
-      password: Joi.string().min(8).max(50), // optional
+      password: Joi.string().min(6).max(32), // optional
       firstName: Joi.string(), // optional
       lastName: Joi.string(), // optional
       // in case admin, editor or parent create a teacher or student,
@@ -36,7 +45,7 @@ export default {
   login: {
     body: {
       username: Joi.string().required().email(),
-      password: Joi.string().required().min(8).max(50),
+      password: Joi.string().required().min(6).max(32),
     }
   },
 

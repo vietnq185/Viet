@@ -17,7 +17,7 @@ class NotFound extends React.Component {
         <PageHeader scrollTo={() => this.scrollTo()} />
         <div className='subscribe-wrapper'>
           <div ref='pageContent'>
-            <div className='pageNotFoundImage'><img src={PageNotFoundImage} /></div>
+            <div className='pageNotFoundImage'><img src={PageNotFoundImage} alt='Page Not Found' /></div>
           </div>
         </div>
         <Footer />

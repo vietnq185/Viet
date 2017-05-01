@@ -69,7 +69,7 @@ class Step1SignUp extends React.Component {
       },
       email: {
         required: 'Email is required',
-        email: 'Invalid email address'
+        email: 'Please enter correct email format'
       },
       phone: {
         required: 'Phone is required'

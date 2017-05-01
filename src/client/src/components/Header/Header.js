@@ -9,6 +9,7 @@ import { IndexLink, Link } from 'react-router'
 import { Nav, NavItem, Navbar } from 'react-bootstrap';
 
 import * as authActions from '../../store/auth'
+import * as subscribeActions from '../../routes/Subscribe/modules/subscribe'
 
 import Utils from '../../helpers/utils'
 
@@ -38,6 +39,11 @@ class Header extends React.Component {
       }
       self.props.logout(nextAction)
     }, 500);
+  }
+
+  onCreateParent() {
+    this.props.changeStep(this.props.subscribe.steps.signUp) // eslint-disable-line
+    Utils.redirect('/subscribe')
   }
 
   render() {
@@ -104,7 +110,7 @@ class Header extends React.Component {
               <div className='modal-body'>
                 <p className='text-center'>Thank you for your interest! Please let your parents to create an account and signup ASLS for you!</p><br />
                 <div className='text-center'>
-                  <a className='btn dk-bg-green dk-white' href='/subscribe'>PARENT? SIGNUP FOR A-SLS</a>
+                  <a className='btn dk-bg-green dk-white' href='javascript: void(0);' onClick={() => this.onCreateParent()}>PARENT? SIGNUP FOR A-SLS</a>
                 </div>
               </div>
             </div>
@@ -117,11 +123,13 @@ class Header extends React.Component {
 }
 
 const mapDispatchToProps = {
-  ...authActions
+  ...authActions,
+  ...subscribeActions
 }
 
 const mapStateToProps = (state) => ({
-  auth: state.auth
+  auth: state.auth,
+  subscribe: state.subscribe
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header)

@@ -66,7 +66,7 @@ class Step4CreateStudent extends React.Component {
       },
       email: {
         required: 'Email is required',
-        email: 'Invalid email address'
+        email: 'Please enter correct email format'
       },
       password: {
         required: 'Password is required'

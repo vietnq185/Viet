@@ -1,12 +1,16 @@
 /* eslint-disable */
 
 import React from 'react'
+import { connect } from 'react-redux'
 import { fadeIn } from 'react-animations'
 import { StyleSheet, css } from 'aphrodite'
+
 import Utils from '../../../helpers/utils'
 
 import Header from '../../../components/Header'
 import ScrollImage from '../../../styles/images/mouse-scroll.png'
+
+import * as subscribeActions from '../../Subscribe/modules/subscribe'
 
 const styles = StyleSheet.create({
   fadeIn: {
@@ -24,7 +28,12 @@ class PageHeader extends React.Component {
     }
   }
 
-  render () {
+  onCreateParent() {
+    this.props.changeStep(this.props.subscribe.steps.signUp) // eslint-disable-line
+    Utils.redirect('/subscribe')
+  }
+
+  render() {
     return (
       <div className='programme-header dk-white'>
         <Header />
@@ -79,13 +88,13 @@ class PageHeader extends React.Component {
               <div className='modal-body'>
                 <p className='text-center'>Thank you for your interest! Please let your parents to create an account and signup ASLS for you!</p><br />
                 <div className='text-center'>
-                  <a className='btn dk-bg-green dk-white' href='/subscribe'>PARENT? SIGNUP FOR A-SLS</a>
+                  <a className='btn dk-bg-green dk-white' href='javascript: void(0);' onClick={() => this.onCreateParent()}>PARENT? SIGNUP FOR A-SLS</a>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        
+
       </div>
     )
   }
@@ -95,4 +104,12 @@ PageHeader.propTypes = {
   scrollTo: React.PropTypes.func.isRequired
 }
 
-export default PageHeader
+const mapDispatchToProps = {
+  ...subscribeActions
+}
+
+const mapStateToProps = (state) => ({
+  subscribe: state.subscribe
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(PageHeader)
