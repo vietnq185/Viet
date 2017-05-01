@@ -751,7 +751,8 @@ export const checkToShowBannerDiscount = (req, res, next) => new SubscriptionMod
     var isDisabled = parseInt(dataResp.o_allow_discount) === 1 ? true : false,
       limit = dataResp.o_discount_limit || 0,
       discount = dataResp.o_discount_percent || 0;
-    if (isDisabled || (!isDisabled && total >= limit)) {
+
+    if (!isDisabled || total >= limit) {
       return res.json(new APIResponse({ showBanner: 0, discount: 0, limit: 0 }));
     } else {
       return res.json(new APIResponse({ showBanner: 1, discount: discount, limit: limit }));
@@ -812,4 +813,58 @@ export const getOptions = (req, res, next) => {
   }).catch(e => next(e));
 }
 
-export default { getSubscriptionsByUser, create, assignStudent, upgrade, countSubscriptions, getSubscriptionById, paySubscription, stripeConfirmation, checkToShowBannerDiscount, cancelSubscription, getOptions };
+export const forgotPassword = (req, res, next) => {
+  return new UserModel().where('t1.email::varchar=$1').findOne([req.body.email]).then((user) => {
+    if (user === null) {
+      return res.json(new APIResponse({ status: 'ERR', msg: 'EMAIL_NOT_EXISTS' }));
+    }
+
+    Utils.sendMail({
+      to: user.email,
+      template: 'mail_forgot_password',
+      data: {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        resetPasswordUrl: req.body.webUrl + '/resetPassword/' + user._id + "/" + Utils.sha3Encrypt(user._id + user.dateCreated)
+      }
+    }).then(result => {
+      console.log('SEND EMAIL success: ', result);
+    }).catch(err => {
+      console.log('SEND EMAIL with error: ', err);
+    });
+
+  }).catch(e => next(e));
+};
+
+export const getUserForgotPassword = (req, res, next) => {
+  var _id = req.params.id,
+    hash = req.params.hash;
+  return new UserModel().where('t1._id::varchar=$1').findOne([_id]).then((user) => {
+    if (user === null) {
+      return res.json(new APIResponse({ status: 'ERR', msg: 'USER_NOT_FOUND' }));
+    }
+
+    if (hash !== Utils.sha3Encrypt(user._id + user.dateCreated)) {
+      return res.json(new APIResponse({ status: 'ERR', msg: 'HASH_DID_NOT_MATCH' }));
+    }
+
+    return res.json(new APIResponse({ status: 'OK', msg: 'HASH_MATCH' }));
+  }).catch(e => next(e));
+};
+
+export const resetPassword = (req, res, next) => {
+  return new UserModel().where('t1._id::varchar=$1').findOne([req.body.id]).then((user) => {
+    if (user === null) {
+      return res.json(new APIResponse({ status: 'ERR', msg: 'USER_NOT_EXISTS' }));
+    }
+
+    var hashedPassword = Utils.encrypt(req.body.password, user.salt);
+    return new UserModel().reset().where('t1._id::varchar=$1').update({ hashedPassword: hashedPassword }, [user._id]).then(dataUpdated => {
+      if (!dataUpdated) return res.json(new APIResponse({ status: 'ERR', msg: 'PASSWORD_WAS_NOT_RESET' }));
+      return res.json(new APIResponse({ status: 'OK', msg: 'PASSWORD_WAS_RESET' }));
+    });
+
+  }).catch(e => next(e));
+};
+
+export default { getSubscriptionsByUser, create, assignStudent, upgrade, countSubscriptions, getSubscriptionById, paySubscription, stripeConfirmation, checkToShowBannerDiscount, cancelSubscription, getOptions, forgotPassword, getUserForgotPassword, resetPassword };

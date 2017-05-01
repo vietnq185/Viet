@@ -356,4 +356,66 @@ export default class API {
     })
   }
 
+  static forgotPassword = (data = { email: '' }) => {
+    return new Promise((resolve, reject) => {
+      return fetch(config.api.forgotPassword, {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      }).then((response) => response.json()).then((jsonResponse) => {
+        if (jsonResponse && jsonResponse.success) {
+          return resolve(jsonResponse.result)
+        }
+        const msg = jsonResponse.error.message || ''
+        return reject(msg)
+      }).catch((error) => {
+        const msg = error.message || ''
+        return reject(msg)
+      })
+    })
+  }
+
+static getUserForgotPassword = (id, hash) => {
+    return new Promise((resolve, reject) => {
+      return fetch(config.api.getUserForgotPassword.replace(/:id/g, id).replace(/:hash/g, hash), {
+        method: 'GET',
+        headers: {
+          'Content-type': 'application/json'
+        }
+      }).then((response) => response.json()).then((jsonResponse) => {
+        if (jsonResponse && jsonResponse.success) {
+          return resolve(jsonResponse.result)
+        }
+        const msg = jsonResponse.error.message || ''
+        return reject(msg)
+      }).catch((error) => {
+        const msg = error.message || ''
+        return reject(msg)
+      })
+    })
+  }
+
+  static resetPassword = (data = { id: '', password: '' }) => {
+    return new Promise((resolve, reject) => {
+      return fetch(config.api.resetPassword, {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      }).then((response) => response.json()).then((jsonResponse) => {
+        if (jsonResponse && jsonResponse.success) {
+          return resolve(jsonResponse.result)
+        }
+        const msg = jsonResponse.error.message || ''
+        return reject(msg)
+      }).catch((error) => {
+        const msg = error.message || ''
+        return reject(msg)
+      })
+    })
+  }
+
 }

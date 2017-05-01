@@ -48,6 +48,9 @@ config.api = {
   checkToShowBannerDiscount: '/api/subscriptions/checkToShowBannerDiscount', // GET
   cancelSubscription: '/api/subscriptions/cancelSubscription', // GET
   getOptions: '/api/subscriptions/getOptions', // GET
+  forgotPassword: '/api/subscriptions/forgotPassword', // GET
+  getUserForgotPassword: '/api/subscriptions/getUserForgotPassword/:id/:hash', // GET
+  resetPassword: '/api/subscriptions/resetPassword', // POST
 }
 config.api = concatHost(config.apiServer, config.api)
 

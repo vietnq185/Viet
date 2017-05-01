@@ -6,12 +6,11 @@ import API from '../../../helpers/api'
 import Utils from '../../../helpers/utils'
 import validate from '../../../helpers/validate'
 
-class Step1SignIn extends React.Component {
-  constructor (props) {
+class ForgotPassword extends React.Component {
+  constructor(props) {
     super(props)
     this.initialErrors = {
-      email: '',
-      password: ''
+      email: ''
     }
     this.errors = Utils.copy(this.initialErrors)
     this.state = {
@@ -20,17 +19,17 @@ class Step1SignIn extends React.Component {
     }
   }
 
-  resetErrors () {
+  resetErrors() {
     this.errors = Utils.copy(this.initialErrors)
     this.setState({ hasError: false })
   }
 
-  setErrors (errors) {
+  setErrors(errors) {
     this.errors = errors
     this.setState({ hasError: true })
   }
 
-  submitForm () {
+  submitForm() {
     const self = this
 
     this.resetErrors()
@@ -38,10 +37,7 @@ class Step1SignIn extends React.Component {
     const rules = {
       email: {
         required: 'Email is required',
-        email: 'Please enter correct email format'
-      },
-      password: {
-        required: 'Password is required'
+        email: 'Invalid email address'
       }
     }
 
@@ -49,20 +45,22 @@ class Step1SignIn extends React.Component {
 
     if (result === null) {
       // can submit
-      API.login({ username: self.refs.email.value, password: self.refs.password.value }).then((result) => {
-        const nextAction = () => self.props.changeStep(self.props.steps.plan)
-        self.props.loginSuccess(result, nextAction)
-      }).catch((errMsg) => {
-        switch (errMsg) {
-          case 'UNREGISTERED_USER':
-            this.setState({ errMsg: 'Email not found.' })
+      return API.forgotPassword({ email: self.refs.email.value, webUrl: process.env.REACT_APP_API_URL }).then((result) => {
+        switch (result.msg) {
+          case 'EMAIL_SENT':
+            this.setState({ errMsg: 'An email has been sent to your email. Futhur information please check your email.' })
             break
-          case 'WRONG_PASSWORD':
-            this.setState({ errMsg: 'Incorrect password.' })
+          case 'EMAIL_NOT_SENT':
+            this.setState({ errMsg: 'Failed to send email. Please try again' })
+            break
+          case 'EMAIL_NOT_EXISTS':
+            this.setState({ errMsg: 'Email does not exists in our system' })
             break
           default:
             this.setState({ errMsg })
         }
+      }).catch((errMsg) => {
+
       })
       //
     } else {
@@ -70,19 +68,17 @@ class Step1SignIn extends React.Component {
     }
   }
 
-  componentDidMount () {
-    const { changeStep, steps, auth: { isLoggedIn } } = this.props
-    if (isLoggedIn) {
-      changeStep(steps.plan)
-    }
+  componentDidMount() {
+    const { changeStep } = this.props
+    changeStep(steps.forgotPassword)
   }
 
-  render () {
+  render() {
     const requiredLabel = (<abbr className='dk-red-text'>&nbsp;*</abbr>)
     return (
       <div className='form-subscribe'>
-        <div className='form-title'>Sign In</div>
-        <div className='form-title-desc text-center'>If you have a parent account with us, please sign in.</div>
+        <div className='form-title'>Forgot Password</div>
+        <div className='form-title-desc text-center'>Please enter your email to retrieve password.</div>
         <br />
         <form className='form form-subscribe-login'>
           <div className={['form-group', this.errors.email ? 'has-error' : ''].join(' ')}>
@@ -90,21 +86,14 @@ class Step1SignIn extends React.Component {
             <input className='form-control' name='email' id='email' required='' type='text' ref='email' />
             <span className={[this.errors.email ? 'help-block' : 'hide'].join(' ')}>{this.errors.email}</span>
           </div>
-          <div className={['form-group', this.errors.password ? 'has-error' : ''].join(' ')}>
-            <label htmlFor='contact-name'>Password{requiredLabel}</label>
-            <input className='form-control' name='password' id='password' required='' type='password' ref='password' />
-            <span className='forgot-password'><a href='javascript: void(0);' onClick={() => this.props.changeStep(this.props.steps.forgotPassword)}>Forgot password?</a></span>
-            <span className={[this.errors.password ? 'help-block' : 'hide'].join(' ')}>{this.errors.password}</span>
-          </div>
           <div className={['form-group', this.state.errMsg ? 'has-error' : 'hide'].join(' ')}>
             <span className='help-block'>{this.state.errMsg}</span>
           </div>
           <div className='form-group'>
-            <button type='button' className='btn btn-block dk-bg-blue dk-white' onClick={() => this.submitForm()}>Sign In</button>
+            <button type='button' className='btn btn-block dk-bg-blue dk-white' onClick={() => this.submitForm()}>Send</button>
           </div>
           <div className='form-group text-center'>
-            Do not have a parent account?&nbsp;
-            <a href='javascript: void(0);' onClick={() => this.props.changeStep(this.props.steps.signUp)}>Sign Up Now</a>
+            <a href='javascript: void(0);' onClick={() => this.props.changeStep(this.props.steps.signIn)}>Sign In</a>
           </div>
         </form>
       </div>
@@ -112,10 +101,10 @@ class Step1SignIn extends React.Component {
   }
 }
 
-Step1SignIn.propTypes = {
+ForgotPassword.propTypes = {
   steps: React.PropTypes.object.isRequired,
   changeStep: React.PropTypes.func.isRequired,
   auth: React.PropTypes.object.isRequired
 }
 
-export default Step1SignIn
+export default ForgotPassword

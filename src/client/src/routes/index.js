@@ -10,6 +10,7 @@ import SubscriptionRoute from './Subscription'
 import SubscriptionDetailsRoute from './SubscriptionDetails'
 import UpgradeSubscriptionRoute from './UpgradeSubscription'
 import CancelSubscriptionRoute from './CancelSubscription'
+import ForgotPasswordRoute from './ForgotPassword'
 import NotFoundRoute from './NotFound'
 
 /*  Note: Instead of using JSX, we recommend using react-router
@@ -29,6 +30,7 @@ export const createRoutes = (store) => ({
     SubscriptionDetailsRoute(store),
     UpgradeSubscriptionRoute(store),
     CancelSubscriptionRoute(store),
+    ForgotPasswordRoute(store),
     NotFoundRoute(store)
   ]
 })

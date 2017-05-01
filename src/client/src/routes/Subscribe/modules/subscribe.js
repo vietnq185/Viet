@@ -9,6 +9,7 @@ import * as authActions from '../../../store/auth'
 export const STEPS = {
   signIn: 'SIGN_IN',
   signUp: 'SIGN_UP',
+  forgotPassword: 'FORGOT_PASSWORD',
   plan: 'PLAN',
   payment: 'PAYMENT',
   createStudent: 'CREATE_STUDENT',
