@@ -166,7 +166,7 @@ export const create = (req, res, next) => {
         if (!savedSubscription.cardId) {
           return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
         }
-        processPayment(savedSubscription).then((dataResp) => {
+        return processPayment(savedSubscription).then((dataResp) => {
           savedSubscription.stripeStatus = dataResp.status;
           savedSubscription.stripeMsg = data.msg;
           return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
@@ -243,7 +243,7 @@ export const upgrade = (req, res, next) => {
           return Promise.reject(new APIError(constants.errors.cannotUpgrade, httpStatus.OK, true));
         }
         savedSubscription = savedSubscription[0];
-        processPayment(Object.assign({}, savedSubscription, paymentMeta)).then((dataResp) => {
+        return processPayment(Object.assign({}, savedSubscription, paymentMeta)).then((dataResp) => {
           savedSubscription.stripeStatus = dataResp.status;
           savedSubscription.stripeMsg = dataResp.msg;
           return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
@@ -678,7 +678,7 @@ export const paySubscription = (req, res, next) => {
   return new SubscriptionModel().select(`t1.*`)
     .where('t1._id::varchar=$1').findOne([req.params.subscriptionId]).then((subscription) => { // eslint-disable-line
       if (subscription !== null) {
-        processPayment(subscription).then((dataResp) => {
+        return processPayment(subscription).then((dataResp) => {
           return res.json(new APIResponse({ status: 'OK', msg: constants.errors.subscriptionPaidSuccessful }));
         }).catch((err) => {
           return res.json(new APIResponse({ status: 'FAILED', msg: constants.errors.subscriptionPaidUnSuccessful }));

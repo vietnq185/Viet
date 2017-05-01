@@ -24,6 +24,11 @@ class Subscription extends React.Component {
   componentDidUpdate (prevProps, prevState) {
   }
 
+  componentDidMount() {
+    // reset subscript to default
+    this.props.restart();
+  }
+
   render () {
     const { auth } = this.props // eslint-disable-line
     let contentPage = (<PageContent ref='pageContent' scrollTo={() => this.scrollTo()} {...this.props} />)
