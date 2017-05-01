@@ -53,19 +53,27 @@ const plansResult = (result) => {
 }
 
 export const getPlans = () => (dispatch, getState) => {
-  const promises = [API.getPlans(), API.countSubscriptions()]
+  const promises = [API.getPlans(), API.countSubscriptions(), API.getOptions()]
   Promise.all(promises).then((results) => {
     const plans = results[0]
     const totalSubscriptions = results[1]
+    const options = results[2]
+    const applyDiscount = parseInt(options.o_allow_discount) === 1 && totalSubscriptions < options.o_discount_limit ? true : false
+    const discountPercent = options.o_discount_percent || 0
+    const discountLimit = options.o_discount_limit || 0
     dispatch(plansResult({
       plans,
-      applyDiscount: (totalSubscriptions < 200)
+      applyDiscount,
+      discountPercent: parseFloat(discountPercent),
+      discountLimit: parseInt(discountLimit)
     }))
   }).catch((errors) => {
     console.info('getPlans => errors: ', errors)
     dispatch(plansResult({
       plans: [],
-      applyDiscount: false
+      applyDiscount: false,
+      discountPercent: parseFloat(discountPercent),
+      discountLimit: parseInt(discountLimit)
     }))
   })
 }
@@ -199,6 +207,7 @@ export const initialState = {
   // and assign to applyDiscount property
   applyDiscount: false,
   discountPercent: 20,
+  discountLimit: 200,
   cclist: [],
   selectedCardId: '',
   paymentMethod: constants.paymentMethod.creditCard,
@@ -228,7 +237,7 @@ export default (state = initialState, action) => {
       return Utils.merge(state, { step: action.step, prevStep })
       break // eslint-disable-line
     case GET_PLANS:
-      return Utils.merge(state, { plans: action.result.plans, applyDiscount: action.result.applyDiscount })
+      return Utils.merge(state, { plans: action.result.plans, applyDiscount: action.result.applyDiscount, discountPercent: action.result.discountPercent, discountLimit: action.result.discountLimit })
       break // eslint-disable-line
     case SELECT_PLAN:
       return Utils.merge(state, { selectedPlan: action.selectedPlan })

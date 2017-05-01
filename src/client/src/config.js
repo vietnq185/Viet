@@ -47,6 +47,7 @@ config.api = {
   upgradeSubscription: '/api/subscriptions/upgrade',  // POST
   checkToShowBannerDiscount: '/api/subscriptions/checkToShowBannerDiscount', // GET
   cancelSubscription: '/api/subscriptions/cancelSubscription', // GET
+  getOptions: '/api/subscriptions/getOptions', // GET
 }
 config.api = concatHost(config.apiServer, config.api)
 
