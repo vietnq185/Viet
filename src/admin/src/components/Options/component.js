@@ -143,7 +143,7 @@ export default class Component extends React.Component {
           <br /><br />
           Available tokens:<br />
           {(emailTokens[tkArr[0]] || []).map(tk => {
-            return (<span>{tk}<br /></span>);
+            return (<span key={Utils.uuid()}>{tk}<br /></span>);
           })}
         </div>
       );
