@@ -2,7 +2,6 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:4040",
   "dependencies": {
     "aphrodite": "^1.2.0",
     "bootstrap": "3",

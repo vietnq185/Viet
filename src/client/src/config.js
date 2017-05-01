@@ -29,7 +29,7 @@ const merge = (src, dst) => { // eslint-disable-line
 const config = {}
 
 // API
-config.apiServer = process.env.NODE_ENV === 'development' ? '' : process.env.REACT_APP_API_URL;
+config.apiServer = process.env.NODE_ENV === 'development' ? process.env.REACT_APP_DEV_API_URL : process.env.REACT_APP_API_URL;
 config.api = {
   changeSubscriptionStatus: '/api/subscriptions/changeStatus/:subscriptionId/:newStatus', // GET
   getSubscriptionDetails: '/api/subscriptions/details/:subscriptionId', // GET
