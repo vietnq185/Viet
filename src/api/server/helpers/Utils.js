@@ -2,6 +2,7 @@
 
 import OptionModel from '../models/option.model';
 import constants from '../../config/constants';
+import config from '../../config/config';
 
 const CryptoJS = require("crypto-js");
 const sha3 = require('crypto-js/sha3');
@@ -460,15 +461,35 @@ Utils.sendMail = (options) => {
       message = replaceTokens(message);
 
       //send email
-      const SMTP_CONFIG = {
-        host: dataOpts.o_smtp_host,
-        port: dataOpts.o_smtp_port,
-        secure: true, // use SSL 
+      // if (config.env === 'development') {
+      //   let SMTP_CONFIG = {
+      //     host: dataOpts.o_smtp_host,
+      //     port: dataOpts.o_smtp_port,
+      //     secure: true, // use SSL 
+      //     auth: {
+      //       user: dataOpts.o_smtp_user,
+      //       pass: dataOpts.o_smtp_pass
+      //     }
+      //   };
+      // }
+      // else {
+      //   let SMTP_CONFIG = {
+      //     service: 'gmail',
+      //     auth: {
+      //       user: dataOpts.o_smtp_user,
+      //       pass: dataOpts.o_smtp_pass
+      //     }
+      //   }
+      // }
+
+      let SMTP_CONFIG = {
+        service: 'gmail',
         auth: {
           user: dataOpts.o_smtp_user,
           pass: dataOpts.o_smtp_pass
         }
-      };
+      }
+
       const transporter = nodemailer.createTransport(SMTP_CONFIG);
       const MAIL_OPTIONS = { from, to, subject, html: message };
       return transporter.sendMail(MAIL_OPTIONS, (err, info) => {
