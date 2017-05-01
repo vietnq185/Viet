@@ -14,6 +14,7 @@ export default {
     emailRegisted: 'REGISTERED_EMAIL',
     usernameRegisted: 'REGISTERED_USER',
     wrongUsername: 'UNREGISTERED_USER',
+    emailNotExists: 'EMAIL_NOT_EXISTS',
     wrongPassword: 'WRONG_PASSWORD',
     unauthorized: 'UNAUTHORIZED',
     logoutError: 'LOGOUT_ERROR',

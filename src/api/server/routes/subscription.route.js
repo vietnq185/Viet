@@ -56,4 +56,16 @@ router.route('/checkToShowBannerDiscount')
   /** GET /api/subscriptions/getOptions */
   .get(subscriptionCtrl.getOptions);
 
+  router.route('/forgotPassword')
+  /** GET /api/subscriptions/forgotPassword - Pay subscription */
+  .post(subscriptionCtrl.forgotPassword);
+  
+  router.route('/getUserForgotPassword/:id/:hash')
+  /** GET /api/subscriptions/getUserForgotPassword/:id/:hash */
+  .get(subscriptionCtrl.getUserForgotPassword);
+
+  router.route('/resetPassword')
+  /** GET /api/subscriptions/resetPassword - Pay subscription */
+  .post(subscriptionCtrl.resetPassword);
+
 export default router;

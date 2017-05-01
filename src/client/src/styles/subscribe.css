@@ -818,6 +818,10 @@ color: #007fff;
 .pageNotFoundImage img{
 	max-width: 100%;
 }
+.reset-password-container{
+	width: 40%;
+	margin: 0 auto;
+}
 @media (max-width: 1199px){
 	.subscription-plan .subscription-plan-item{
 		min-height: 509px;
@@ -842,10 +846,18 @@ color: #007fff;
 	.subcribe-contact-info .subcribe-contact-info-desc .contact-email{
 		padding-left: 10px;
 	}
+	.reset-password-container{
+		width: 50%;
+		margin: 0 auto;
+	}
 }
 @media (max-width: 767px){
 	.subscribe-wrapper .subscribe-details .upgrade-plan-container .table-responsive{
 		border: none;
+	}
+	.reset-password-container{
+		width: 90%;
+		margin: 0 auto;
 	}
 }
 @media (max-width: 659px){
