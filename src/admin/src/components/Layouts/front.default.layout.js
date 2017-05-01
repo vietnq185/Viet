@@ -40,7 +40,7 @@ class HeaderComponent extends React.Component {
     const { auth: { isLoggedIn } } = this.props;
     const theLink = !isLoggedIn ? this.loginLink() : this.logoutLink();
     return (
-      <Navbar inverse fixedTop>
+      <Navbar inverse fixedTop collapseOnSelect className="admin-nav-bar">
 
         <Navbar.Header>
           <Navbar.Brand>
@@ -48,13 +48,15 @@ class HeaderComponent extends React.Component {
           </Navbar.Brand>
           <Navbar.Toggle />
         </Navbar.Header>
-        <ul className="nav navbar-nav pull-right">
-          {/*<li><NavLink className="menu-item" activeClassName="selected-menu-item" to={`${Utils.adminLink('/')}`} exact>Home</NavLink></li>*/}
-          <li><NavLink className="menu-item" activeClassName="selected-menu-item" to={`${Utils.adminLink('/subscriptions')}`} exact>Subscriptions</NavLink></li>
-          <li><NavLink className="menu-item" activeClassName="selected-menu-item" to={`${Utils.adminLink('/users')}`} exact>Users</NavLink></li>
-          <li><NavLink className="menu-item" activeClassName="selected-menu-item" to={`${Utils.adminLink('/options')}`} exact>Options</NavLink></li>
-          {theLink}
-        </ul>
+        <Navbar.Collapse className='navbar-right'>
+          <ul className="nav navbar-nav">
+            {/*<li><NavLink className="menu-item" activeClassName="selected-menu-item" to={`${Utils.adminLink('/')}`} exact>Home</NavLink></li>*/}
+            <li><NavLink className="menu-item" activeClassName="selected-menu-item" to={`${Utils.adminLink('/subscriptions')}`} exact>Subscriptions</NavLink></li>
+            <li><NavLink className="menu-item" activeClassName="selected-menu-item" to={`${Utils.adminLink('/users')}`} exact>Users</NavLink></li>
+            <li><NavLink className="menu-item" activeClassName="selected-menu-item" to={`${Utils.adminLink('/options')}`} exact>Options</NavLink></li>
+            {theLink}
+          </ul>
+        </Navbar.Collapse>
       </Navbar >
     )
   }

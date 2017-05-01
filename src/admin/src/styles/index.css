@@ -25,3 +25,7 @@ body {
 .admin-details-row {
   margin-bottom: 10px; 
 }
+
+.admin-nav-bar {
+  z-index: 500;
+}
