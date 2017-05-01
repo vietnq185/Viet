@@ -31,7 +31,7 @@ const config = {}
 // API
 config.apiServer = process.env.NODE_ENV === 'development' ? '' : process.env.REACT_APP_API_URL;
 config.api = {
-  getUserList: '/api/users/:page/:limit',  // GET
+  getUserList: '/api/users/list/:page/:limit',  // GET
   changeSubscriptionStatus: '/api/subscriptions/changeStatus/:subscriptionId/:newStatus', // GET
   getSubscriptionDetails: '/api/subscriptions/details/:subscriptionId', // GET
   signIn: '/api/auth/login', // POST
