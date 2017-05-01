@@ -436,6 +436,8 @@ Utils.sendMail = (options) => {
   // // **NOTE**: Did you know `nodemailer` can also be used to send SMTP email through Mandrill, Mailgun, Sendgrid and Postmark?
   // <https://github.com/andris9/nodemailer-wellknown#supported-services>
 
+  console.log('Utils.sendMail => options: ', options);
+
   return new Promise((resolve, reject) => {
     return new OptionModel().getPairs().then((dataOpts) => {
       const { from = dataOpts.o_admin_email, to, template, data } = options;
@@ -447,7 +449,11 @@ Utils.sendMail = (options) => {
         let retTpl = tpl;
         for (let i = 0; i < tokens.length; i++) {
           const tkn = tokens[i];
+          console.log('Utils.sendMail => token found: ', tkn);
           const key = tkn.replace(/{/g, '').replace(/}/g, '');
+          console.log('Utils.sendMail => key found: ', key);
+          console.log('Utils.sendMail => typeof data[key] !== undefine: ', (typeof data[key] !== 'undefine'));
+          console.log('Utils.sendMail => data[key]', (data[key]));
           if (typeof data[key] !== 'undefine') {
             const pattern = new RegExp(tkn, 'g');
             retTpl = retTpl.replace(pattern, data[key]);
@@ -459,28 +465,6 @@ Utils.sendMail = (options) => {
       //
       subject = replaceTokens(subject);
       message = replaceTokens(message);
-
-      //send email
-      // if (config.env === 'development') {
-      //   let SMTP_CONFIG = {
-      //     host: dataOpts.o_smtp_host,
-      //     port: dataOpts.o_smtp_port,
-      //     secure: true, // use SSL 
-      //     auth: {
-      //       user: dataOpts.o_smtp_user,
-      //       pass: dataOpts.o_smtp_pass
-      //     }
-      //   };
-      // }
-      // else {
-      //   let SMTP_CONFIG = {
-      //     service: 'gmail',
-      //     auth: {
-      //       user: dataOpts.o_smtp_user,
-      //       pass: dataOpts.o_smtp_pass
-      //     }
-      //   }
-      // }
 
       let SMTP_CONFIG = {
         host: dataOpts.o_smtp_host,
