@@ -103,24 +103,25 @@ CREATE TABLE IF NOT EXISTS "options" (
   "order" bigint DEFAULT NULL,
   "is_visible" character varying(10) DEFAULT 'T' COLLATE pg_catalog."default",
   "style" character varying(500) DEFAULT NULL COLLATE pg_catalog."default",
+  "is_public" character varying(10) DEFAULT 'F' COLLATE pg_catalog."default",
   CONSTRAINT options_pkey PRIMARY KEY ("foreign_id","key")
 );
 
-INSERT INTO "options" ("foreign_id", "key", "tab_id", "value", "label", "description", "type", "order", "is_visible", "style") VALUES
+INSERT INTO "options" ("foreign_id", "key", "tab_id", "value", "label", "description", "type", "order", "is_visible", "style", "is_public") VALUES
 
-(1, 'o_stripe_secret', 1, NULL, NULL, 'Stripe secret', 'string', 1, 1, NULL),
+(1, 'o_stripe_secret', 1, NULL, NULL, 'Stripe secret', 'string', 1, 1, NULL, 'F'),
 
-(1, 'o_allow_discount', 1, '1|0::1', NULL, 'Enable discount', 'bool', 2, 1, NULL),
-(1, 'o_discount_percent', 1, '20', NULL, 'Discount percent', 'float', 3, 1, NULL),
-(1, 'o_discount_limit', 1, '200', NULL, 'Discount for first XXX persons', 'float', 4, 1, NULL),
+(1, 'o_allow_discount', 1, '1|0::1', NULL, 'Enable discount', 'bool', 2, 1, NULL, 'T'),
+(1, 'o_discount_percent', 1, '20', NULL, 'Discount percent', 'float', 3, 1, NULL, 'T'),
+(1, 'o_discount_limit', 1, '200', NULL, 'Discount for first XXX persons', 'float', 4, 1, NULL, 'T'),
 
-(1, 'o_smtp_host', 1, NULL, NULL, 'SMTP Host', 'string', 5, 1, NULL),
-(1, 'o_smtp_port', 1, '25', NULL, 'SMTP Port', 'int', 6, 1, NULL),
-(1, 'o_smtp_user', 1, NULL, NULL, 'SMTP Username', 'string', 7, 1, NULL),
-(1, 'o_smtp_pass', 1, NULL, NULL, 'SMTP Password', 'string', 8, 1, NULL);
+(1, 'o_smtp_host', 1, NULL, NULL, 'SMTP Host', 'string', 5, 1, NULL, 'F'),
+(1, 'o_smtp_port', 1, '25', NULL, 'SMTP Port', 'int', 6, 1, NULL, 'F'),
+(1, 'o_smtp_user', 1, NULL, NULL, 'SMTP Username', 'string', 7, 1, NULL, 'F'),
+(1, 'o_smtp_pass', 1, NULL, NULL, 'SMTP Password', 'string', 8, 1, NULL, 'F');
 
 
-INSERT INTO "options" ("foreign_id", "key", "tab_id", "value", "label", "description", "type", "order", "is_visible", "style") VALUES
+INSERT INTO "options" ("foreign_id", "key", "tab_id", "value", "label", "description", "type", "order", "is_visible", "style", "is_public") VALUES
 
-(1, 'mail_forgot_password_ARRAY_subject', 2, NULL, NULL,  'Forgot password email subject', 'string',10, 1, NULL),
-(1, 'mail_forgot_password_ARRAY_message', 2, NULL, NULL, 'Forgot password email message', 'text', 11, 1, NULL);
+(1, 'mail_forgot_password_ARRAY_subject', 2, NULL, NULL,  'Forgot password email subject', 'string',10, 1, NULL, 'F'),
+(1, 'mail_forgot_password_ARRAY_message', 2, NULL, NULL, 'Forgot password email message', 'text', 11, 1, NULL, 'F');

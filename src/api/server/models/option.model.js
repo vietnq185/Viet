@@ -26,10 +26,14 @@ class OptionModel extends AppModel {
     });
   }
 
-  getPairs(foreignId = 1) {
+  getPairs(foreignId = 1, isPublic = false) {
     const self = this;
     return new Promise((resolve, reject) => { // eslint-disable-line
-      self.reset().where('t1.foreign_id=$1').orderBy('t1."order" ASC').findAll([foreignId]).then((results) => { // eslint-disable-line
+      self.reset().where('t1.foreign_id=$1').orderBy('t1."order" ASC');
+      if (isPublic) {
+        self.where("t1.is_public='T'");
+      }
+      self.findAll([foreignId]).then((results) => { // eslint-disable-line
         const obj = {};
         for (let i = 0; i < results.length; i++) { // eslint-disable-line
           const { key, value, type } = results[i];
