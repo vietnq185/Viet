@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Button } from 'react-bootstrap';  // eslint-disable-line
+import { Button, Nav, NavItem, Tab, Tabs } from 'react-bootstrap';  // eslint-disable-line
 
 import Utils from '../../helpers/utils';  // eslint-disable-line
 
@@ -8,7 +8,13 @@ export default class Component extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      activeTab: props.activeTab || 1
     }
+    this.o_arr = {};  // this object will look like this: { tab_id => [opt1, opt2,..], ... }
+    this.oTabLabels = {
+      1: 'General',
+      2: 'Email templates',
+    };
   }
 
   componentDidMount() {
@@ -23,7 +29,11 @@ export default class Component extends React.Component {
     const o_arr = {};
     for (let i = 0; i < props.option.list.length; i++) {
       const opt = props.option.list[i];
-      o_arr[opt.key] = opt;
+      const { tab_id } = opt;
+      if (typeof o_arr[tab_id] === 'undefined') {
+        o_arr[tab_id] = [];
+      }
+      o_arr[tab_id].push(opt);
     }
     return o_arr;
   }
@@ -45,8 +55,49 @@ export default class Component extends React.Component {
     this.props.updateOptions(data);
   }
 
+  handleSelect(selectedTab) {
+    this.setState({
+      activeTab: selectedTab
+    });
+  }
+
   render() {
-    console.info('Options components => props: ', this.props, this.o_arr);
+    var self = this;
+
+    console.info('Options components => props: ', this.props);
+    console.info('Options components => o_arr: ', this.o_arr);
+
+    const tabsArr = Object.keys(this.o_arr).map(num => parseInt(num, 10));
+    tabsArr.sort((a, b) => {
+      return a - b;
+    });
+
+    return (
+      <div>
+
+        <h3>Options</h3>
+
+        <Tabs activeKey={this.state.activeTab} onSelect={this.handleSelect.bind(this)} id="optionTabs">
+          {tabsArr.map(tabId => {
+            return (
+              <Tab key={`option_tab_${tabId}`} eventKey={tabId} title={(self.oTabLabels[tabId] || '')} style={{ padding: '10px' }}>
+                {self.renderTab(tabId)}
+              </Tab>);
+          })}
+        </Tabs>
+
+        <div className={['form-group', this.props.option.updateResult.errMsg ? 'has-error' : 'hide'].join(' ')}>
+          <span className='help-block'>{this.props.option.updateResult.errMsg}</span>
+        </div>
+        {(this.props.option.list.length === 0 ? '' : (<Button bsStyle="success" onClick={() => this.updateOptions()}>Save</Button>))}
+
+      </div>
+    );
+  }
+
+  renderTab(tabId) {
+    const self = this;
+    const data = this.o_arr[tabId] || [];
     return (
       <div className='table-responsive'>
         <table className='table'>
@@ -57,22 +108,18 @@ export default class Component extends React.Component {
             </tr>
           </thead>
           <tbody>
-            {this.props.option.list.map(item => {
+            {data.map(item => {
               return (
                 <tr key={item.key}>
                   <td>{item.description}</td>
                   <td>
-                    {this.renderControl(item)}
+                    {self.renderControl(item)}
                   </td>
                 </tr>
               );
             })}
           </tbody>
         </table>
-        <div className={['form-group', this.props.option.updateResult.errMsg ? 'has-error' : 'hide'].join(' ')}>
-          <span className='help-block'>{this.props.option.updateResult.errMsg}</span>
-        </div>
-        {(this.props.option.list.length === 0 ? '' : (<Button bsStyle="success" onClick={() => this.updateOptions()}>Save</Button>))}
       </div>
     );
   }
@@ -86,7 +133,7 @@ export default class Component extends React.Component {
         return (<input type="text" ref={name} name={name} defaultValue={value} className="form-control" />);
         break; // eslint-disable-line
       case 'text':
-        return (<textarea ref={name} name={name} className="form-control">{value}</textarea>);
+        return (<textarea ref={name} name={name} defaultValue={value} className="form-control"></textarea>);
         break; // eslint-disable-line
       case 'int':
         return (<input type="text" ref={name} name={name} defaultValue={value} className="form-control" />);
