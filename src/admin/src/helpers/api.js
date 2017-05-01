@@ -275,9 +275,10 @@ export default class API {
     })
   }
 
-  static getSubscriptionList = (accessToken, userId, page) => {
+  static getSubscriptionList = (accessToken, page) => {
+    console.info('get list urL :', config.api.getSubscriptionList.replace(/:page/g, page));
     return new Promise((resolve, reject) => {
-      return fetch(config.api.getSubscriptionList.replace(/:userId/g, userId).replace(/:page/g, page), {
+      return fetch(config.api.getSubscriptionList.replace(/:page/g, page), {
         method: 'GET',
         headers: {
           'Content-type': 'application/json',

@@ -48,24 +48,28 @@ router.route('/checkToShowBannerDiscount')
   /** GET /api/subscriptions/checkToShowBannerDiscount */
   .get(subscriptionCtrl.checkToShowBannerDiscount);
 
-  router.route('/cancelSubscription')
+router.route('/cancelSubscription')
   /** GET /api/subscriptions/cancelSubscription/:subscriptionId - Pay subscription */
   .post(authCtrl.verifyAccessToken, subscriptionCtrl.cancelSubscription);
 
-  router.route('/getOptions')
+router.route('/getOptions')
   /** GET /api/subscriptions/getOptions */
   .get(subscriptionCtrl.getOptions);
 
-  router.route('/forgotPassword')
+router.route('/forgotPassword')
   /** GET /api/subscriptions/forgotPassword - Pay subscription */
   .post(subscriptionCtrl.forgotPassword);
-  
-  router.route('/getUserForgotPassword/:id/:hash')
+
+router.route('/getUserForgotPassword/:id/:hash')
   /** GET /api/subscriptions/getUserForgotPassword/:id/:hash */
   .get(subscriptionCtrl.getUserForgotPassword);
 
-  router.route('/resetPassword')
+router.route('/resetPassword')
   /** GET /api/subscriptions/resetPassword - Pay subscription */
   .post(subscriptionCtrl.resetPassword);
+
+router.route('/list-all/:page')
+  /** GET /api/subscriptions/list-all/:page - Get subscriptions - for Admin */
+  .get(authCtrl.verifyAccessToken, authCtrl.adminAuth, subscriptionCtrl.getSubscriptions);
 
 export default router;

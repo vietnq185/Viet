@@ -58,7 +58,10 @@ export default class Component extends React.Component {
     if (result === null) {
       // can submit
       API.login({ username: self.refs.email.value, password: self.refs.password.value }).then((result) => {
-        self.props.loginSuccess(result)
+        if (result.jwt.isAdmin) {
+          return self.props.loginSuccess(result);
+        }
+        this.setState({ errMsg: 'Permission deny. This page is for Admin only.' })
       }).catch((errMsg) => {
         switch (errMsg) {
           case 'UNREGISTERED_USER':

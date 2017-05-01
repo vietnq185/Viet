@@ -13,7 +13,7 @@ router.route('/')
 
 router.route('/list/:page/:limit')
   /** GET /api/users - Get list of users */
-  .get(authCtrl.verifyAccessToken, /*authCtrl.adminOrEditorAuth, */userCtrl.list);
+  .get(authCtrl.verifyAccessToken, authCtrl.adminAuth, userCtrl.list);
 
 router.route('/:userId')
   /** GET /api/users/:userId - Get user */

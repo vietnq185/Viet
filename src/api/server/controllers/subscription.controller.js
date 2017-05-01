@@ -869,4 +869,42 @@ export const resetPassword = (req, res, next) => {
   }).catch(e => next(e));
 };
 
+export const getSubscriptions = (req, res, next) => {
+  const { limit = 10, offset = 0 } = req.query;
+  return new SubscriptionModel().findCount().then((total) => {
+    let rowCount = 10,
+      pages = Math.ceil(total / rowCount),
+      page = 1;
+    if (req.params.page != undefined && parseInt(req.params.page) > 0) {
+      page = parseInt(req.params.page);
+    }
+    let offset = (parseInt(page) - 1) * rowCount;
+    if (page > pages) {
+      page = pages;
+    }
+
+    const iModel = new ItemModel();
+    const pModel = new PlanModel();
+    const cModel = new CourseModel();
+    new SubscriptionModel()
+      .select(`t1."_id", t1."parentId", t1."planId", t1."expirationType", t1."type", t1.refid,
+        t1."expiryDate", t1.discount, t1.fee, t1.status, t1."dateCreated", t1.channel, t1."cardId", t1."nextPeriodStart", t1."nextPeriodEnd", t1."nextChannel", t1."nextExpirationType", 
+        ARRAY(SELECT t2.title FROM ${cModel.getTable()} AS t2 
+          INNER JOIN ${pModel.getTable()} AS t3 ON t2._id = ANY(ARRAY[t3."courseIds"])
+          WHERE t3._id=t1."planId") AS "courseTitles", (SELECT t4.user FROM ${iModel.getTable()} AS t4 WHERE t4.order=t1._id Limit 1) AS "studentId"`)
+      .orderBy('t1."dateCreated" DESC')
+      .limit(limit).offset(offset)
+      .findAll()
+      .then((subscriptions) => {
+        const result = {
+          subscriptions,
+          page,
+          totalPages: pages
+        };
+        return res.json(new APIResponse(result));
+      })
+      .catch(e => next(e));
+  });
+};
+
 export default { getSubscriptionsByUser, create, assignStudent, upgrade, countSubscriptions, getSubscriptionById, paySubscription, stripeConfirmation, checkToShowBannerDiscount, cancelSubscription, getOptions, forgotPassword, getUserForgotPassword, resetPassword };

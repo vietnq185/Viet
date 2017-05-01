@@ -43,7 +43,7 @@ config.api = {
   createSubscription: '/api/subscriptions', // POST
   countSubscriptions: '/api/subscriptions/countSubscriptions', // GET
   assignStudent: '/api/subscriptions/AssignStudent', // POST
-  getSubscriptionList: '/api/subscriptions/list/:userId/:page', // GET
+  getSubscriptionList: '/api/subscriptions/list-all/:page', // GET
   linkStudent: '/api/users/linkStudent', // POST
   upgradeSubscription: '/api/subscriptions/upgrade',  // POST
   getOptionList: '/api/options',  // GET
