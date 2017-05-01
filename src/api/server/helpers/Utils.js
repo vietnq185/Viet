@@ -455,11 +455,12 @@ Utils.sendMail = (options) => {
           console.log('Utils.sendMail => typeof data[key] !== undefine: ', (typeof data[key] !== 'undefine'));
           console.log('Utils.sendMail => data[key]', (data[key]));
           if (typeof data[key] !== 'undefine') {
-            const pattern = new RegExp(tkn, 'gi');
+            const pattern = new RegExp(tkn, "gi");
             console.log('Utils.sendMail => pattern: ', pattern);
             retTpl = retTpl.replace(pattern, data[key]);
           }
         }
+        console.log('Utils.sendMail => retTpl: ', retTpl);
         return retTpl;
       }
 
