@@ -483,12 +483,14 @@ Utils.sendMail = (options) => {
       // }
 
       let SMTP_CONFIG = {
-        service: 'gmail',
+        host: dataOpts.o_smtp_host,
+        port: dataOpts.o_smtp_port,
+        secure: true, // use SSL 
         auth: {
           user: dataOpts.o_smtp_user,
           pass: dataOpts.o_smtp_pass
         }
-      }
+      };
 
       const transporter = nodemailer.createTransport(SMTP_CONFIG);
       const MAIL_OPTIONS = { from, to, subject, html: message };
