@@ -2,6 +2,8 @@
 
 import React from 'react'
 
+import config from '../../../config'
+
 import API from '../../../helpers/api'
 import Utils from '../../../helpers/utils'
 import validate from '../../../helpers/validate'
@@ -37,7 +39,7 @@ class ForgotPassword extends React.Component {
     const rules = {
       email: {
         required: 'Email is required',
-        email: 'Invalid email address'
+        email: 'Please enter correct email format'
       }
     }
 
@@ -45,7 +47,8 @@ class ForgotPassword extends React.Component {
 
     if (result === null) {
       // can submit
-      return API.forgotPassword({ email: self.refs.email.value, webUrl: process.env.REACT_APP_API_URL }).then((result) => {
+      return API.forgotPassword({ email: self.refs.email.value, webUrl: config.webUrl }).then((result) => {
+        console.info('the response: ', result);
         switch (result.msg) {
           case 'EMAIL_SENT':
             this.setState({ errMsg: 'An email has been sent to your email. Futhur information please check your email.' })
@@ -69,8 +72,6 @@ class ForgotPassword extends React.Component {
   }
 
   componentDidMount() {
-    const { changeStep } = this.props
-    changeStep(steps.forgotPassword)
   }
 
   render() {

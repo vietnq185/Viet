@@ -481,4 +481,10 @@ Utils.sendMail = (options) => {
   });
 }
 
+Utils.getServerUrl = (req) => {
+  //const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+  const serverUrl = req.protocol + '://' + req.get('host');
+  return serverUrl;
+}
+
 export default Utils;

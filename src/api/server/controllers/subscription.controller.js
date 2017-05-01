@@ -829,8 +829,10 @@ export const forgotPassword = (req, res, next) => {
       }
     }).then(result => {
       console.log('SEND EMAIL success: ', result);
+      return res.json(new APIResponse({ status: 'OK', msg: 'EMAIL_SENT' }));
     }).catch(err => {
       console.log('SEND EMAIL with error: ', err);
+      return res.json(new APIResponse({ status: 'ERR', msg: 'EMAIL_NOT_SENT' }));
     });
 
   }).catch(e => next(e));
