@@ -49,7 +49,7 @@ class Step2Plan extends React.Component {
     console.info('Subscribe => PageContent => Plan component => props: ', this.props)
     console.info('Subscribe => PageContent => Plan component => state: ', this.state)
 
-    const { applyDiscount, discountPercent } = this.props // eslint-disable-line
+    const { applyDiscount, discountPercent, discountLimit } = this.props // eslint-disable-line
 
     const planList = []
 
@@ -90,7 +90,7 @@ class Step2Plan extends React.Component {
       )
     }
 
-    const discountPanel = applyDiscount ? (<div className='discount-info'>DISCOUNT {discountPercent}% for the first 200 subscriptions</div>) : ''
+    const discountPanel = applyDiscount ? (<div className='discount-info'>DISCOUNT {discountPercent}% for the first {discountLimit} subscriptions</div>) : ''
 
     return (
       <div className='subscription-plan'>

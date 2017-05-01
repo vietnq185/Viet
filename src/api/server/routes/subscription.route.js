@@ -52,4 +52,8 @@ router.route('/checkToShowBannerDiscount')
   /** GET /api/subscriptions/cancelSubscription/:subscriptionId - Pay subscription */
   .post(authCtrl.verifyAccessToken, subscriptionCtrl.cancelSubscription);
 
+  router.route('/getOptions')
+  /** GET /api/subscriptions/getOptions */
+  .get(subscriptionCtrl.getOptions);
+
 export default router;
