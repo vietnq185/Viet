@@ -118,3 +118,9 @@ INSERT INTO "options" ("foreign_id", "key", "tab_id", "value", "label", "descrip
 (1, 'o_smtp_port', 1, '25', NULL, 'SMTP Port', 'int', 6, 1, NULL),
 (1, 'o_smtp_user', 1, NULL, NULL, 'SMTP Username', 'string', 7, 1, NULL),
 (1, 'o_smtp_pass', 1, NULL, NULL, 'SMTP Password', 'string', 8, 1, NULL);
+
+
+INSERT INTO "options" ("foreign_id", "key", "tab_id", "value", "label", "description", "type", "order", "is_visible", "style") VALUES
+
+(1, 'mail_forgot_password_ARRAY_subject', 2, NULL, NULL,  'Forgot password email subject', 'string',10, 1, NULL),
+(1, 'mail_forgot_password_ARRAY_message', 2, NULL, NULL, 'Forgot password email message', 'text', 11, 1, NULL);

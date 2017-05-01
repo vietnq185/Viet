@@ -4,6 +4,8 @@ import { Button, Nav, NavItem, Tab, Tabs } from 'react-bootstrap';  // eslint-di
 
 import Utils from '../../helpers/utils';  // eslint-disable-line
 
+import TinyEditor from '../TinyEditor';
+
 export default class Component extends React.Component {
   constructor(props) {
     super(props);
@@ -133,6 +135,10 @@ export default class Component extends React.Component {
         return (<input type="text" ref={name} name={name} defaultValue={value} className="form-control" />);
         break; // eslint-disable-line
       case 'text':
+        const pattern = new RegExp(/^mail_(.*)_ARRAY_message$/gi);
+        if (pattern.test(item.key)) {
+          return (<TinyEditor ref={name} value={value} id={`myCoolEditor_${item.key}`} />);
+        }
         return (<textarea ref={name} name={name} defaultValue={value} className="form-control"></textarea>);
         break; // eslint-disable-line
       case 'int':
