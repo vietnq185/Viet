@@ -1,12 +1,20 @@
 /* eslint-disable */
-export default {
-  frequency: {
-    monthly: 'monthly',
-    annually: 'annually',
-  },
-  paymentMethod: {
-    bankTransfer: 'bank',
-    creditCard: 'stripe'
-  },
-  subscriptionStatuses: ["pending", "trailing", "active", "overdue", "cancelled"]
+const constants = {};
+
+constants.frequency = {
+  monthly: 'monthly',
+  annually: 'annually',
+}
+
+constants.paymentMethod = {
+  bankTransfer: 'bank',
+  creditCard: 'stripe'
+}
+
+constants.subscriptionStatuses = ["pending", "trailing", "active", "overdue", "cancelled"]
+
+constants.emailTokens = {
+  mail_forgot_password: ['{firstName}', '{lastName}', '{resetPasswordUrl}']
 };
+
+export default constants;

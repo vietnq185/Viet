@@ -4,7 +4,11 @@ import { Button, Nav, NavItem, Tab, Tabs } from 'react-bootstrap';  // eslint-di
 
 import Utils from '../../helpers/utils';  // eslint-disable-line
 
+import constants from '../../constants';  // eslint-disable-line
+
 import TinyEditor from '../TinyEditor';
+
+const emailTokens = constants.emailTokens;
 
 export default class Component extends React.Component {
   constructor(props) {
@@ -111,9 +115,13 @@ export default class Component extends React.Component {
           </thead>
           <tbody>
             {data.map(item => {
+
               return (
                 <tr key={item.key}>
-                  <td>{item.description}</td>
+                  <td>
+                    {item.description}
+                    {self.renderAvailableTokens(item)}
+                  </td>
                   <td>
                     {self.renderControl(item)}
                   </td>
@@ -124,6 +132,23 @@ export default class Component extends React.Component {
         </table>
       </div>
     );
+  }
+
+  renderAvailableTokens(item) {
+    const pattern = new RegExp(/^mail_(.*)_ARRAY_message$/gi);
+    if (pattern.test(item.key)) {
+      const tkArr = item.key.split('_ARRAY_message');
+      return (
+        <div>
+          <br /><br />
+          Available tokens:<br />
+          {(emailTokens[tkArr[0]] || []).map(tk => {
+            return (<span>{tk}<br /></span>);
+          })}
+        </div>
+      );
+    }
+    return '';
   }
 
   renderControl(item) {
