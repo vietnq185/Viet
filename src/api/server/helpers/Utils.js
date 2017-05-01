@@ -1,5 +1,6 @@
 /*eslint-disable*/
 
+import OptionModel from '../models/option.model';
 import constants from '../../config/constants';
 
 const CryptoJS = require("crypto-js");
@@ -8,6 +9,8 @@ const aes = require('crypto-js/aes');
 
 const crypto = require('crypto');
 const uuidV4 = require('uuid/v4');
+
+const nodemailer = require('nodemailer');
 
 /**
  * Constructor
@@ -391,6 +394,91 @@ Utils.getDataPair = function (results, arrKeyFields, arrResultFields = '*', strK
   } catch (ex) {
     return ex;
   }
+}
+
+/*
+function sendMail
+@options = {
+    from: string (optional),
+    to: string (required),
+    template: string (required),    // name of sub-folder in templates directory. In this sub-folder MUST have following files: subject.ejs AND (html.ejs OR text.ejs)
+    templateVars: object (optional) // an object include variables that need to parse in template
+}
+*/
+
+/**
+ * send email.
+ * @param {object} options // object.
+ * @property {string} from (optional)
+ * @property {string} to
+ * @property {string} template // template key get from option, for example if we define mail_forgot_password_ARRAY_message, the template will be mail_forgot_password
+ * @property {object} data  // data to replace the tokens (token defination is in config/constants.js)
+ * @returns {Promise}
+ * 
+ * Example: 
+ * Utils.sendMail({
+    to: 'mrdamtn@gmail.com',
+    template: 'mail_forgot_password',
+    data: {
+      firstName: 'NGOC',
+      lastName: 'DAM',
+      resetPasswordUrl: 'http://localhost:3000/resetPassword/this_should_be_hash'
+    }
+  }).then(result => {
+    console.log('SEND EMAIL success: ', result);
+  }).catch(err => {
+    console.log('SEND EMAIL with error: ', err);
+  });
+ * 
+ */
+Utils.sendMail = (options) => {
+  // // **NOTE**: Did you know `nodemailer` can also be used to send SMTP email through Mandrill, Mailgun, Sendgrid and Postmark?
+  // <https://github.com/andris9/nodemailer-wellknown#supported-services>
+
+  return new Promise((resolve, reject) => {
+    return new OptionModel().getPairs().then((dataOpts) => {
+      const { from = dataOpts.o_admin_email, to, template, data } = options;
+      const tokens = constants.emailTokens[template];
+      let { subject, message } = dataOpts[template];
+
+      //
+      const replaceTokens = (tpl) => {
+        let retTpl = tpl;
+        for (let i = 0; i < tokens.length; i++) {
+          const tkn = tokens[i];
+          const key = tkn.replace(/{/g, '').replace(/}/g, '');
+          if (typeof data[key] !== 'undefine') {
+            const pattern = new RegExp(tkn, 'g');
+            retTpl = retTpl.replace(pattern, data[key]);
+          }
+        }
+        return retTpl;
+      }
+
+      //
+      subject = replaceTokens(subject);
+      message = replaceTokens(message);
+
+      //send email
+      const SMTP_CONFIG = {
+        host: dataOpts.o_smtp_host,
+        port: dataOpts.o_smtp_port,
+        secure: true, // use SSL 
+        auth: {
+          user: dataOpts.o_smtp_user,
+          pass: dataOpts.o_smtp_pass
+        }
+      };
+      const transporter = nodemailer.createTransport(SMTP_CONFIG);
+      const MAIL_OPTIONS = { from, to, subject, html: message };
+      return transporter.sendMail(MAIL_OPTIONS, (err, info) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve(info);
+      });
+    }).catch(reject);
+  });
 }
 
 export default Utils;

@@ -38,4 +38,7 @@ export default {
     alreadyIsAnnually: 'ALREADY_IS_ANNUALL',
     cannotUpgrade: 'CANNOT_UPGRADE_SUBSCRIPTION'
   },
+  emailTokens: {
+    mail_forgot_password: ['{firstName}', '{lastName}', '{resetPasswordUrl}']
+  }
 };
