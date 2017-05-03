@@ -822,6 +822,10 @@ color: #007fff;
 	width: 40%;
 	margin: 0 auto;
 }
+#frameGoogleSurvey{
+	border: none;
+	min-height: 850px;
+}
 @media (max-width: 1199px){
 	.subscription-plan .subscription-plan-item{
 		min-height: 509px;
@@ -896,5 +900,9 @@ color: #007fff;
 	.subscribe-wrapper .subscribe-details .upgrade-plan-container table tr td,
 	.subscribe-wrapper .subscribe-details .upgrade-plan-container table tr td:first-child{
 		font-size: 14px;
+	}
+	#modalFreeTrialConfirm, #modalFreeTrialConfirmStudent {
+		margin: 0 auto;
+		width: 90%;
 	}
 }

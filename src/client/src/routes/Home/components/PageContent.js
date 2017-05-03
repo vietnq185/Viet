@@ -9,7 +9,7 @@ import WorksheetImage from '../../../styles/images/worksheet.png'
 import ReportImage from '../../../styles/images/report.png'
 
 class PageContent extends React.Component {
-  render () {
+  render() {
     return (
       <div>
 
