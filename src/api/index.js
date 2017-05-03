@@ -26,7 +26,7 @@ if (!module.parent) {
     var cron = require('cron');
 
     var job1 = new cron.CronJob({
-      cronTime: '0 0 * * *',
+      cronTime: '* * * * *',
       onTick: function () {
         subscriptionCtrl.cronUpdateSubscriptionStatus()
       },

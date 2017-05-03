@@ -178,12 +178,13 @@ class Step3Payment extends React.Component {
     )
 
     if (frequency === MONTHLY) {
-      bankTransferOption = (
+      /*bankTransferOption = (
         <li>
           <input type='radio' name='payment_method' id='bank' value={BANK_TRANSFER} disabled />
           <label htmlFor='bank'><i className='fa fa-money' aria-hidden='true' />Bank Transfer</label>
         </li>
-      )
+      )*/
+      bankTransferOption = '';
     }
 
     return (
