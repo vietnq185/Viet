@@ -53,6 +53,7 @@ config.api = {
   forgotPassword: '/api/subscriptions/forgotPassword', // GET
   getUserForgotPassword: '/api/subscriptions/getUserForgotPassword/:id/:hash', // GET
   resetPassword: '/api/subscriptions/resetPassword', // POST
+  getOptionPairs: '/api/auth/getOptionPairs', // GET
 }
 config.api = concatHost(config.apiServer, config.api)
 

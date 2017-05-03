@@ -12,7 +12,7 @@ const MONTHLY = constants.frequency.monthly
 const ANNUALLY = constants.frequency.annually
 
 class Step2Plan extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     //
     const obj = {}
@@ -31,7 +31,7 @@ class Step2Plan extends React.Component {
     }
   }
 
-  changeFrequency (id) {
+  changeFrequency(id) {
     const frequency = this.state.plans[id].frequency
     const plans = Utils.copy(this.state.plans)
     plans[id].frequency = (frequency === MONTHLY ? ANNUALLY : MONTHLY)
@@ -40,16 +40,16 @@ class Step2Plan extends React.Component {
     })
   }
 
-  onSubmit (id) {
+  onSubmit(id) {
     this.props.selectPlan(this.state.plans[id]) // eslint-disable-line
     this.props.changeStep(this.props.steps.payment) // eslint-disable-line
   }
 
-  render () {
+  render() {
     console.info('Subscribe => PageContent => Plan component => props: ', this.props)
     console.info('Subscribe => PageContent => Plan component => state: ', this.state)
 
-    const { applyDiscount, discountPercent, discountLimit } = this.props // eslint-disable-line
+    const { applyDiscount, discountPercent, discountLimit, auth: { option_arr } } = this.props // eslint-disable-line
 
     const planList = []
 
@@ -83,7 +83,7 @@ class Step2Plan extends React.Component {
               <div className='subscription-payment-type'>Monthly <span className='fa-toggle'><img src={frequency === MONTHLY ? ToggleLeftImage : ToggleRightImage} onClick={() => this.changeFrequency(item._id)} /></span> Annually</div>
               {pricingContent}
               <div className='subscription-price-per'>{frequency === MONTHLY ? 'per month' : 'per year'}</div>
-              <a href='javascript: void(0);' className='start-your-trial' onClick={() => this.onSubmit(item._id)}>Start your free 14 day trial</a>
+              <a href='javascript: void(0);' className='start-your-trial' onClick={() => this.onSubmit(item._id)}>Start your free {option_arr.o_trial_days} day trial</a>
             </div>
           </div>
         </div>

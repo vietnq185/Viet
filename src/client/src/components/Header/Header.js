@@ -85,7 +85,7 @@ class Header extends React.Component {
             {/* <!-- Modal content--> */}
             <div className='modal-content'>
               <div className='modal-header text-center'>
-                <span className='modalFreeTrialConfirmTitle'>Free Trial:</span>
+                <span className='modalFreeTrialConfirmTitle'>Free Trial</span>
                 <button type='button' className='close' data-dismiss='modal' onClick={() => this.setState({ showFreeTrialConfirm: false })}>&times;</button>
               </div>
               <div className='modal-body'>
@@ -104,7 +104,7 @@ class Header extends React.Component {
             {/* <!-- Modal content--> */}
             <div className='modal-content'>
               <div className='modal-header text-center'>
-                <span className='modalFreeTrialConfirmTitle'>Free Trial:</span>
+                <span className='modalFreeTrialConfirmTitle'>Free Trial</span>
                 <button type='button' className='close' data-dismiss='modal' onClick={() => this.setState({ showFreeTrialConfirmStudent: false })}>&times;</button>
               </div>
               <div className='modal-body'>

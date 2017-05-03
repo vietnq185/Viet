@@ -29,4 +29,8 @@ router.route('/checkToken')
 router.route('/random-number')
   .get(authCtrl.verifyAccessToken, authCtrl.getRandomNumber);
 
+/** GET /api/auth/getOptionPairs - get public options */
+router.route('/getOptionPairs')
+  .get(authCtrl.getOptionPairs);
+
 export default router;

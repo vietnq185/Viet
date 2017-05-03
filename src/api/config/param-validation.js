@@ -6,8 +6,8 @@ export default {
     body: {
       email: Joi.string().required().email(),
       password: Joi.string().required().min(6).max(32),
-      firstName: Joi.string().required(),
-      lastName: Joi.string().required(),
+      firstName: Joi.string().required().max(20),
+      lastName: Joi.string().required().max(20),
       phone: Joi.string().regex(/[0-9]+/).min(10).max(12).options({// eslint-disable-line
         language: {
           string: {
@@ -29,8 +29,8 @@ export default {
     body: {
       email: Joi.string().email(), // optional
       password: Joi.string().min(6).max(32), // optional
-      firstName: Joi.string(), // optional
-      lastName: Joi.string(), // optional
+      firstName: Joi.string().max(20), // optional
+      lastName: Joi.string().max(20), // optional
       // in case admin, editor or parent create a teacher or student,
       // the parentId field will refer to user field in user_roles table.
       parentId: Joi.string().guid(), // optional

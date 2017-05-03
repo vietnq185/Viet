@@ -118,7 +118,7 @@ class Step3Payment extends React.Component {
 
     const requiredLabel = (<abbr className='dk-red-text'>&nbsp;*</abbr>)
 
-    const { applyDiscount, discountPercent, selectedPlan } = this.props // eslint-disable-line
+    const { applyDiscount, discountPercent, selectedPlan, auth: { option_arr } } = this.props // eslint-disable-line
     let { frequency, fee } = selectedPlan
     fee = isNaN(fee) ? 0 : (applyDiscount ? (fee - fee * discountPercent / 100) : fee)
     //
@@ -200,7 +200,7 @@ class Step3Payment extends React.Component {
         <hr />
         <div className='payment-method'>
           <div className={this.state.paymentMethod === CREDIT_CARD ? 'cc-container' : 'hide'}>
-            <div>Your credit card will not be charged until the 14 days trial period expires. If you cancel the subscription before the trial expired, your card will not be charged.</div>
+            <div>Your credit card will not be charged until the {option_arr.o_trial_days} days trial period expires. If you cancel the subscription before the trial expired, your card will not be charged.</div>
             <div>After your trial period you will be charged <strong>{frequency === MONTHLY ? (<abbr>${fee} per month</abbr>) : (<abbr>${fee * 12} per year</abbr>)}</strong></div><br />
           </div>
           <div className={this.state.paymentMethod === BANK_TRANSFER ? 'bank-container' : 'hide'}>

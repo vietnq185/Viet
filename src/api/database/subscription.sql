@@ -128,3 +128,6 @@ INSERT INTO "options" ("foreign_id", "key", "tab_id", "value", "label", "descrip
 
 (1, 'mail_forgot_password_ARRAY_subject', 2, NULL, NULL,  'Forgot password email subject', 'string',10, 1, NULL, 'F'),
 (1, 'mail_forgot_password_ARRAY_message', 2, NULL, NULL, 'Forgot password email message', 'text', 11, 1, NULL, 'F');
+
+INSERT INTO "options" ("foreign_id", "key", "tab_id", "value", "label", "description", "type", "order", "is_visible", "style", "is_public") VALUES
+(1, 'o_trial_days', 1, '14', NULL, 'Number of trial days', 'float', 12, 1, NULL, 'T');

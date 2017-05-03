@@ -27,8 +27,12 @@ export default class Footer extends React.Component {
     })
   }
   render() {
+    let showPromotionBanner = this.state.show;
     if (this.state.showBannerDiscount.showBanner === 0) {
-      this.state.show = false
+      showPromotionBanner = false;
+    }
+    if(this.props.auth.isLoggedIn) {
+      showPromotionBanner = false;
     }
     
     return (
@@ -55,7 +59,7 @@ export default class Footer extends React.Component {
               </div>
             </div>
           </div>
-          <div className={['banner-discount-container hidden-xs', (this.state.show ? '' : 'hide')].join(' ')}>
+          <div className={['banner-discount-container hidden-xs', (showPromotionBanner ? '' : 'hide')].join(' ')}>
             <nav className='navbar-fixed-bottom'>
               <div className='banner-discount'>
                 <span className='left-bg-special-offer'><img src={LeftBGSpecialOffer} /></span>

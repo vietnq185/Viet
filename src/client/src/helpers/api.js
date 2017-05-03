@@ -418,4 +418,24 @@ static getUserForgotPassword = (id, hash) => {
     })
   }
 
+  static getOptionPairs = () => {
+    return new Promise((resolve, reject) => {
+      return fetch(config.api.getOptionPairs, {
+        method: 'GET',
+        headers: {
+          'Content-type': 'application/json'
+        }
+      }).then((response) => response.json()).then((jsonResponse) => {
+        if (jsonResponse && jsonResponse.success) {
+          return resolve(jsonResponse.result)
+        }
+        const msg = jsonResponse.error.message || ''
+        return reject(msg)
+      }).catch((error) => {
+        const msg = error.message || ''
+        return reject(msg)
+      })
+    })
+  }
+
 }

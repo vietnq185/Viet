@@ -8,6 +8,7 @@ import Utils from '../helpers/Utils';
 import config from '../../config/config';
 import constants from '../../config/constants';
 import UserModel from '../models/user.model';
+import OptionModel from '../models/option.model';
 
 const debug = require('debug')('rest-api:user.controller'); // eslint-disable-line
 
@@ -325,6 +326,8 @@ export const renewAccessToken = (req, res, next) => {
   addToBlacklist(userId, iat);
   return generateTokens(req, userId).then(tokenResp => res.json(tokenResp)).catch(e => next(e)); // eslint-disable-line
 };
+
+export const getOptionPairs = (req, res, next) => new OptionModel().getPairs(1, true).then(optionArr => res.json(new APIResponse(optionArr))).catch(e => next(e));  // eslint-disable-line
 
 // ------------------------------------------------------------------------------------------------
 

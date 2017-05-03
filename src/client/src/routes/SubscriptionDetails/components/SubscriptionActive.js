@@ -47,7 +47,7 @@ class SubscriptionActive extends React.Component {
           <p>Your plan will be upgraded to annual plan on {moment.unix(objSubscription.nextPeriodStart / 1000).format('MMM D, YYYY')}</p>
         </div>
       )
-    } else {
+    } else if (objSubscription.expirationType !== 'annually') {
       buttonUpgrade = (
         <a href={['/upgrade-subscription/', objSubscription._id].join('')} className='upgrade-link'>Upgrade</a>
       )
@@ -78,7 +78,7 @@ class SubscriptionActive extends React.Component {
           {studentInfo}
         </div>
         <div className='upgradedInfo'>
-        {upgradedInfo}
+          {upgradedInfo}
         </div>
         <div className='row'>
           <div className='col-xs-12'>

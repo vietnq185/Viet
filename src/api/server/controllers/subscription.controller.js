@@ -107,9 +107,8 @@ export const create = (req, res, next) => {
       fee = fee - discountValue;
 
       // create data
-      var expiryDate = new Date().getTime() + (30 * 60 * 1000),//30 mins trial
-        //expiryDate = new Date().getTime() + (14 * 86400 * 1000),//14 days trial
-        dateCreated = new Date().getTime();
+      var expiryDate = new Date().getTime() + (optionResp.o_trial_days * 86400 * 1000),
+        dateCreated = new Date().getTime(); //14 days trial
       var data = { // eslint-disable-line
         _id: id,
         parentId,
@@ -650,7 +649,7 @@ var processPayment = function (subscription) {
               stripe.subscriptions.create({
                 customer: source.customer,
                 plan: planSubscription,
-                //trial_period_days: 14
+                //trial_period_days: dataResp.o_trial_days,
                 trial_end: moment.unix(subscriptionData.expiryDate / 1000).unix()
               }, function (err, subscriptionResp) {
                 if (subscriptionResp) {

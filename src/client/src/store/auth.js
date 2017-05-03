@@ -41,10 +41,10 @@ export const logout = (nextAction = () => { }) => (dispatch, getState) => {
     return resolve()
   }).then(() => {
     dispatch(updateLoginResult({ isLoggedIn: false, jwt: {}, user: {} }))
-    nextAction()  // call next action (if any)
+    Utils.redirect('/');
   }).catch(() => {
     dispatch(updateLoginResult({ isLoggedIn: false, jwt: {}, user: {} }))
-    nextAction()  // call next action (if any)
+    Utils.redirect('/');
   })
 }
 
@@ -59,11 +59,21 @@ export const checkTokensAtStartUp = () => (dispatch, getState) => {
     }
     return API.checkLogin(accessToken, userId).then((result) => resolve(Utils.copy({ jwt, user: result }))).catch(reject) // eslint-disable-line
   }).then((result) => {
+    API.getOptionPairs().then((optionArr) => dispatch(updateOptions(optionArr))).catch(err => dispatch(updateOptions({}))) // eslint-disable-line
+    //
     if (Utils.isNotEmptyObject(result)) {
-      console.info('result of check login: ', result)
       return dispatch(updateLoginResult({ isLoggedIn: true, jwt: result.jwt }))
     }
   }).catch(() => dispatch(logout()))
+}
+
+const UPDATE_OPTIONS = 'UPDATE_OPTIONS'
+
+const updateOptions = (result) => {
+  return {
+    type: UPDATE_OPTIONS,
+    result
+  }
 }
 
 // ------------------------------------
@@ -88,13 +98,17 @@ export const checkAccessToken = () => {
 const initialState = {
   isLoggedIn: false,
   jwt: {},
-  user: {}
+  user: {},
+  option_arr: {}
 }
 
 export default (state = initialState, action) => {
   switch (action.type) {
     case UPDATE_LOGIN_RESULT:
       return Utils.merge(state, action.result)
+      break // eslint-disable-line
+    case UPDATE_OPTIONS:
+      return Utils.merge(state, { option_arr: action.result })
       break // eslint-disable-line
     default:
       return state
