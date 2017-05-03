@@ -6,6 +6,7 @@ import * as authActions from '../../../store/auth'
 import Step1 from './Step1'
 import Step2 from './Step2'
 import Step3 from './Step3'
+import GoogleSurvey from './GoogleSurvey'
 
 class PageContent extends React.Component {
   constructor(props) {
@@ -53,6 +54,9 @@ class PageContent extends React.Component {
           break;
         case 3:
           content = <Step3 stepData={this.state.stepData} objSubscription={this.state.subscription} changeStep={this.changeStep.bind(this)} />;
+          break;
+        case 4:
+          content = <GoogleSurvey stepData={this.state.stepData} changeStep={this.changeStep.bind(this)} />;
           break;
       }
       var objSubscription = this.state.subscription

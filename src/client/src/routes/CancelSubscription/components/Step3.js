@@ -10,7 +10,6 @@ class Step3 extends React.Component {
 
 	render() {
 		const { objSubscription } = this.props
-		console.log(objSubscription)
 		if (objSubscription.channel == 'bank') {
 			return (
 				<div className="subscribe-cancellation">
