@@ -12,7 +12,7 @@ import '../../../styles/programme.css'
 
 class HomeView extends React.Component {
   componentDidMount() {
-    Utils.redirect('/programme')
+    Utils.redirect('/about')
   }
 
   scrollTo() {

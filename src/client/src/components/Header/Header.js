@@ -35,7 +35,7 @@ class Header extends React.Component {
     const self = this
     setTimeout(function () {
       const nextAction = () => {
-        Utils.redirect('/subscribe')
+        Utils.redirect('/about')
       }
       self.props.logout(nextAction)
     }, 500);
