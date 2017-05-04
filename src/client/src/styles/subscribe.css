@@ -826,6 +826,22 @@ color: #007fff;
 	border: none;
 	min-height: 850px;
 }
+.__react_component_tooltip.about-tooltip {
+	min-width: 200px;
+	padding: 6px;
+	line-height: 20px;
+}
+.about-tooltip span{
+	color: #007fff;
+}
+
+.left-testimonial-container{
+	height: 258px;
+}
+.right-testimonial-container{
+	height: 216px;
+}
+
 @media (max-width: 1199px){
 	.subscription-plan .subscription-plan-item{
 		min-height: 509px;
