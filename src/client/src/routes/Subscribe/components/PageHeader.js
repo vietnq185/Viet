@@ -45,6 +45,7 @@ class PageHeader extends React.Component {
           </Navbar.Header>
           <Navbar.Collapse className='navbar-collapse navbar-ex1-collapse navbar-right dk-white'>
             <ul className='nav navbar-nav side-nav'>
+              <li><Link to='/about' className='side-nav-item dk-white route--link' activeClassName='route--link--active dk-yellow'>Home</Link></li>
               <li><Link to='/programme' className='side-nav-item dk-white route--link' activeClassName='route--link--active dk-yellow'>Our Programme</Link></li>
               <li><Link to='/student' className='side-nav-item dk-white route--link' activeClassName='route--link--active dk-yellow'>For Student</Link></li>
               <li><Link to='/parent' className='side-nav-item dk-white route--link' activeClassName='route--link--active dk-yellow'>For Parent</Link></li>

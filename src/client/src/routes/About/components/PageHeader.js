@@ -1,19 +1,16 @@
 /* eslint-disable */
 
 import React from 'react'
+import { connect } from 'react-redux'
 import { fadeIn } from 'react-animations'
 import { StyleSheet, css } from 'aphrodite'
-import { connect } from 'react-redux'
-import { IndexLink, Link } from 'react-router'
 
-import { Nav, NavItem, Navbar } from 'react-bootstrap';
+import Utils from '../../../helpers/utils'
 
-import * as authActions from '../../store/auth'
-import * as subscribeActions from '../../routes/Subscribe/modules/subscribe'
+import Header from '../../../components/Header'
+import ScrollImage from '../../../styles/images/mouse-scroll.png'
 
-import Utils from '../../helpers/utils'
-
-import './Header.css'
+import * as subscribeActions from '../../Subscribe/modules/subscribe'
 
 const styles = StyleSheet.create({
   fadeIn: {
@@ -22,7 +19,7 @@ const styles = StyleSheet.create({
   }
 })
 
-class Header extends React.Component {
+class PageHeader extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -31,55 +28,57 @@ class Header extends React.Component {
     }
   }
 
-  doLogout() {
-    const self = this
-    setTimeout(function () {
-      const nextAction = () => {
-        Utils.redirect('/about')
-      }
-      self.props.logout(nextAction)
-    }, 500);
-  }
-
   onCreateParent() {
     this.props.changeStep(this.props.subscribe.steps.signUp) // eslint-disable-line
     Utils.redirect('/subscribe')
   }
 
   render() {
-    const { auth } = this.props
-    const isLoggedIn = auth && auth.isLoggedIn
-    let subscriptionLink = ''
-    let theLink = (<li className='signin'><a href='https://app.a-smartlearning.com/en/sml/login' className='text-signin'> <span className='side-nav-item dk-white'>Sign In</span></a></li>)
-    let trialLink = (<li><a className='side-nav-item dk-white route--item' href='javascript: void(0);' data-toggle='modal' data-target='#modalFreeTrialConfirm' onClick={() => this.setState({ showFreeTrialConfirm: true })}>Free Trial</a></li>)
-    if (isLoggedIn) {
-      theLink = (<li><a href='javascript: void(0);' className='side-nav-item dk-white route--item' onClick={() => this.doLogout()}>Logout</a></li>)
-      if (auth.jwt.isParent) {
-        subscriptionLink = (<li><Link to='/subscription' className='side-nav-item dk-white route--item' activeClassName='route--active dk-yellow'>My Subscriptions</Link></li>)
-        trialLink = (<li><Link to='/subscribe' className='side-nav-item dk-white route--item' activeClassName='route--active dk-yellow'>Free Trial</Link></li>)
-      }
-    }
     return (
-      <div>
-        <Navbar default fluid collapseOnSelect className='topmost navbar navbar-default dk-navbar'>
-          <Navbar.Header className='navbar-header'>
-            <Navbar.Brand>
-              <IndexLink to='/' className='navbar-brand'>A-SLS</IndexLink>
-            </Navbar.Brand>
-            <Navbar.Toggle />
-          </Navbar.Header>
-          <Navbar.Collapse className='navbar-right dk-white'>
-            <ul className='nav navbar-nav side-nav'>
-              <li><Link to='/about' className='side-nav-item dk-white route--item' activeClassName='route--active dk-yellow'>Home</Link></li>
-              <li><Link to='/programme' className='side-nav-item dk-white route--item' activeClassName='route--active dk-yellow'>Our Programme</Link></li>
-              <li><Link to='/student' className='side-nav-item dk-white route--item' activeClassName='route--active dk-yellow'>For Student</Link></li>
-              <li><Link to='/parent' className='side-nav-item dk-white route--item' activeClassName='route--active dk-yellow'>For Parent</Link></li>
-              {trialLink}
-              {subscriptionLink}
-              {theLink}
-            </ul>
-          </Navbar.Collapse>
-        </Navbar>
+      <div className='programme-header dk-white'>
+        <Header />
+        
+        <div className="content-wraper text-center">
+            <h1 className="about-tittle">
+                A-Smart Learning System
+            </h1>
+            <hr className="dk-gb-white about-hr"/>
+            <div className="about-sub-tittle">
+              <h3 className="about-sub-tittle-text">
+                An Academic GPS
+              </h3>
+            </div>
+            <p className="about-text-content text-justify">
+              A-Smart Learning System (A-SLS) is a state-of-the-art programme that incorporates <span className="dk-yellow">Statistical Machine Learning Technology, Natural Language Processing, Data Analytics and Neuroscience Technology</span> to plan an Individualised Learning Programme by dynamically diagnosing students' academic readiness and help them maximise their best potential to achieve their academic goals.
+            </p>
+            <div className="row">
+              <div className="col-md-4 col-xs-12 text-center">
+                <a href="programme">
+                  <button className="btn dk-btn dk-bg-teal dk-white">
+                    OUR PROGRAMME
+                  </button>
+                </a>
+              </div>
+              <div className="col-md-4 col-xs-12 text-center">
+                <a href="student">
+                  <button className="btn dk-btn dk-bg-green dk-white">
+                    I AM A STUDENT
+                  </button>
+                </a>
+              </div>
+              <div className="col-md-4 col-xs-12 text-center">
+                <a href="parent">
+                  <button className="btn dk-btn dk-bg-blue dk-white">
+                    I AM A PARENT
+                  </button>
+                </a>
+              </div>
+            </div>
+            <a href='javascript: void(0);' onClick={() => this.props.scrollTo()}>
+              <img className="mouse-scroll" src={ScrollImage} />
+            </a>
+          </div>
+
         {/* <!-- Modal --> */}
         <div id='modalFreeTrialConfirm' aria-hidden='false' className={['modal fade', this.state.showFreeTrialConfirm ? 'in' : '', css(styles.fadeIn)].join(' ')} role='dialog' style={this.state.showFreeTrialConfirm ? { display: 'block' } : { display: 'none' }}>
           <div className='modal-dialog'>
@@ -123,14 +122,16 @@ class Header extends React.Component {
   }
 }
 
+PageHeader.propTypes = {
+  scrollTo: React.PropTypes.func.isRequired
+}
+
 const mapDispatchToProps = {
-  ...authActions,
   ...subscribeActions
 }
 
 const mapStateToProps = (state) => ({
-  auth: state.auth,
   subscribe: state.subscribe
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(Header)
+export default connect(mapStateToProps, mapDispatchToProps)(PageHeader)
