@@ -923,7 +923,7 @@ export const cancelSubscription = (req, res, next) => {
           var date = new Date(),
             lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0),
             tsLastDayOfMonth = moment(lastDayOfMonth).unix() * 1000,
-            periodStart = moment(moment.unix(1494057849464 / 1000).format('YYYY-MM-DD')),
+            periodStart = moment(moment.unix(subscription.expiryDateFrom / 1000).format('YYYY-MM-DD')),
             periodEnd = moment(moment.unix(tsLastDayOfMonth / 1000).format('YYYY-MM-DD'));
           dataUpdate.expiryDate = tsLastDayOfMonth;
           if (subscription.channel === 'stripe' && subscription.expirationType == 'annually') {
