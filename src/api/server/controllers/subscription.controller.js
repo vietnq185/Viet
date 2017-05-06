@@ -248,7 +248,7 @@ export const upgrade = (req, res, next) => {
       return Promise.reject(new APIError(constants.errors.subscriptionNotFound, httpStatus.OK, true));
     }
     if (objSubscription.expirationType === 'annually') {
-      //return Promise.reject(new APIError(constants.errors.alreadyIsAnnually, httpStatus.OK, true));
+      return Promise.reject(new APIError(constants.errors.alreadyIsAnnually, httpStatus.OK, true));
     }
     return Promise.resolve(objSubscription);
   }).then((objSubscription) => {
@@ -317,7 +317,7 @@ export const getSubscriptionsByUser = (req, res, next) => {
     const cModel = new CourseModel();
     new SubscriptionModel().where('t1."parentId"::varchar=$1')
       .select(`t1."_id", t1."parentId", t1."planId", t1."expirationType", t1."type", t1.refid,
-        t1."expiryDate", t1.discount, t1.fee, t1.status, t1."dateCreated", t1.channel, t1."cardId", t1."nextPeriodStart", t1."nextPeriodEnd", t1."nextChannel", t1."nextExpirationType", 
+        t1."expiryDate", t1.discount, t1.fee, t1.status, t1."dateCreated", t1.channel, t1."cardId", t1."nextPeriodStart", t1."nextPeriodEnd", t1."nextChannel", t1."nextExpirationType", t1."cancelMetadata", 
         ARRAY(SELECT t2.title FROM ${cModel.getTable()} AS t2 
           INNER JOIN ${pModel.getTable()} AS t3 ON t2._id = ANY(ARRAY[t3."courseIds"])
           WHERE t3._id=t1."planId") AS "courseTitles", (SELECT t4.user FROM ${iModel.getTable()} AS t4 WHERE t4.order=t1._id Limit 1) AS "studentId"`)
@@ -810,6 +810,7 @@ export const stripeConfirmation = (req, res, next) => {
               status: 'active',
               expiryDateFrom,
               expiryDate,
+              stripeChargeId: invoice.id,
               // nextPeriodStart: expiryDate,
               // nextPeriodEnd
             }
@@ -911,11 +912,24 @@ export const cancelSubscription = (req, res, next) => {
           return res.json(new APIResponse({ status: 'ERR', msg: 'SUBSCRIPTION_NOT_FOUND' }));
         }
 
+        var refundCharge = false,
+          monthsUsed = 1;
         const dataUpdate = {
           cancelMetadata: req.body.cancellationData
         }
-        if (req.body.subscriptionChannel === 'stripe') {
+        if (subscription.status === 'trailing') {
           dataUpdate.status = 'cancelled';
+        } else if (subscription.status === 'active') {
+          var date = new Date(),
+            lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0),
+            tsLastDayOfMonth = moment(lastDayOfMonth).unix() * 1000,
+            periodStart = moment(moment.unix(1494057849464 / 1000).format('YYYY-MM-DD')),
+            periodEnd = moment(moment.unix(tsLastDayOfMonth / 1000).format('YYYY-MM-DD'));
+          dataUpdate.expiryDate = tsLastDayOfMonth;
+          if (subscription.channel === 'stripe' && subscription.expirationType == 'annually') {
+            refundCharge = true;
+            monthsUsed = periodEnd.diff(periodStart, 'months') + 1;
+          }
         }
         return new SubscriptionModel().reset().where('t1._id::varchar=$1').update(dataUpdate, [req.body.subscriptionId]).then(result => {
           if (result === null) {
@@ -938,6 +952,15 @@ export const cancelSubscription = (req, res, next) => {
             var stripe = require("stripe")(dataResp.o_stripe_secret);
             stripe.subscriptions.del(req.body.stripeSubscriptionId,
               function (err, confirmation) {
+                var amountRefund = (subscription.fee * 12) - (monthsUsed * subscription.fee) - dataResp.o_admin_fee;
+                if (refundCharge && amountRefund > 0 && subscription.stripeChargeId !== '') {
+                  stripe.refunds.create({
+                    charge: subscription.stripeChargeId,
+                    amount: amountRefund * 100
+                  }, function (err, refund) {
+                    // asynchronously called
+                  });
+                }
                 if (subscription.status !== 'trailing') {
                   if (result.channel === 'annually') {
                     Utils.sendMail({

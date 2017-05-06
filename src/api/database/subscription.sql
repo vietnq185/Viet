@@ -87,6 +87,8 @@ ALTER TABLE subscriptions ADD COLUMN "nextPeriodEnd" bigint;
 ALTER TABLE subscriptions ADD COLUMN "nextChannel" character varying(255) COLLATE pg_catalog."default";
 ALTER TABLE subscriptions ADD COLUMN "nextExpirationType" character varying(255) COLLATE pg_catalog."default";
 
+ALTER TABLE subscriptions ADD COLUMN "stripeChargeId" character varying(255) COLLATE pg_catalog."default";
+
 ALTER TABLE subscriptions ADD COLUMN "cancelMetadata" jsonb;
 
 
