@@ -118,10 +118,9 @@ INSERT INTO "options" ("foreign_id", "key", "tab_id", "value", "label", "descrip
 (1, 'o_smtp_host', 1, NULL, NULL, 'SMTP Host', 'string', 5, 1, NULL, 'F'),
 (1, 'o_smtp_port', 1, '25', NULL, 'SMTP Port', 'int', 6, 1, NULL, 'F'),
 (1, 'o_smtp_user', 1, NULL, NULL, 'SMTP Username', 'string', 7, 1, NULL, 'F'),
-(1, 'o_smtp_pass', 1, NULL, NULL, 'SMTP Password', 'string', 8, 1, NULL, 'F');
-
-INSERT INTO "options" ("foreign_id", "key", "tab_id", "value", "label", "description", "type", "order", "is_visible", "style", "is_public") VALUES
-(1, 'o_admin_email', 1, NULL, NULL, 'Admin email', 'string', 9, 1, NULL, 'F');
+(1, 'o_smtp_pass', 1, NULL, NULL, 'SMTP Password', 'string', 8, 1, NULL, 'F'),
+(1, 'o_admin_email', 1, NULL, NULL, 'Admin email', 'string', 9, 1, NULL, 'F'),
+(1, 'o_trial_days', 1, '14', NULL, 'Number of trial days', 'float', 10, 1, NULL, 'T');
 
 
 INSERT INTO "options" ("foreign_id", "key", "tab_id", "value", "label", "description", "type", "order", "is_visible", "style", "is_public") VALUES
@@ -129,5 +128,50 @@ INSERT INTO "options" ("foreign_id", "key", "tab_id", "value", "label", "descrip
 (1, 'mail_forgot_password_ARRAY_subject', 2, NULL, NULL,  'Forgot password email subject', 'string',10, 1, NULL, 'F'),
 (1, 'mail_forgot_password_ARRAY_message', 2, NULL, NULL, 'Forgot password email message', 'text', 11, 1, NULL, 'F');
 
+
 INSERT INTO "options" ("foreign_id", "key", "tab_id", "value", "label", "description", "type", "order", "is_visible", "style", "is_public") VALUES
-(1, 'o_trial_days', 1, '14', NULL, 'Number of trial days', 'float', 12, 1, NULL, 'T');
+
+(1, 'mail_reset_password_inform_ARRAY_subject', 2, NULL, NULL,  'Reset password inform email subject', 'string',12, 1, NULL, 'F'),
+(1, 'mail_reset_password_inform_ARRAY_message', 2, NULL, NULL, 'Reset password inform email message', 'text', 13, 1, NULL, 'F'),
+
+(1, 'mail_sign_up_confirmation_ARRAY_subject', 2, NULL, NULL,  'Sign up confirmation email subject', 'string',14, 1, NULL, 'F'),
+(1, 'mail_sign_up_confirmation_ARRAY_message', 2, NULL, NULL, 'Sign up confirmation email message', 'text', 15, 1, NULL, 'F'),
+
+(1, 'mail_bank_transfer_instruction_ARRAY_subject', 2, NULL, NULL,  'Bank transfer instruction email subject', 'string',16, 1, NULL, 'F'),
+(1, 'mail_bank_transfer_instruction_ARRAY_message', 2, NULL, NULL, 'Bank transfer instruction email message', 'text', 17, 1, NULL, 'F'),
+
+(1, 'mail_bank_transfer_activation_ARRAY_subject', 2, NULL, NULL,  'Bank transfer activation email subject', 'string',18, 1, NULL, 'F'),
+(1, 'mail_bank_transfer_activation_ARRAY_message', 2, NULL, NULL, 'Bank transfer activation email message', 'text', 19, 1, NULL, 'F'),
+
+(1, 'mail_bank_transfer_cancellation_ARRAY_subject', 2, NULL, NULL,  'Bank transfer cancelation email subject', 'string',20, 1, NULL, 'F'),
+(1, 'mail_bank_transfer_cancellation_ARRAY_message', 2, NULL, NULL, 'Bank transfer cancelation email message', 'text', 21, 1, NULL, 'F'),
+
+(1, 'mail_bank_transfer_reactivate_subscription_ARRAY_subject', 2, NULL, NULL,  'Bank transfer reactivate subscription email subject', 'string',22, 1, NULL, 'F'),
+(1, 'mail_bank_transfer_reactivate_subscription_ARRAY_message', 2, NULL, NULL, 'Bank transfer reactivate subscription email message', 'text', 23, 1, NULL, 'F'),
+
+(1, 'mail_cancel_monthly_subscription_ARRAY_subject', 2, NULL, NULL,  'Cancel monthly subscription  email subject', 'string',24, 1, NULL, 'F'),
+(1, 'mail_cancel_monthly_subscription_ARRAY_message', 2, NULL, NULL, 'Cancel monthly subscription  email message', 'text', 25, 1, NULL, 'F'),
+
+(1, 'mail_cancel_annually_subscription_ARRAY_subject', 2, NULL, NULL,  'Cancel annually subscription  email subject', 'string',26, 1, NULL, 'F'),
+(1, 'mail_cancel_annually_subscription_ARRAY_message', 2, NULL, NULL, 'Cancel annually subscription  email message', 'text', 27, 1, NULL, 'F'),
+
+(1, 'mail_trial_reminder_after_7_days_ARRAY_subject', 2, NULL, NULL,  'Trial reminder after 7 days email subject', 'string',28, 1, NULL, 'F'),
+(1, 'mail_trial_reminder_after_7_days_ARRAY_message', 2, NULL, NULL, 'Trial reminder after 7 days email message', 'text', 29, 1, NULL, 'F'),
+
+(1, 'mail_trial_reminder_after_12_days_ARRAY_subject', 2, NULL, NULL,  'Trial reminder after 12 days email subject', 'string',30, 1, NULL, 'F'),
+(1, 'mail_trial_reminder_after_12_days_ARRAY_message', 2, NULL, NULL, 'Trial reminder after 12 days email message', 'text', 31, 1, NULL, 'F'),
+
+(1, 'mail_trial_reminder_after_13_days_ARRAY_subject', 2, NULL, NULL,  'Trial reminder after 13 days email subject', 'string',32, 1, NULL, 'F'),
+(1, 'mail_trial_reminder_after_13_days_ARRAY_message', 2, NULL, NULL, 'Trial reminder after 13 days email message', 'text', 33, 1, NULL, 'F'),
+
+(1, 'mail_trial_reminder_when_expired_ARRAY_subject', 2, NULL, NULL,  'Trial reminder when expired email subject', 'string',34, 1, NULL, 'F'),
+(1, 'mail_trial_reminder_when_expired_ARRAY_message', 2, NULL, NULL, 'Trial reminder when expired message', 'text', 35, 1, NULL, 'F'),
+
+(1, 'mail_sorry_for_cancellation_ARRAY_subject', 2, NULL, NULL,  'Sorry for cancellation email subject', 'string',36, 1, NULL, 'F'),
+(1, 'mail_sorry_for_cancellation_ARRAY_message', 2, NULL, NULL, 'Sorry for cancellation email message', 'text', 37, 1, NULL, 'F'),
+
+(1, 'mail_successful_charge_ARRAY_subject', 2, NULL, NULL,  'Successful charge email subject', 'string',38, 1, NULL, 'F'),
+(1, 'mail_successful_charge_ARRAY_message', 2, NULL, NULL, 'Successful charge email message', 'text', 39, 1, NULL, 'F'),
+
+(1, 'mail_subscribe_via_bank_transfer_ARRAY_subject', 2, NULL, NULL,  'Subscribe via bank transfer email subject', 'string',40, 1, NULL, 'F'),
+(1, 'mail_subscribe_via_bank_transfer_ARRAY_message', 2, NULL, NULL, 'Subscribe via bank transfer email message', 'text', 41, 1, NULL, 'F');

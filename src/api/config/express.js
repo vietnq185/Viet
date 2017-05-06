@@ -16,6 +16,7 @@ import routes from '../server/routes/index.route';
 import config from './config';
 import APIError from '../server/helpers/APIError';
 import { APIErrorResponse } from '../server/helpers/APIResponse';
+import Validator from 'validator';
 
 const debug = require('debug')('rest-api:express');
 
@@ -52,7 +53,19 @@ if (config.env === 'development') {
 }
 
 // mount all routes on /api path
-app.use('/api', routes);
+app.use('/api', (req, res, next) => {
+  if (typeof req.body !== 'undefined') {
+    if (typeof req.body.email === 'string' && req.body.email.length > 0) {
+      req.body.email = req.body.email.toLowerCase();  // eslint-disable-line
+    }
+    if (typeof req.body.username === 'string' && req.body.username.length > 0) {
+      if (Validator.isEmail(req.body.username)) {
+        req.body.username = req.body.username.toLowerCase(); // eslint-disable-line
+      }
+    }
+  }
+  return next();
+}, routes);
 
 // -------------------------------------------------------------------------------
 // START - using web server on the same host with API

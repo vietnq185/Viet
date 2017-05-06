@@ -62,7 +62,7 @@ export const checkTokensAtStartUp = () => (dispatch, getState) => {
     API.getOptionPairs().then((optionArr) => dispatch(updateOptions(optionArr))).catch(err => dispatch(updateOptions({}))) // eslint-disable-line
     //
     if (Utils.isNotEmptyObject(result)) {
-      return dispatch(updateLoginResult({ isLoggedIn: true, jwt: result.jwt }))
+      return dispatch(updateLoginResult({ isLoggedIn: true, ...result }))
     }
   }).catch(() => dispatch(logout()))
 }

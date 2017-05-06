@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDataGrid from 'react-data-grid';
+const { Row } = ReactDataGrid;
 import moment from 'moment';
 
 import { Button, Modal, Pagination } from 'react-bootstrap';
@@ -22,6 +23,33 @@ const STATUSES = constants.subscriptionStatuses // eslint-disable-line
 const EmptyRowsView = () => {
   return (<div>No data found</div>);
 };
+
+class RowRenderer extends React.Component {
+
+  setScrollLeft(scrollBy) {
+    // if you want freeze columns to work, you need to make sure you implement this as apass through
+    this.row.setScrollLeft(scrollBy);
+  }
+
+  getRowStyle() {
+    return {
+      //color: this.getRowBackground()
+      cursor: 'pointer'
+    };
+  }
+
+  getRowBackground() {
+    return this.props.idx % 2 ? 'green' : 'blue';
+  }
+
+  onViewDetails() {
+    this.props.viewDetails(this.row.props.idx);
+  }
+
+  render() {
+    return (<div onClick={() => this.onViewDetails()} style={this.getRowStyle()}><Row ref={node => this.row = node} {...this.props} /></div>);
+  }
+}
 
 export default class Component extends React.Component {
   constructor(props) {
@@ -94,6 +122,17 @@ export default class Component extends React.Component {
     this.setState({ objDetails: item, updateMsg: '' });
   }
 
+  onRowClick(idx, formattedData) {
+    console.info('onRowClick: ', idx, formattedData);
+    // const item = this.props.subscription.list.subscriptions[idx];
+    // this.open(item);
+  }
+
+  viewDetails(idx) {
+    const item = this.props.subscription.list.subscriptions[idx];
+    this.open(item);
+  }
+
   render() {
     console.info('Subscriptions components => props: ', this.props);
 
@@ -107,6 +146,8 @@ export default class Component extends React.Component {
           rowGetter={(i) => this.rowGetter(i)}
           rowsCount={this.props.subscription.list.subscriptions.length}
           minHeight={500}
+          onRowClick={this.onRowClick.bind(this)}
+          rowRenderer={<RowRenderer viewDetails={this.viewDetails.bind(this)} />}
           emptyRowsView={EmptyRowsView} />
 
         <div className="text-center">
