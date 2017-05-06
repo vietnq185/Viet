@@ -981,7 +981,7 @@ export const getOptions = (req, res, next) => {
 
 export const forgotPassword = (req, res, next) => {
   return new OptionModel().getPairs().then((dataResp) => {
-    return new UserModel().where('t1.email::varchar=$1').findOne([req.body.email]).then((user) => {
+    return new UserModel().where('lower(t1.email)=$1').findOne([req.body.email]).then((user) => {
       if (user === null) {
         return res.json(new APIResponse({ status: 'ERR', msg: 'EMAIL_NOT_EXISTS' }));
       }

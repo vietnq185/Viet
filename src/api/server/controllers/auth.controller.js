@@ -264,7 +264,7 @@ const generateTokens = (req, userId) => {
 export const login = (req, res, next) => {
   blacklistDebug();
   const db = new UserModel();
-  db.where('t1.email=$1').findOne([req.body.username]).then((user) => {
+  db.where('lower(t1.email)=$1').findOne([req.body.username]).then((user) => {
     // verify email and password
     if (user === null) {
       const err = new APIError(constants.errors.wrongUsername, httpStatus.UNAUTHORIZED, true);

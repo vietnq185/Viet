@@ -89,7 +89,7 @@ export const create = (req, res, next) => {
   const email = req.body.email;
   const username = req.body.username || id;
   // validate email
-  const validateEmail = new UserModel().where('t1.email=$1').findCount([email]).then((cnt) => {
+  const validateEmail = new UserModel().where('lower(t1.email)=$1').findCount([email]).then((cnt) => {
     const err = new APIError(constants.errors.emailRegisted, httpStatus.OK, true);
     return (cnt === 0 ? Promise.resolve() : Promise.reject(err));
   });
@@ -179,7 +179,7 @@ export const update = (req, res, next) => {
 
   // validate email (if any)
   if (typeof req.body.email !== 'undefined') {
-    const validateEmail = new UserModel().where('t1._id::varchar!=$1 AND t1.email=$2').findCount([userData._id, req.body.email]).then((cnt) => {
+    const validateEmail = new UserModel().where('t1._id::varchar!=$1 AND lower(t1.email)=$2').findCount([userData._id, req.body.email]).then((cnt) => {
       const err = new APIError(constants.errors.emailRegisted, httpStatus.OK, true);
       return (cnt === 0 ? Promise.resolve() : Promise.reject(err));
     });
@@ -314,7 +314,7 @@ export const linkStudent = (req, res, next) => {
     return next(new APIError(constants.errors.linkCodeNotFound, httpStatus.OK, true));
   }
 
-  return new UserModel().where('t1.email=$1').findOne([email]).then((objStudent) => {
+  return new UserModel().where('lower(t1.email)=$1').findOne([email]).then((objStudent) => {
     // validate student account
     if (objStudent === null) {
       return Promise.reject(new APIError(constants.errors.studentEmailNotFound, httpStatus.OK, true)); // eslint-disable-line
