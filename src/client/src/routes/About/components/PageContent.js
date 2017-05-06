@@ -1,7 +1,15 @@
+/* eslint-disable */
+
 import React from 'react'
 import ReactTooltip from 'react-tooltip'
 import { fadeIn } from 'react-animations'
 import { StyleSheet, css } from 'aphrodite'
+import { connect } from 'react-redux'
+
+import * as subscribeActions from '../../Subscribe/modules/subscribe'
+
+import Utils from '../../../helpers/utils'
+
 import LocatingImage from '../../../styles/images/locating.svg'
 import RouteImage from '../../../styles/images/route.svg'
 
@@ -24,7 +32,8 @@ class PageContent extends React.Component {
     super(props)
     this.state = {
       showFreeTrialConfirmStudent: false,
-      showFreeTrialConfirm: false
+      showFreeTrialConfirm: false,
+      testimonialIndex: 1
     }
   }
 
@@ -33,11 +42,16 @@ class PageContent extends React.Component {
   }
 
   setupActiveTestimonial(index) {
-    
+    this.setState({ testimonialIndex: index })
   }
 
   componentDidMount() {
-    this.setupActiveTestimonial(1)
+    this.setupActiveTestimonial(this.state.testimonialIndex)
+  }
+
+  onCreateParent() {
+    this.props.changeStep(this.props.subscribe.steps.signUp) // eslint-disable-line
+    Utils.redirect('/subscribe')
   }
 
   render() {
@@ -57,8 +71,8 @@ class PageContent extends React.Component {
                     <div className="map-description">
                       Locating the
                           Learning Needs
-                          <a className="map-learnmore dk-red-text" tabindex="0" data-tip="<span>SLS conducts ongoing analysis</span> of all Test and Practice Papers for all topics to <span>identify</span> the student's <span>learning needs.</span>" data-html="true">learn more <i className="fa fa-fw fa-angle-right"></i></a>
-                      <ReactTooltip className="about-tooltip" place="bottom" type="light" html="true" />
+                          <a className="map-learnmore dk-red-text" tabIndex="0" data-tip="<span>SLS conducts ongoing analysis</span> of all Test and Practice Papers for all topics to <span>identify</span> the student's <span>learning needs.</span>" data-html={true}>learn more <i className="fa fa-fw fa-angle-right"></i></a>
+                      <ReactTooltip className="about-tooltip" place="bottom" type="light" html={true} />
                     </div>
                   </div>
                 </div>
@@ -72,7 +86,7 @@ class PageContent extends React.Component {
                     <div className="map-description">
                       Planning the
                           Learning Route
-                          <a className="map-learnmore dk-red-text" data-toggle="popover" data-trigger="focus" tabindex="0" data-placement="bottom" data-html="true" data-tip="<span>It generates a Personalised Learning Road Map</span> based on the identified learning needs.">learn more <i className="fa fa-fw fa-angle-right"></i></a>
+                          <a className="map-learnmore dk-red-text" data-toggle="popover" data-trigger="focus" tabIndex="0" data-placement="bottom" data-html={true} data-tip="<span>It generates a Personalised Learning Road Map</span> based on the identified learning needs.">learn more <i className="fa fa-fw fa-angle-right"></i></a>
                     </div>
                   </div>
                 </div>
@@ -86,7 +100,7 @@ class PageContent extends React.Component {
                     <div className="map-description">
                       Navigating the
                           Concept Map
-                          <a className="map-learnmore dk-red-text" data-toggle="popover" data-trigger="focus" tabindex="0" data-placement="bottom" data-html="true" data-tip="Each worksheet is individualised based on performance from previous practice paper to <span>guide</span> the student in <span>navigating</span> the <span>Concept Map.</span>">learn more <i className="fa fa-fw fa-angle-right"></i></a>
+                          <a className="map-learnmore dk-red-text" data-toggle="popover" data-trigger="focus" tabIndex="0" data-placement="bottom" data-html={true} data-tip="Each worksheet is individualised based on performance from previous practice paper to <span>guide</span> the student in <span>navigating</span> the <span>Concept Map.</span>">learn more <i className="fa fa-fw fa-angle-right"></i></a>
                     </div>
                   </div>
                 </div>
@@ -100,7 +114,7 @@ class PageContent extends React.Component {
                     <div className="map-description">
                       Arriving at Learning
                           Destination
-                          <a className="map-learnmore dk-red-text" data-toggle="popover" data-trigger="focus" tabindex="0" data-placement="bottom" data-html="true" data-tip="Through targeted practice, the student <span>masters content</span> for all topics in the subject and <span>achieves</span> his/her <span>learning goals.</span>">learn more <i className="fa fa-fw fa-angle-right"></i></a>
+                          <a className="map-learnmore dk-red-text" data-toggle="popover" data-trigger="focus" tabIndex="0" data-placement="bottom" data-html={true} data-tip="Through targeted practice, the student <span>masters content</span> for all topics in the subject and <span>achieves</span> his/her <span>learning goals.</span>">learn more <i className="fa fa-fw fa-angle-right"></i></a>
                     </div>
                   </div>
                 </div>
@@ -115,7 +129,7 @@ class PageContent extends React.Component {
                       Receiving
                           Comprehensive
                           Real-time Updates
-                          <a className="map-learnmore dk-red-text" data-toggle="popover" data-trigger="focus" tabindex="0" data-placement="bottom" data-html="true" data-tip="Parents receive <span>comprehensive,  accurate</span> and <span>timely</span> updates of their child's progress on their mobile devices anytime, anywhere.">learn more <i className="fa fa-fw fa-angle-right"></i></a>
+                          <a className="map-learnmore dk-red-text" data-toggle="popover" data-trigger="focus" tabIndex="0" data-placement="bottom" data-html={true} data-tip="Parents receive <span>comprehensive,  accurate</span> and <span>timely</span> updates of their child's progress on their mobile devices anytime, anywhere.">learn more <i className="fa fa-fw fa-angle-right"></i></a>
                     </div>
                   </div>
                 </div>
@@ -162,125 +176,33 @@ class PageContent extends React.Component {
           </div>
         </div>
 
+        {this.renderTestimonials()}
+
+      </div>
+    )
+  }
+
+  renderTestimonials() {
+    return (
+      <div>
+
         <div className="page-section3 text-center">
-          <h3 className="dk-blue-text section2-text-header">
-            What Others Say About Us
-            </h3>
+          <h3 className="dk-blue-text section2-text-header">What Others Say About Us</h3>
           <div className="container">
             <div className="row">
-              <div className="col-md-6 col-sm-12 col-xs-12 left-testimonial-container">
-                <div className="section3-testimonial left-1 active">
-                  <div className="section3-text-highlight dk-blue-text text-left">
-                    <p>
-                      I think it is very helpful
-                      </p>
-                  </div>
-                  <div className="section3-text-comment text-left">
-                    "My son is hard-working. He does lots of practice and corrections for Math and Science yet he doesn't improve much. I think this is because he does not know which concepts to focus. Here I think the A-SLS is very helpful because it identifies his weaknesses, and generates the individualised worksheets for him so he can focus on his weak areas to work and improve."
-                    </div>
-                  <div className="section3-text-writter text-right">
-                    <h4 className="native dk-green-text">Susan, 40 years old</h4>
-                    <p className="native">Parent with P5 son in 2016</p>
-                  </div>
-                </div>
-                <div className="section3-testimonial left-2">
-                  <div className="section3-text-highlight dk-blue-text text-left">
-                    <p>
-                      The Parent App provides this information to me so I can help him
-                      </p>
-                  </div>
-                  <div className="section3-text-comment text-left">
-                    "Being a parent, I want to and can only help my son if I monitor him closely especially know what are the areas he needs help. The Parent App provides this information to me so I can help him."
-                    </div>
-                  <div className="section3-text-writter text-right">
-                    <h4 className="native dk-green-text">MeiLing, 45 years old</h4>
-                    <p className="native">Parent with P6 son in 2016</p>
-                  </div>
-                </div>
-                <div className="section3-testimonial left-3">
-                  <div className="section3-text-highlight dk-blue-text text-left">
-                    <p>
-                      The A-SLS is a fantastic tool
-                      </p>
-                  </div>
-                  <div className="section3-text-comment text-left">
-                    "The A-SLS allows my daughter to study at home while I can monitor her progress on the Parent App even when I am not with her at home. The A-SLS is a fantastic tool, it helps both of us save a lot of cost, time and energy."
-                    </div>
-                  <div className="section3-text-writter text-right">
-                    <h4 className="native dk-green-text">Karen, 42 years old</h4>
-                    <p className="native">Parent with P5 daughter in 2016</p>
-                  </div>
-                </div>
-                <div className="section3-testimonial left-4">
-                  <div className="section3-text-highlight dk-blue-text text-left">
-                    <p>
-                      Best of all, I can monitor my child study anywhere and anytime.
-                      </p>
-                  </div>
-                  <div className="section3-text-comment text-left">
-                    "I find the Concept Map very useful as it helps me to know exactly the areas which my child needs to work on. Best of all, I can monitor my child study anywhere and anytime."
-                    </div>
-                  <div className="section3-text-writter text-right">
-                    <h4 className="native dk-green-text">Josephine, 39 years old</h4>
-                    <p className="native">Parent with P5 son in 2016</p>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-6 col-sm-12 col-xs-12 right-testimonial-container">
-                <div className="section3-testimonial right-1 active">
-                  <div className="section3-text-highlight dk-blue-text text-left">
-                    <p>
-                      It is the best I have seen in the market
-                      </p>
-                  </div>
-                  <div className="section3-text-comment text-left">
-                    "I am impressed with the advanced technology of the A-SLS. Especially this system provides not only questions for practice, but also, most importantly, instant analysis for users. It is the best I have seen in the market."
-                    </div>
-                  <div className="section3-text-writter text-right">
-                    <h4 className="native dk-green-text">David, 48 years old</h4>
-                    <p className="native">Parent with P6 daughter in 2016</p>
-                  </div>
-                </div>
-                <div className="section3-testimonial right-2">
-                  <div className="section3-text-highlight dk-blue-text text-left">
-                    <p>
-                      This A-SLS allows me to study from home
-                      </p>
-                  </div>
-                  <div className="section3-text-comment text-left">
-                    "I don't like to rush to the tuition centre for classes after school. This A-SLS allows me to study from home and I can also receive immediate feedback from doing the worksheets."
-                    </div>
-                  <div className="section3-text-writter text-right">
-                    <h4 className="native dk-green-text">Chloe, 12 years old</h4>
-                    <p className="native">Student who is P6 in 2016</p>
-                  </div>
-                </div>
-                <div className="section3-testimonial right-3">
-                  <div className="section3-text-highlight dk-blue-text text-left">
-                    <p>
-                      I am more focused on my studies
-                      </p>
-                  </div>
-                  <div className="section3-text-comment text-left">
-                    "I like to do questions on computer. It is more fun. I am more focused on my studies while doing the worksheets on the computer than on paper."
-                    </div>
-                  <div className="section3-text-writter text-right">
-                    <h4 className="native dk-green-text">Michael, 11 years old</h4>
-                    <p className="native">Student who is P5 in 2016</p>
-                  </div>
-                </div>
-              </div>
+              {this.renderTestimonialLeft()}
+              {this.renderTestimonialRight()}
             </div>
           </div>
           <div className="section3-paging">
-            <input type="radio" name="testimonial-paging" id="first" onchange="changeTestimonial(1)" checked />
-            <input type="radio" name="testimonial-paging" id="second" onchange="changeTestimonial(2)" />
-            <input type="radio" name="testimonial-paging" id="third" onchange="changeTestimonial(3)" />
-            <input type="radio" name="testimonial-paging" id="forth" onchange="changeTestimonial(4)" />
-            <label className="section3-paging-item dk-bg-gray" for="first"><span></span></label>
-            <label className="section3-paging-item dk-bg-gray" for="second"><span></span></label>
-            <label className="section3-paging-item dk-bg-gray" for="third"><span></span></label>
-            <label className="section3-paging-item dk-bg-gray" for="forth"><span></span></label>
+            <input type="radio" name="testimonial-paging" id="first" onChange={() => this.changeTestimonial(1)} checked={this.state.testimonialIndex === 1} />
+            <input type="radio" name="testimonial-paging" id="second" onChange={() => this.changeTestimonial(2)} checked={this.state.testimonialIndex === 2} />
+            <input type="radio" name="testimonial-paging" id="third" onChange={() => this.changeTestimonial(3)} checked={this.state.testimonialIndex === 3} />
+            <input type="radio" name="testimonial-paging" id="forth" onChange={() => this.changeTestimonial(4)} checked={this.state.testimonialIndex === 4} />
+            <label className="section3-paging-item dk-bg-gray" htmlFor="first"><span></span></label>
+            <label className="section3-paging-item dk-bg-gray" htmlFor="second"><span></span></label>
+            <label className="section3-paging-item dk-bg-gray" htmlFor="third"><span></span></label>
+            <label className="section3-paging-item dk-bg-gray" htmlFor="forth"><span></span></label>
           </div>
           <div>
             <h3 className="dk-blue1 tree-trial">
@@ -288,7 +210,7 @@ class PageContent extends React.Component {
               </h3>
             <button className="btn dk-btn dk-bg-blue dk-white" data-toggle='modal' data-target='#modalFreeTrialConfirm' onClick={() => this.setState({ showFreeTrialConfirm: true })}>
               START A FREE TRIAL
-              </button>
+            </button>
           </div>
         </div>
 
@@ -329,12 +251,105 @@ class PageContent extends React.Component {
             </div>
           </div>
         </div>
-
       </div>
-    )
+    );
   }
+
+  renderTestimonialLeft() {
+    return (
+      <div className="col-md-6 col-sm-12 col-xs-12 left-testimonial-container">
+        <div className={['section3-testimonial', 'left-1', this.state.testimonialIndex === 1 ? 'active' : ''].join(' ')}>
+          <div className="section3-text-highlight dk-blue-text text-left">
+            <p>I think it is very helpful</p>
+          </div>
+          <div className="section3-text-comment text-left">"My son is hard-working. He does lots of practice and corrections for Math and Science yet he doesn't improve much. I think this is because he does not know which concepts to focus. Here I think the A-SLS is very helpful because it identifies his weaknesses, and generates the individualised worksheets for him so he can focus on his weak areas to work and improve."</div>
+          <div className="section3-text-writter text-right">
+            <h4 className="native dk-green-text">Susan, 40 years old</h4>
+            <p className="native">Parent with P5 son in 2016</p>
+          </div>
+        </div>
+        <div className={['section3-testimonial', 'left-2', this.state.testimonialIndex === 2 ? 'active' : ''].join(' ')}>
+          <div className="section3-text-highlight dk-blue-text text-left">
+            <p>The Parent App provides this information to me so I can help him</p>
+          </div>
+          <div className="section3-text-comment text-left">"Being a parent, I want to and can only help my son if I monitor him closely especially know what are the areas he needs help. The Parent App provides this information to me so I can help him."</div>
+          <div className="section3-text-writter text-right">
+            <h4 className="native dk-green-text">MeiLing, 45 years old</h4>
+            <p className="native">Parent with P6 son in 2016</p>
+          </div>
+        </div>
+        <div className={['section3-testimonial', 'left-3', this.state.testimonialIndex === 3 ? 'active' : ''].join(' ')}>
+          <div className="section3-text-highlight dk-blue-text text-left">
+            <p>The A-SLS is a fantastic tool</p>
+          </div>
+          <div className="section3-text-comment text-left">"The A-SLS allows my daughter to study at home while I can monitor her progress on the Parent App even when I am not with her at home. The A-SLS is a fantastic tool, it helps both of us save a lot of cost, time and energy."</div>
+          <div className="section3-text-writter text-right">
+            <h4 className="native dk-green-text">Karen, 42 years old</h4>
+            <p className="native">Parent with P5 daughter in 2016</p>
+          </div>
+        </div>
+        <div className={['section3-testimonial', 'left-4', this.state.testimonialIndex === 4 ? 'active' : ''].join(' ')}>
+          <div className="section3-text-highlight dk-blue-text text-left">
+            <p>Best of all, I can monitor my child study anywhere and anytime.</p>
+          </div>
+          <div className="section3-text-comment text-left">"I find the Concept Map very useful as it helps me to know exactly the areas which my child needs to work on. Best of all, I can monitor my child study anywhere and anytime."</div>
+          <div className="section3-text-writter text-right">
+            <h4 className="native dk-green-text">Josephine, 39 years old</h4>
+            <p className="native">Parent with P5 son in 2016</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  renderTestimonialRight() {
+    return (
+      <div className="col-md-6 col-sm-12 col-xs-12 right-testimonial-container">
+        <div className={['section3-testimonial', 'right-1', this.state.testimonialIndex === 1 ? 'active' : ''].join(' ')}>
+          <div className="section3-text-highlight dk-blue-text text-left">
+            <p>It is the best I have seen in the market</p>
+          </div>
+          <div className="section3-text-comment text-left">"I am impressed with the advanced technology of the A-SLS. Especially this system provides not only questions for practice, but also, most importantly, instant analysis for users. It is the best I have seen in the market."</div>
+          <div className="section3-text-writter text-right">
+            <h4 className="native dk-green-text">David, 48 years old</h4>
+            <p className="native">Parent with P6 daughter in 2016</p>
+          </div>
+        </div>
+        <div className={['section3-testimonial', 'right-2', this.state.testimonialIndex === 2 ? 'active' : ''].join(' ')}>
+          <div className="section3-text-highlight dk-blue-text text-left">
+            <p>This A-SLS allows me to study from home</p>
+          </div>
+          <div className="section3-text-comment text-left">"I don't like to rush to the tuition centre for classes after school. This A-SLS allows me to study from home and I can also receive immediate feedback from doing the worksheets."</div>
+          <div className="section3-text-writter text-right">
+            <h4 className="native dk-green-text">Chloe, 12 years old</h4>
+            <p className="native">Student who is P6 in 2016</p>
+          </div>
+        </div>
+        <div className={['section3-testimonial', 'right-3', this.state.testimonialIndex === 3 ? 'active' : ''].join(' ')}>
+          <div className="section3-text-highlight dk-blue-text text-left">
+            <p>I am more focused on my studies</p>
+          </div>
+          <div className="section3-text-comment text-left">"I like to do questions on computer. It is more fun. I am more focused on my studies while doing the worksheets on the computer than on paper."</div>
+          <div className="section3-text-writter text-right">
+            <h4 className="native dk-green-text">Michael, 11 years old</h4>
+            <p className="native">Student who is P5 in 2016</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  //
 }
 
 PageContent.propTypes = {}
 
-export default PageContent
+const mapDispatchToProps = {
+  ...subscribeActions
+}
+
+const mapStateToProps = (state) => ({
+  subscribe: state.subscribe
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(PageContent)
