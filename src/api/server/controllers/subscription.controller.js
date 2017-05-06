@@ -773,9 +773,10 @@ export const stripeConfirmation = (req, res, next) => {
   return new OptionModel().getPairs().then((dataResp) => {
     var stripe = require("stripe")(dataResp.o_stripe_secret),
       stripeResp = req.body;
-      
+    console.log("stripeResponse ", stripeResp)
     // Verify the event by fetching it from Stripe
     stripe.events.retrieve(stripeResp.id, function (err, event) {
+      console.log("stripeEvent ", event)
       if (!event) return res.json(new APIResponse("Stripe - Event not found")); // eslint-disable-line
 
       var invoice = event.data.object,
@@ -788,18 +789,87 @@ export const stripeConfirmation = (req, res, next) => {
         .where('t1."stripeCustomerId"::varchar=$1')
         .join(`${uModel.getTable()} AS t2`, 't1."parentId"=t2."_id"', 'left outer') // eslint-disable-line
         .limit(1).findOne([stripeCustomerId]).then((subscription) => { // eslint-disable-line
+          console.log("stripeSubscription ", subscription)
           if (subscription === null) return res.json(new APIResponse("Stripe - Subscription not found")); // eslint-disable-line
 
-          const dataHistory = {
-            _id: Utils.uuid(),
-            subscriptionId: subscription._id,
-            paymentMethod: 'stripe',
-            txnid: invoice.charge,
-            paymentStatus: invoice.paid === true ? 'paid' : 'not_paid',
-            paymentDate: new Date().getTime()
-          };
+          if (stripeResp.type === 'charge.succeeded') {
+            const dataHistory = {
+              _id: Utils.uuid(),
+              subscriptionId: subscription._id,
+              paymentMethod: 'stripe',
+              txnid: invoice.id,
+              paymentStatus: invoice.status,
+              paymentDate: new Date().getTime()
+            };
 
-          if (stripeResp.type === 'invoice.payment_succeeded') {
+            var period = subscription.nextExpirationType == 'monthly' ? 'month' : 'year',
+              ts = new Date().getTime(),
+              expiryDateFrom = subscription.expiryDate > ts ? subscription.expiryDate : ts,
+              tsExpiryDateFrom = moment.unix(expiryDateFrom / 1000),
+              expiryDate = moment(tsExpiryDateFrom.add(moment.duration(1, period))).unix() * 1000,
+              tsExpiryDate = moment.unix(expiryDate / 1000),
+              nextPeriodEnd = moment(tsExpiryDate.add(moment.duration(1, period))).unix() * 1000;
+            const dataUpdate = {
+              status: 'active',
+              expiryDateFrom,
+              expiryDate,
+              stripeChargeId: invoice.id,
+              cancelMetadata: ''
+              // nextPeriodStart: expiryDate,
+              // nextPeriodEnd
+            }
+            return new SubscriptionModel().where('t1._id::varchar=$1').update(dataUpdate, [subscription._id]).then(savedDataUpdated => {
+              console.log("savedDataUpdated ==> Payment success: ", savedDataUpdated)
+              return new PaymentHistory().insert(dataHistory).then(savedHistory => {
+                var fee = subscription.fee;
+                if (subscription.expirationType === 'annually') {
+                  fee = fee * 12;
+                }
+                Utils.sendMail({
+                  to: subscription.email,
+                  template: 'mail_successful_charge',
+                  data: {
+                    firstName: subscription.firstName,
+                    lastName: subscription.lastName,
+                    price: '$' + fee,
+                    type: subscription.expirationType,
+                    subject: [subscription.courseTitles || ''].join(" & "),
+                    subscriptionDetailsLink: dataResp.o_website_url + '/subscription-details/' + subscription._id,
+                  }
+                });
+                return res.json(new APIResponse({ status: 'OK', msg: 'Payment successful - subscription has been activated' }));
+              });
+            });
+          } else if (stripeResp.type === 'charge.failed') {
+            const dataHistory = {
+              _id: Utils.uuid(),
+              subscriptionId: subscription._id,
+              paymentMethod: 'stripe',
+              txnid: invoice.id,
+              paymentStatus: invoice.status,
+              paymentDate: new Date().getTime()
+            };
+            return new SubscriptionModel().where('t1._id::varchar=$1').update({ status: 'overdue' }, [subscription._id]).then(savedDataUpdated => {
+              console.log("savedDataUpdated ==> Payment failed: ", savedDataUpdated)
+              return new PaymentHistory().insert(dataHistory).then(savedHistory => {
+                return res.json(new APIResponse({ status: 'OK', msg: 'Payment failed - subscription status has been changed to overdue' }));
+              });
+            });
+          } else if (stripeResp.type === 'charge.refunded') {
+            console.log("Refund")
+            //return new PaymentHistory().insert(dataHistory).then(savedHistory => {
+            return res.json(new APIResponse({ status: 'OK', msg: 'Refunded amount to client account' }));
+            //});
+          } /*else if (stripeResp.type === 'invoice.payment_succeeded') {
+            const dataHistory = {
+              _id: Utils.uuid(),
+              subscriptionId: subscription._id,
+              paymentMethod: 'stripe',
+              txnid: invoice.charge,
+              paymentStatus: invoice.paid === true ? 'paid' : 'not_paid',
+              paymentDate: new Date().getTime()
+            };
+
             var period = subscription.nextExpirationType == 'monthly' ? 'month' : 'year',
               ts = new Date().getTime(),
               expiryDateFrom = subscription.expiryDate > ts ? subscription.expiryDate : ts,
@@ -816,7 +886,8 @@ export const stripeConfirmation = (req, res, next) => {
               // nextPeriodStart: expiryDate,
               // nextPeriodEnd
             }
-            return new SubscriptionModel().where('t1._id::varchar=$1').update(dataUpdate, [subscription._id]).then(dataUpdated => {
+
+            return new SubscriptionModel().where('t1._id::varchar=$1').update(dataUpdate, [subscription._id]).then(savedDataUpdated => {
               return new PaymentHistory().insert(dataHistory).then(savedHistory => {
                 var fee = subscription.fee;
                 if (subscription.expirationType === 'annually') {
@@ -838,18 +909,24 @@ export const stripeConfirmation = (req, res, next) => {
               });
             });
           } else if (stripeResp.type === 'invoice.payment_failed') {
-            return new SubscriptionModel().where('t1._id::varchar=$1').update({ status: 'overdue' }, [subscription._id]).then(dataUpdated => {
+            const dataHistory = {
+              _id: Utils.uuid(),
+              subscriptionId: subscription._id,
+              paymentMethod: 'stripe',
+              txnid: invoice.charge,
+              paymentStatus: invoice.paid === true ? 'paid' : 'not_paid',
+              paymentDate: new Date().getTime()
+            };
+
+            return new SubscriptionModel().where('t1._id::varchar=$1').update({ status: 'overdue' }, [subscription._id]).then(savedDataUpdated => {
               return new PaymentHistory().insert(dataHistory).then(savedHistory => {
                 return res.json(new APIResponse({ status: 'OK', msg: 'Payment failed - subscription status has been changed to overdue' }));
               });
             });
-          } else if (stripeResp.type === 'charge.refunded') {
-            return new PaymentHistory().insert(dataHistory).then(savedHistory => {
-              return res.json(new APIResponse({ status: 'OK', msg: 'Refunded amount to client account' }));
-            });
           } else {
             return res.json(new APIResponse({ status: 'FAILED', msg: "Stripe - Do not update any because type is not 'charge.succeeded' or 'charge.failed'." })); // eslint-disable-line
-          }
+          }*/
+
         }).catch(e => next(e));
     });
   }).catch((err) => {
@@ -881,21 +958,24 @@ export const cronUpdateSubscriptionStatus = (req) => {
     .where('t1."expiryDate" < $1')
     .join(`${uModel.getTable()} AS t2`, 't1."parentId"=t2."_id"', 'left outer') // eslint-disable-line
     .findAll([now])
-    .then((subscription) => {
-      if (subscription.status === 'active') {
-        new SubscriptionModel().reset().where('t1._id::varchar=$1').update({ status: 'overdue' }, [subscription._id]);
-      } else {
-        if (subscription.channel === 'bank') {
-          Utils.sendMail({
-            to: subscription.email,
-            template: 'mail_bank_transfer_cancellation',
-            data: {
-              firstName: subscription.firstName,
-              lastName: subscription.lastName
-            }
-          });
+    .then((subscriptions) => {
+      for (var i = 0; i < subscriptions.length; i++) {
+        const subscription = subscriptions[i];
+        if (subscription.status === 'active') {
+          new SubscriptionModel().reset().where('t1._id::varchar=$1').update({ status: 'overdue' }, [subscription._id]);
+        } else {
+          if (subscription.channel === 'bank') {
+            Utils.sendMail({
+              to: subscription.email,
+              template: 'mail_bank_transfer_cancellation',
+              data: {
+                firstName: subscription.firstName,
+                lastName: subscription.lastName
+              }
+            });
+          }
+          new SubscriptionModel().reset().where('t1._id::varchar=$1').update({ status: 'cancelled' }, [subscription._id]);
         }
-        new SubscriptionModel().reset().where('t1._id::varchar=$1').update({ status: 'cancelled' }, [subscription._id]);
       }
     })
     .catch(e => next(e));
