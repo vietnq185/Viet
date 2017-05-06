@@ -41,6 +41,9 @@ class SubscriptionActive extends React.Component {
     let theRate = (objSubscription.expirationType === 'annually' ? 12 : 1)
     let buttonUpgrade = ''
     let upgradedInfo = ''
+    let buttonCancel = ''
+    let cancelledInfo = ''
+    let cancelMetadata = objSubscription.cancelMetadata || ''
     if (parseInt(objSubscription.nextPeriodEnd) > parseInt(objSubscription.expiryDate)) {
       upgradedInfo = (
         <div className='alert alert-danger'>
@@ -52,10 +55,22 @@ class SubscriptionActive extends React.Component {
         <a href={['/upgrade-subscription/', objSubscription._id].join('')} className='upgrade-link'>Upgrade</a>
       )
     }
+
+    if (cancelMetadata === '') {
+      buttonCancel = (<a href={['/cancel-subscription/', objSubscription._id].join('')} className='cancel-link'>Cancel</a>)
+    } else {
+      upgradedInfo = ''
+      cancelledInfo = (
+        <div className='alert alert-danger'>
+          <p>Your plan will be cancelled on {moment.unix(objSubscription.expiryDate / 1000).format('MMM D, YYYY')}</p>
+        </div>
+      )
+    }
+
     return (
       <div className='subscribe-details'>
         <h1>{objSubscription.courseTitles.join(' & ')} <span className='status status-active'>Active</span>
-          <a href={['/cancel-subscription/', objSubscription._id].join('')} className='cancel-link'>Cancel</a>
+          {buttonCancel}
           {buttonUpgrade}
         </h1>
         <h3>Subscription details</h3>
@@ -78,6 +93,7 @@ class SubscriptionActive extends React.Component {
           {studentInfo}
         </div>
         <div className='upgradedInfo'>
+          {cancelledInfo}
           {upgradedInfo}
         </div>
         <div className='row'>
