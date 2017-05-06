@@ -855,7 +855,7 @@ export const stripeConfirmation = (req, res, next) => {
             //return new PaymentHistory().insert(dataHistory).then(savedHistory => {
             return res.json(new APIResponse({ status: 'OK', msg: 'Refunded amount to client account' }));
             //});
-          } else if (stripeResp.type === 'invoice.payment_succeeded') {
+          } /*else if (stripeResp.type === 'invoice.payment_succeeded') {
             const dataHistory = {
               _id: Utils.uuid(),
               subscriptionId: subscription._id,
@@ -920,7 +920,7 @@ export const stripeConfirmation = (req, res, next) => {
             });
           } else {
             return res.json(new APIResponse({ status: 'FAILED', msg: "Stripe - Do not update any because type is not 'charge.succeeded' or 'charge.failed'." })); // eslint-disable-line
-          }
+          }*/
 
         }).catch(e => next(e));
     });
