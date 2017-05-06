@@ -120,7 +120,8 @@ INSERT INTO "options" ("foreign_id", "key", "tab_id", "value", "label", "descrip
 (1, 'o_smtp_user', 1, NULL, NULL, 'SMTP Username', 'string', 7, 1, NULL, 'F'),
 (1, 'o_smtp_pass', 1, NULL, NULL, 'SMTP Password', 'string', 8, 1, NULL, 'F'),
 (1, 'o_admin_email', 1, NULL, NULL, 'Admin email', 'string', 9, 1, NULL, 'F'),
-(1, 'o_trial_days', 1, '14', NULL, 'Number of trial days', 'float', 10, 1, NULL, 'T');
+(1, 'o_trial_days', 1, '14', NULL, 'Number of trial days', 'float', 10, 1, NULL, 'T'),
+(1, 'o_website_url', 1, 'http://domain.com', NULL, 'Website URL', 'string', 11, 1, NULL, 'T');
 
 
 INSERT INTO "options" ("foreign_id", "key", "tab_id", "value", "label", "description", "type", "order", "is_visible", "style", "is_public") VALUES

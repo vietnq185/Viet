@@ -391,90 +391,92 @@ export const changeStatus = (req, res, next) => {
   const pModel = new PlanModel();
   const cModel = new CourseModel();
 
-  return sModel.reset().where('t1._id::varchar=$1').findOne([id]).then(subscriptionData => {
-    if (subscriptionData === null) {
-      return next(new APIError('SUBSCRIPTION_NOT_FOUND', httpStatus.OK, true));
-    }
-    const allowList = ['pending', 'trailing', 'active', 'overdue', 'cancelled'];
-    if (allowList.indexOf(status) === -1) {
-      return next(new APIError('NOT_ALLOW_STATUS', httpStatus.OK, true));
-    }
-
-    const authData = authCtrl.getJwtInfo(req),
-      dataUpdate = {
-        status
-      };
-
-    if (authData.isAdmin && status === 'active' && subscriptionData.status !== 'active') {
-      var period = subscriptionData.nextExpirationType == 'monthly' ? 'month' : 'year',
-        ts = new Date().getTime(),
-        expiryDateFrom = subscriptionData.expiryDate > ts ? subscriptionData.expiryDate : ts,
-        tsExpiryDateFrom = moment.unix(expiryDateFrom / 1000),
-        expiryDate = moment(tsExpiryDateFrom.add(moment.duration(1, period))).unix() * 1000;
-      dataUpdate.expiryDateFrom = expiryDateFrom;
-      dataUpdate.expiryDate = expiryDate;
-    }
-    return sModel.reset().where('t1._id::varchar=$1').update(dataUpdate, [id]).then(result => {
-      if (result === null) {
-        return next(new APIError('UPDATE_FAILED', httpStatus.OK, true));
+  return new OptionModel().getPairs().then((dataResp) => {
+    return sModel.reset().where('t1._id::varchar=$1').findOne([id]).then(subscriptionData => {
+      if (subscriptionData === null) {
+        return next(new APIError('SUBSCRIPTION_NOT_FOUND', httpStatus.OK, true));
       }
-      return sModel.reset().select(`t1.*, t2."firstName", t2."lastName", t2.email,
+      const allowList = ['pending', 'trailing', 'active', 'overdue', 'cancelled'];
+      if (allowList.indexOf(status) === -1) {
+        return next(new APIError('NOT_ALLOW_STATUS', httpStatus.OK, true));
+      }
+
+      const authData = authCtrl.getJwtInfo(req),
+        dataUpdate = {
+          status
+        };
+
+      if (authData.isAdmin && status === 'active' && subscriptionData.status !== 'active') {
+        var period = subscriptionData.nextExpirationType == 'monthly' ? 'month' : 'year',
+          ts = new Date().getTime(),
+          expiryDateFrom = subscriptionData.expiryDate > ts ? subscriptionData.expiryDate : ts,
+          tsExpiryDateFrom = moment.unix(expiryDateFrom / 1000),
+          expiryDate = moment(tsExpiryDateFrom.add(moment.duration(1, period))).unix() * 1000;
+        dataUpdate.expiryDateFrom = expiryDateFrom;
+        dataUpdate.expiryDate = expiryDate;
+      }
+      return sModel.reset().where('t1._id::varchar=$1').update(dataUpdate, [id]).then(result => {
+        if (result === null) {
+          return next(new APIError('UPDATE_FAILED', httpStatus.OK, true));
+        }
+        return sModel.reset().select(`t1.*, t2."firstName", t2."lastName", t2.email,
         ARRAY(SELECT t3.title FROM ${cModel.getTable()} AS t3 
           INNER JOIN ${pModel.getTable()} AS t4 ON t3._id = ANY(ARRAY[t4."courseIds"])
           WHERE t4._id=t1."planId") AS "courseTitles"
       `)
-        .where('t1._id::varchar=$1')
-        .join(`${uModel.getTable()} AS t2`, 't1."parentId"::varchar=t2."_id"::varchar', 'left') // eslint-disable-line
-        .findOne([id]).then((subscription) => { // eslint-disable-line
-          if (subscription !== null) {
-            if (authData.isAdmin && subscription.channel === 'bank') {
-              if (status === 'trailing') {
-                Utils.sendMail({
-                  to: subscription.email,
-                  template: 'mail_bank_transfer_activation',
-                  data: {
-                    firstName: subscription.firstName,
-                    lastName: subscription.lastName,
-                    subscriptionLink: req.body.webUrl + '/subscription-details/' + subscription._id
-                  }
-                });
+          .where('t1._id::varchar=$1')
+          .join(`${uModel.getTable()} AS t2`, 't1."parentId"::varchar=t2."_id"::varchar', 'left') // eslint-disable-line
+          .findOne([id]).then((subscription) => { // eslint-disable-line
+            if (subscription !== null) {
+              if (authData.isAdmin && subscription.channel === 'bank') {
+                if (status === 'trailing') {
+                  Utils.sendMail({
+                    to: subscription.email,
+                    template: 'mail_bank_transfer_activation',
+                    data: {
+                      firstName: subscription.firstName,
+                      lastName: subscription.lastName,
+                      subscriptionLink: dataResp.o_website_url + '/subscription-details/' + subscription._id
+                    }
+                  });
+                }
+
+                if (status === 'active') {
+                  Utils.sendMail({
+                    to: subscription.email,
+                    template: 'mail_bank_transfer_reactivate_subscription',
+                    data: {
+                      firstName: subscription.firstName,
+                      lastName: subscription.lastName,
+                      subject: [subscription.courseTitles || ''].join(" & "),
+                      periodStart: moment.unix(subscription.expiryDateFrom / 1000).format('MMM D, YYYY'),
+                      periodEnd: moment.unix(subscription.expiryDate / 1000).format('MMM D, YYYY'),
+                      periodPrice: '$' + parseFloat(subscription.fee * 12),
+                    }
+                  });
+                }
+
               }
 
-              if (status === 'active') {
-                Utils.sendMail({
-                  to: subscription.email,
-                  template: 'mail_bank_transfer_reactivate_subscription',
-                  data: {
-                    firstName: subscription.firstName,
-                    lastName: subscription.lastName,
-                    subject: [subscription.courseTitles || ''].join(" & "),
-                    periodStart: moment.unix(subscription.expiryDateFrom / 1000).format('MMM D, YYYY'),
-                    periodEnd: moment.unix(subscription.expiryDate / 1000).format('MMM D, YYYY'),
-                    periodPrice: '$' + parseFloat(subscription.fee * 12),
-                  }
+              if (subscription.stripeSubscriptionId !== null) {
+                return new OptionModel().getPairs(1).then((dataResp) => {
+                  var stripe = require("stripe")(dataResp.o_stripe_secret);
+                  stripe.subscriptions.del(subscription.stripeSubscriptionId,
+                    function (err, confirmation) {
+                      return res.json(new APIResponse({ newStatus: status }));
+                    }
+                  );
+                }).catch((err) => {
+                  return next(new APIError('CAN_NOT_RETRIEVE_OPTIONS', httpStatus.OK, true));
                 });
               }
-
+              return res.json(new APIResponse({ newStatus: status }));
+            } else {
+              return next(new APIError('UPDATE_FAILED', httpStatus.OK, true));
             }
-
-            if (subscription.stripeSubscriptionId !== null) {
-              return new OptionModel().getPairs(1).then((dataResp) => {
-                var stripe = require("stripe")(dataResp.o_stripe_secret);
-                stripe.subscriptions.del(subscription.stripeSubscriptionId,
-                  function (err, confirmation) {
-                    return res.json(new APIResponse({ newStatus: status }));
-                  }
-                );
-              }).catch((err) => {
-                return next(new APIError('CAN_NOT_RETRIEVE_OPTIONS', httpStatus.OK, true));
-              });
-            }
-            return res.json(new APIResponse({ newStatus: status }));
-          } else {
-            return next(new APIError('UPDATE_FAILED', httpStatus.OK, true));
-          }
-        }).catch(e => next(e));
-    }).catch(e => next(e))
+          }).catch(e => next(e));
+      }).catch(e => next(e))
+    }).catch(e => next(e));
   }).catch(e => next(e));
 };
 
@@ -764,7 +766,11 @@ export const paySubscription = (req, res, next) => {
 };
 
 export const stripeConfirmation = (req, res, next) => {
-  return new OptionModel().getPairs(1).then((dataResp) => {
+  const uModel = new UserModel();
+  const iModel = new ItemModel();
+  const pModel = new PlanModel();
+  const cModel = new CourseModel();
+  return new OptionModel().getPairs().then((dataResp) => {
     var stripe = require("stripe")(dataResp.o_stripe_secret),
       stripeResp = req.body;
     // Verify the event by fetching it from Stripe
@@ -773,8 +779,14 @@ export const stripeConfirmation = (req, res, next) => {
 
       var invoice = event.data.object,
         stripeCustomerId = invoice.customer;
-      return new SubscriptionModel().select(`t1.*`)
-        .where('t1."stripeCustomerId"::varchar=$1').limit(1).findOne([stripeCustomerId]).then((subscription) => { // eslint-disable-line
+      return new SubscriptionModel().select(`t1.*, t2."firstName", t2."lastName", t2."email",
+      ARRAY(SELECT t3.title FROM ${cModel.getTable()} AS t3 
+          INNER JOIN ${pModel.getTable()} AS t4 ON t3._id = ANY(ARRAY[t4."courseIds"])
+          WHERE t4._id=t1."planId") AS "courseTitles"
+      `)
+        .where('t1."stripeCustomerId"::varchar=$1')
+        .join(`${uModel.getTable()} AS t2`, 't1."parentId"=t2."_id"', 'left outer') // eslint-disable-line
+        .limit(1).findOne([stripeCustomerId]).then((subscription) => { // eslint-disable-line
           if (subscription === null) return res.json(new APIResponse("Stripe - Subscription not found")); // eslint-disable-line
 
           const dataHistory = {
@@ -803,6 +815,23 @@ export const stripeConfirmation = (req, res, next) => {
             }
             return new SubscriptionModel().where('t1._id::varchar=$1').update(dataUpdate, [subscription._id]).then(dataUpdated => {
               return new PaymentHistory().insert(dataHistory).then(savedHistory => {
+
+                var fee = subscription.fee;
+                if (subscription.expirationType === 'annually') {
+                  fee = fee * 12;
+                }
+                Utils.sendMail({
+                  to: subscription.email,
+                  template: 'mail_successful_charge',
+                  data: {
+                    firstName: subscription.firstName,
+                    lastName: subscription.lastName,
+                    price: '$' + fee,
+                    type: subscription.expirationType,
+                    subject: [subscription.courseTitles || ''].join(" & "),
+                    subscriptionDetailsLink: dataResp.o_website_url + '/subscription-details/' + subscription._id,
+                  }
+                });
                 return res.json(new APIResponse({ status: 'OK', msg: 'Payment successful - subscription has been activated' }));
               });
             });
@@ -841,8 +870,6 @@ export const checkToShowBannerDiscount = (req, res, next) => new SubscriptionMod
 export const cronUpdateSubscriptionStatus = (req) => {
   const uModel = new UserModel();
   var now = new Date().getTime();
-  //return new SubscriptionModel().where('t1."expiryDate" < $1 AND t1.status NOT IN($2, $3)').update({ status: 'overdue' }, [now, 'cancelled', 'pending']);
-
   return new SubscriptionModel()
     .select('t1.*, t2."firstName", t2."lastName", t2."email"')
     .where('t1."expiryDate" < $1')
@@ -870,61 +897,77 @@ export const cronUpdateSubscriptionStatus = (req) => {
 
 export const cancelSubscription = (req, res, next) => {
   const authData = authCtrl.getJwtInfo(req);
-  return new UserModel().where('t1._id::varchar=$1').findOne([authData.userId]).then((user) => {
-    if (user === null) {
-      return res.json(new APIResponse({ status: 'ERR', msg: 'UNREGISTERED_USER' }));
-    }
-    if (user.hashedPassword !== Utils.encrypt(req.body.password, user.salt)) {
-      return res.json(new APIResponse({ status: 'ERR', msg: 'WRONG_PASSWORD' }));
-    }
-    const dataUpdate = {
-      cancelMetadata: req.body.cancellationData
-    }
-    if (req.body.subscriptionChannel === 'stripe') {
-      dataUpdate.status = 'cancelled';
-    }
-    return new SubscriptionModel().where('t1._id::varchar=$1').update(dataUpdate, [req.body.subscriptionId]).then(result => {
-      if (result === null) {
-        return res.json(new APIResponse({ status: 'ERR', msg: 'UPDATE_FAILED' }));
+  return new OptionModel().getPairs().then((dataResp) => {
+    return new UserModel().where('t1._id::varchar=$1').findOne([authData.userId]).then((user) => {
+      if (user === null) {
+        return res.json(new APIResponse({ status: 'ERR', msg: 'UNREGISTERED_USER' }));
       }
-      if (req.body.stripeSubscriptionId !== null) {
+      if (user.hashedPassword !== Utils.encrypt(req.body.password, user.salt)) {
+        return res.json(new APIResponse({ status: 'ERR', msg: 'WRONG_PASSWORD' }));
+      }
 
-        return new OptionModel().getPairs(1).then((dataResp) => {
-          var stripe = require("stripe")(dataResp.o_stripe_secret);
-          stripe.subscriptions.del(req.body.stripeSubscriptionId,
-            function (err, confirmation) {
-              if (result.channel === 'annually') {
-                Utils.sendMail({
-                  to: user.email,
-                  template: 'mail_cancel_annually_subscription',
-                  data: {
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                    signUpLink: req.body.webUrl + '/subscribe'
-                  }
-                });
-              } else {
-                Utils.sendMail({
-                  to: user.email,
-                  template: 'mail_cancel_monthly_subscription',
-                  data: {
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                    signUpLink: req.body.webUrl + '/subscribe'
-                  }
-                });
+      return new SubscriptionModel().where('t1._id::varchar=$1').findOne([req.body.subscriptionId]).then((subscription) => {
+        if (subscription === null) {
+          return res.json(new APIResponse({ status: 'ERR', msg: 'SUBSCRIPTION_NOT_FOUND' }));
+        }
+
+        const dataUpdate = {
+          cancelMetadata: req.body.cancellationData
+        }
+        if (req.body.subscriptionChannel === 'stripe') {
+          dataUpdate.status = 'cancelled';
+        }
+        return new SubscriptionModel().reset().where('t1._id::varchar=$1').update(dataUpdate, [req.body.subscriptionId]).then(result => {
+          if (result === null) {
+            return res.json(new APIResponse({ status: 'ERR', msg: 'UPDATE_FAILED' }));
+          }
+
+          if (subscription.status === 'trailing') {
+            Utils.sendMail({
+              to: user.email,
+              template: 'mail_sorry_for_cancellation',
+              data: {
+                firstName: user.firstName,
+                lastName: user.lastName,
+                signUpLink: dataResp.o_website_url + '/subscribe'
               }
+            });
+          }
 
-              return res.json(new APIResponse({ status: 'OK', msg: 'UPDATE_SUCCESSFUL' }));
-            }
-          );
-        }).catch((err) => {
-          return res.json(new APIResponse({ status: 'FAILED', msg: 'Can not get Options' }));
-        });
-
-
-      }
-      return res.json(new APIResponse({ status: 'OK', msg: 'UPDATE_SUCCESSFUL' }));
+          if (req.body.stripeSubscriptionId !== null) {
+            var stripe = require("stripe")(dataResp.o_stripe_secret);
+            stripe.subscriptions.del(req.body.stripeSubscriptionId,
+              function (err, confirmation) {
+                if (subscription.status !== 'trailing') {
+                  if (result.channel === 'annually') {
+                    Utils.sendMail({
+                      to: user.email,
+                      template: 'mail_cancel_annually_subscription',
+                      data: {
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        signUpLink: dataResp.o_website_url + '/subscribe'
+                      }
+                    });
+                  } else {
+                    Utils.sendMail({
+                      to: user.email,
+                      template: 'mail_cancel_monthly_subscription',
+                      data: {
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        signUpLink: dataResp.o_website_url + '/subscribe'
+                      }
+                    });
+                  }
+                }
+                return res.json(new APIResponse({ status: 'OK', msg: 'UPDATE_SUCCESSFUL' }));
+              }
+            );
+          }
+          return res.json(new APIResponse({ status: 'OK', msg: 'UPDATE_SUCCESSFUL' }));
+        }).catch(e => next(e));
+      }).catch(e => next(e));
     }).catch(e => next(e));
   }).catch(e => next(e));
 };
@@ -937,26 +980,28 @@ export const getOptions = (req, res, next) => {
 }
 
 export const forgotPassword = (req, res, next) => {
-  return new UserModel().where('t1.email::varchar=$1').findOne([req.body.email]).then((user) => {
-    if (user === null) {
-      return res.json(new APIResponse({ status: 'ERR', msg: 'EMAIL_NOT_EXISTS' }));
-    }
-
-    Utils.sendMail({
-      to: user.email,
-      template: 'mail_forgot_password',
-      data: {
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        resetPasswordUrl: req.body.webUrl + '/resetPassword/' + user._id + "/" + Utils.sha3Encrypt(user._id + user.dateCreated)
+  return new OptionModel().getPairs().then((dataResp) => {
+    return new UserModel().where('t1.email::varchar=$1').findOne([req.body.email]).then((user) => {
+      if (user === null) {
+        return res.json(new APIResponse({ status: 'ERR', msg: 'EMAIL_NOT_EXISTS' }));
       }
-    }).then(result => {
-      return res.json(new APIResponse({ status: 'OK', msg: 'EMAIL_SENT' }));
-    }).catch(err => {
-      return res.json(new APIResponse({ status: 'ERR', msg: 'EMAIL_NOT_SENT' }));
-    });
 
+      Utils.sendMail({
+        to: user.email,
+        template: 'mail_forgot_password',
+        data: {
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          resetPasswordUrl: dataResp.o_website_url + '/resetPassword/' + user._id + "/" + Utils.sha3Encrypt(user._id + user.dateCreated)
+        }
+      }).then(result => {
+        return res.json(new APIResponse({ status: 'OK', msg: 'EMAIL_SENT' }));
+      }).catch(err => {
+        return res.json(new APIResponse({ status: 'ERR', msg: 'EMAIL_NOT_SENT' }));
+      });
+
+    }).catch(e => next(e));
   }).catch(e => next(e));
 };
 
@@ -1051,5 +1096,61 @@ export const getSubscriptions = (req, res, next) => {
       .catch(e => next(e));
   }).catch(e => next(e));
 };
+
+export const cronSendTrialReminderEmail = (req) => {
+  const uModel = new UserModel();
+
+  return new OptionModel().getPairs().then((dataResp) => {
+    return new SubscriptionModel()
+      .select('t1.*, t2."firstName", t2."lastName", t2."email"')
+      .where('t1.status = $1')
+      .join(`${uModel.getTable()} AS t2`, 't1."parentId"=t2."_id"', 'left outer') // eslint-disable-line
+      .findAll(['trailing'])
+      .then((subscriptions) => {
+        if (subscriptions.length > 0) {
+          for (var i = 0; i < subscriptions.length; i++) {
+            const subscription = subscriptions[i];
+            var expiryDate = moment(moment.unix(subscription.expiryDate / 1000).format('YYYY-MM-DD')),
+              expiryDateFrom = moment(moment.unix(subscription.expiryDateFrom / 1000).format('YYYY-MM-DD')),
+              fee = subscription.fee,
+              isSendEmail = false,
+              emailTemplate = '';
+            if (subscription.expirationType === 'annually') {
+              fee = fee * 12;
+            }
+            if (expiryDate.diff(expiryDateFrom, 'days') === 7) {
+              emailTemplate = 'mail_trial_reminder_after_7_days';
+              isSendEmail = true;
+            } else if (expiryDate.diff(expiryDateFrom, 'days') === 2) {
+              emailTemplate = 'mail_trial_reminder_after_12_days';
+              isSendEmail = true;
+            } else if (expiryDate.diff(expiryDateFrom, 'days') === 1) {
+              emailTemplate = 'mail_trial_reminder_after_13_days';
+              isSendEmail = true;
+            } else if (expiryDate.diff(expiryDateFrom, 'days') < 1) {
+              emailTemplate = 'mail_trial_reminder_when_expired';
+              isSendEmail = true;
+            }
+
+            if (isSendEmail) {
+              Utils.sendMail({
+                to: subscription.email,
+                template: emailTemplate,
+                data: {
+                  email: subscription.email,
+                  firstName: subscription.firstName,
+                  lastName: subscription.lastName,
+                  price: '$' + fee,
+                  type: subscription.expirationType,
+                  subscriptionDetailsLink: dataResp.o_website_url + '/subscription-details/' + subscription._id,
+                }
+              });
+            }
+          }
+        }
+      })
+      .catch(e => next(e));
+  }).catch(e => next(e));
+}
 
 export default { getSubscriptionsByUser, create, assignStudent, upgrade, countSubscriptions, getSubscriptionById, paySubscription, stripeConfirmation, checkToShowBannerDiscount, cancelSubscription, getOptions, forgotPassword, getUserForgotPassword, resetPassword };

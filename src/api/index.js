@@ -24,17 +24,27 @@ if (!module.parent) {
     debug(`server started on port ${config.port} (${config.env})`);
 
     var cron = require('cron');
-
     var job1 = new cron.CronJob({
       cronTime: '* * * * *',
-      onTick: function () {
-        subscriptionCtrl.cronUpdateSubscriptionStatus()
+      onTick: function onTick() {
+        subscriptionCtrl.cronUpdateSubscriptionStatus();
+      },
+      start: false,
+      timeZone: 'America/Los_Angeles'
+    });
+
+    var job2 = new cron.CronJob({
+      cronTime: '01 00 00 * *',
+      onTick: function onTick() {
+        console.log('job 2 ticked');
+        subscriptionCtrl.cronSendTrialReminderEmail();
       },
       start: false,
       timeZone: 'America/Los_Angeles'
     });
 
     job1.start(); // job 1 started
+    job2.start(); // job 2 started
 
   });
 }
