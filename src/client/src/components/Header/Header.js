@@ -6,7 +6,7 @@ import { StyleSheet, css } from 'aphrodite'
 import { connect } from 'react-redux'
 import { IndexLink, Link } from 'react-router'
 
-import { Nav, NavItem, Navbar } from 'react-bootstrap';
+import { Nav, NavItem, Navbar, NavDropdown, MenuItem } from 'react-bootstrap';
 
 import * as authActions from '../../store/auth'
 import * as subscribeActions from '../../routes/Subscribe/modules/subscribe'
@@ -49,15 +49,22 @@ class Header extends React.Component {
   render() {
     const { auth } = this.props
     const isLoggedIn = auth && auth.isLoggedIn
-    let subscriptionLink = ''
+    let userLink = ''
     let theLink = (<li className='signin'><a href='https://app.a-smartlearning.com/en/sml/login' className='text-signin'> <span className='side-nav-item dk-white'>Sign In</span></a></li>)
     let trialLink = (<li><a className='side-nav-item dk-white route--item' href='javascript: void(0);' data-toggle='modal' data-target='#modalFreeTrialConfirm' onClick={() => this.setState({ showFreeTrialConfirm: true })}>Free Trial</a></li>)
     if (isLoggedIn) {
-      theLink = (<li><a href='javascript: void(0);' className='side-nav-item dk-white route--item' onClick={() => this.doLogout()}>Logout</a></li>)
+      theLink = ''
       if (auth.jwt.isParent) {
-        subscriptionLink = (<li><Link to='/subscription' className='side-nav-item dk-white route--item' activeClassName='route--active dk-yellow'>My Subscriptions</Link></li>)
         trialLink = (<li><Link to='/subscribe' className='side-nav-item dk-white route--item' activeClassName='route--active dk-yellow'>Free Trial</Link></li>)
       }
+
+      let userInfo = (<span><i className='fa fa-user' /> {auth.user.firstName} {auth.user.lastName}</span>)
+      userLink = (
+        <NavDropdown title={userInfo} id="nav-dropdown" className='side-nav-item dk-white route--item'>
+          <MenuItem href='/subscription'>My Subscriptions</MenuItem>
+          <MenuItem onClick={() => this.doLogout()}>Logout</MenuItem>
+        </NavDropdown>
+      )
     }
     return (
       <div>
@@ -75,7 +82,7 @@ class Header extends React.Component {
               <li><Link to='/student' className='side-nav-item dk-white route--item' activeClassName='route--active dk-yellow'>For Student</Link></li>
               <li><Link to='/parent' className='side-nav-item dk-white route--item' activeClassName='route--active dk-yellow'>For Parent</Link></li>
               {trialLink}
-              {subscriptionLink}
+              {userLink}
               {theLink}
             </ul>
           </Navbar.Collapse>

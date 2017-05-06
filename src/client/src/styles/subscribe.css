@@ -89,6 +89,26 @@ a{
 .subscribe-header .signin .side-nav-item{
 	color: #ffffff;
 }
+.navbar-nav li.side-nav-item a{
+	color: #ffffff !important;
+}
+.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus{
+	background-color: transparent;
+}
+.navbar-nav li.side-nav-item .dropdown-menu li a{
+	color: #007FFF !important;
+}
+
+.subscribe-header .navbar-nav li.side-nav-item a{
+	color: #000 !important;
+}
+.subscribe-header .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus{
+	background-color: transparent;
+}
+.subscribe-header .navbar-nav li.side-nav-item .dropdown-menu li a{
+	color: #007FFF !important;
+}
+
 .page-footer{
 	background-color: #FFFFFF;
 	border-top: 1px solid #ddd;
@@ -841,7 +861,9 @@ color: #007fff;
 .right-testimonial-container{
 	height: 216px;
 }
-
+#modalFreeTrialConfirm .btn{
+	margin: 0 10px;
+}
 @media (max-width: 1199px){
 	.subscription-plan .subscription-plan-item{
 		min-height: 509px;
@@ -924,5 +946,8 @@ color: #007fff;
 
 	.btn{
 		font-size: 15px;
+	}
+	#modalFreeTrialConfirm .btn{
+		margin: 5px 0;
 	}
 }
