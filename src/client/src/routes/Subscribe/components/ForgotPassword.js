@@ -47,7 +47,7 @@ class ForgotPassword extends React.Component {
 
     if (result === null) {
       // can submit
-      return API.forgotPassword({ email: self.refs.email.value, webUrl: config.webUrl }).then((result) => {
+      return API.forgotPassword({ email: self.refs.email.value }).then((result) => {
         console.info('the response: ', result);
         switch (result.msg) {
           case 'EMAIL_SENT':
