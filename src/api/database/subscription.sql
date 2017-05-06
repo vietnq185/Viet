@@ -175,3 +175,43 @@ INSERT INTO "options" ("foreign_id", "key", "tab_id", "value", "label", "descrip
 
 (1, 'mail_subscribe_via_bank_transfer_ARRAY_subject', 2, NULL, NULL,  'Subscribe via bank transfer email subject', 'string',40, 1, NULL, 'F'),
 (1, 'mail_subscribe_via_bank_transfer_ARRAY_message', 2, NULL, NULL, 'Subscribe via bank transfer email message', 'text', 41, 1, NULL, 'F');
+
+
+UPDATE plans 
+SET "description" = 'You can learn all about Measurement, Algebra, Geometry, Statistics, Numbers and more...', 
+    "keyBenefits"=ARRAY[
+        'Access to full resource',
+        'Receipt of academic ability estimation',
+        'Highlight of areas for improvement',
+        'Outline of personalised learning path',
+        'Tracking of progress and mistakes',
+        '3 worksheets (2 MCQ + Short Structured Questions, 1 Long Structured Questions) per day, 7 days a week',
+        '24/7 assistance from teacher'
+    ]
+WHERE _id::uuid='121bbca5-3f43-4374-a176-243a095cf852';
+
+UPDATE plans 
+SET "description" = 'You can learn all about Cycles, Intractions, Diversity, Enger, System and more...', 
+    "keyBenefits"=ARRAY[
+        'Access to full resource',
+        'Receipt of academic ability estimation',
+        'Highlight of areas for improvement',
+        'Outline of personalised learning path',
+        'Tracking of progress and mistakes',
+        '3 worksheets (2 MCQ + Short Structured Questions, 1 Long Structured Questions) per day, 7 days a week',
+        '24/7 assistance from teacher'
+    ]
+WHERE _id::uuid='7d17b4c0-feee-47d9-aa7a-3679a4237401';
+
+UPDATE plans 
+SET "description" = 'You can learn all concepts about Math & Science', 
+    "keyBenefits"=ARRAY[
+        'Access to full resource',
+        'Receipt of academic ability estimation',
+        'Highlight of areas for improvement',
+        'Outline of personalised learning path',
+        'Tracking of progress and mistakes',
+        '3 worksheets (2 MCQ + Short Structured Questions, 1 Long Structured Questions) for ONE subject, total 6 worksheets per day, 7 days a week',
+        '24/7 assistance from teacher'
+    ]
+WHERE _id::uuid='55148ffa-6ca0-4930-bb09-cd2a1158d655';
