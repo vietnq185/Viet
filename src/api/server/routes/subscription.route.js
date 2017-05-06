@@ -10,7 +10,7 @@ const router = express.Router(); // eslint-disable-line new-cap
 
 router.route('/')
   /** POST /api/subscriptions - Create new subscription */
-  .post(validate(paramValidation.createSubscription), subscriptionCtrl.create);
+  .post(authCtrl.verifyAccessToken, validate(paramValidation.createSubscription), subscriptionCtrl.create);
 
 router.route('/AssignStudent')
   /** POST /api/subscriptions/AssignStudent - Assign student */

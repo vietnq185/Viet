@@ -6,6 +6,7 @@ import tinymce from 'tinymce';
 import 'tinymce/themes/modern';
 import 'tinymce/plugins/wordcount';
 import 'tinymce/plugins/table';
+import 'tinymce/plugins/link';
 
 class TinyEditor extends Component {
   constructor() {
@@ -16,7 +17,8 @@ class TinyEditor extends Component {
     tinymce.init({
       selector: `#${this.props.id}`,
       skin_url: `${process.env.PUBLIC_URL}/skins/lightgray`,
-      plugins: 'wordcount table',
+      plugins: 'wordcount table link',
+      height: 400,
       setup: editor => {
         this.setState({ editor });
         editor.on('keyup change', () => {

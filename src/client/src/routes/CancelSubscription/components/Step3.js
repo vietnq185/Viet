@@ -16,7 +16,7 @@ class Step3 extends React.Component {
 					<p>&nbsp;</p>
 					<p>This is not saying goodbye, you are always served by us.</p>
 					<p>To cancel your subscription, please contact us via: +65 4321 1234.</p>
-					<p>If you are unsubscribing by mistake, and wish to re-subscribe, please turn back to <a herf="/subscribe">your subscription</a> and continue to enjoy our amazing learning system.</p>
+					<p>If you are unsubscribing by mistake, and wish to re-subscribe, please turn back to <a href="/subscribe">your subscription</a> and continue to enjoy our amazing learning system.</p>
 				</div>
 			)
 		} else {
