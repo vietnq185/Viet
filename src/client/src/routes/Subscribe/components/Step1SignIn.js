@@ -7,7 +7,7 @@ import Utils from '../../../helpers/utils'
 import validate from '../../../helpers/validate'
 
 class Step1SignIn extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.initialErrors = {
       email: '',
@@ -20,17 +20,17 @@ class Step1SignIn extends React.Component {
     }
   }
 
-  resetErrors () {
+  resetErrors() {
     this.errors = Utils.copy(this.initialErrors)
     this.setState({ hasError: false })
   }
 
-  setErrors (errors) {
+  setErrors(errors) {
     this.errors = errors
     this.setState({ hasError: true })
   }
 
-  submitForm () {
+  submitForm() {
     const self = this
 
     this.resetErrors()
@@ -50,6 +50,13 @@ class Step1SignIn extends React.Component {
     if (result === null) {
       // can submit
       API.login({ username: self.refs.email.value, password: self.refs.password.value }).then((result) => {
+        const { jwt: { isAdmin, isEditor, isTeacher, isParent, isStudent } } = result;
+        if (isStudent) {
+          return this.setState({ errMsg: 'Student account cannot login to this page.' })
+        }
+        if (isAdmin || isEditor || isTeacher || !isParent) {
+          return this.setState({ errMsg: 'Only parent account can access this page.' })
+        }
         const nextAction = () => self.props.changeStep(self.props.steps.plan)
         self.props.loginSuccess(result, nextAction)
       }).catch((errMsg) => {
@@ -70,14 +77,14 @@ class Step1SignIn extends React.Component {
     }
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const { changeStep, steps, auth: { isLoggedIn } } = this.props
     if (isLoggedIn) {
       changeStep(steps.plan)
     }
   }
 
-  render () {
+  render() {
     const requiredLabel = (<abbr className='dk-red-text'>&nbsp;*</abbr>)
     return (
       <div className='form-subscribe'>
