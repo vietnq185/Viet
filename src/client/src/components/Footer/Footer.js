@@ -31,13 +31,13 @@ export default class Footer extends React.Component {
     if (this.state.showBannerDiscount.showBanner === 0) {
       showPromotionBanner = false;
     }
-    if(this.props.auth.isLoggedIn) {
+    if (this.props.auth.isLoggedIn) {
       showPromotionBanner = false;
     }
-    
+
     return (
       <div className={['page-footer text-left', (this.state.show ? 'mb6' : '')].join(' ')}>
-        < div className= 'container-fluid' >
+        < div className='container-fluid' >
           <div className='row'>
             <div className='col-md-6 col-xs-12 col-md-push-6 footer-follow'>
               {/* <span>
@@ -59,15 +59,17 @@ export default class Footer extends React.Component {
               </div>
             </div>
           </div>
-          <div className={['banner-discount-container hidden-xs', (showPromotionBanner ? '' : 'hide')].join(' ')}>
+          <div className={['banner-discount-container', (showPromotionBanner ? '' : 'hide')].join(' ')}>
             <nav className='navbar-fixed-bottom'>
               <div className='banner-discount'>
                 <span className='left-bg-special-offer'><img src={LeftBGSpecialOffer} /></span>
                 <span className='banner-discount-info'>
-                  Discount {this.state.showBannerDiscount.discount}% for the first {this.state.showBannerDiscount.limit} subscriptions
+                  <span className='banner-discount-text'>
+                    Discount {this.state.showBannerDiscount.discount}% for the first {this.state.showBannerDiscount.limit} subscriptions
 								<Link to='/subscribe' className='btn dk-bg-green dk-white ml2'>Subscribe Now</Link>
+                  </span>
+                  <span className='banner-discount-close'><a className='close' onClick={() => this.setState({ show: false })}>&times;</a></span>
                 </span>
-                <span><a className='close' onClick={() => this.setState({ show: false })}>&times;</a></span>
               </div>
             </nav>
           </div>

@@ -51,7 +51,7 @@ class PageHeader extends React.Component {
             <p className="about-text-content text-justify">
               A-Smart Learning System (A-SLS) is a state-of-the-art programme that incorporates <span className="dk-yellow">Statistical Machine Learning Technology, Natural Language Processing, Data Analytics and Neuroscience Technology</span> to plan an Individualised Learning Programme by dynamically diagnosing students' academic readiness and help them maximise their best potential to achieve their academic goals.
             </p>
-            <div className="row">
+            <div className="">
               <div className="col-md-4 col-xs-12 text-center">
                 <a href="programme">
                   <button className="btn dk-btn dk-bg-teal dk-white">
@@ -91,8 +91,8 @@ class PageHeader extends React.Component {
               <div className='modal-body'>
                 <p className='text-center'>Are you a student or parent?</p><br />
                 <div className='text-center'>
-                  <a className='btn dk-bg-green dk-white mb5' data-dismiss='modal' data-toggle='modal' data-target='#modalFreeTrialConfirmStudent' onClick={() => this.setState({ showFreeTrialConfirm: false, showFreeTrialConfirmStudent: true })}>I AM A STUDENT</a>&nbsp;&nbsp;&nbsp;&nbsp;
-                  <a className='btn dk-bg-blue dk-white' href='/subscribe'>I AM A PARENT</a>
+                  <a className='btn dk-bg-green dk-white mb5' data-dismiss='modal' data-toggle='modal' data-target='#modalFreeTrialConfirmStudent' onClick={() => this.setState({ showFreeTrialConfirm: false, showFreeTrialConfirmStudent: true })}>I AM A STUDENT</a>
+                  <a className='btn dk-bg-blue dk-white mb5' href='/subscribe'>I AM A PARENT</a>
                 </div>
               </div>
             </div>
