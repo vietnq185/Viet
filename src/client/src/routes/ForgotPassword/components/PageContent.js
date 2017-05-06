@@ -61,8 +61,11 @@ class PageContent extends React.Component {
     if (result === null) {
       return API.resetPassword({ id: this.state.id, password: self.refs.password.value }).then((result) => {
         switch (result.msg) {
-          case 'PASSWORD_WAS_RESET':
+          case 'PASSWORD_WAS_RESET_AND_EMAIL_SENT':
             this.setState({ errMsg: 'Your password has been reset. You can login now with the new password' })
+            break
+          case 'PASSWORD_WAS_RESET_AND_EMAIL_NOT_SENT':
+            this.setState({ errMsg: 'Your password has been reset but failed to send email. You can login now with the new password' })
             break
           case 'PASSWORD_WAS_NOT_RESET':
             this.setState({ errMsg: 'Failed to reset password. Please try again' })
