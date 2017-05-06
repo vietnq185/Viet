@@ -28,8 +28,6 @@ const merge = (src, dst) => { // eslint-disable-line
 
 const config = {}
 
-config.webUrl = process.env.NODE_ENV === 'development' ? process.env.REACT_APP_DEV_WEB_URL : process.env.REACT_APP_WEB_URL;
-
 // API
 config.apiServer = process.env.NODE_ENV === 'development' ? process.env.REACT_APP_DEV_API_URL : process.env.REACT_APP_API_URL;
 config.api = {
