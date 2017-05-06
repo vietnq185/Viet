@@ -839,7 +839,7 @@ export const stripeConfirmation = (req, res, next) => {
                 });
                 return res.json(new APIResponse({ status: 'OK', msg: 'Payment successful - subscription has been activated' }));
               });
-            });
+            }).catch(e => next(e));
           } else if (stripeResp.type === 'charge.failed') {
             const dataHistory = {
               _id: Utils.uuid(),
@@ -854,7 +854,7 @@ export const stripeConfirmation = (req, res, next) => {
               return new PaymentHistory().insert(dataHistory).then(savedHistory => {
                 return res.json(new APIResponse({ status: 'OK', msg: 'Payment failed - subscription status has been changed to overdue' }));
               });
-            });
+            }).catch(e => next(e));
           } else if (stripeResp.type === 'charge.refunded') {
             console.log("=======================> stripeConfirmation => Refund")
             //return new PaymentHistory().insert(dataHistory).then(savedHistory => {
