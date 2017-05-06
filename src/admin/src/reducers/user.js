@@ -23,9 +23,9 @@ const updateList = (result) => {
   }
 }
 
-export const getUserList = (page) => (dispatch, getState) => {
+export const getUserList = (data) => (dispatch, getState) => {
   return authActions.checkAccessToken().then((jwt) => {
-    return API.getUserList(jwt.accessToken || '', page).then((result) => {
+    return API.getUserList(jwt.accessToken || '', data).then((result) => {
       dispatch(updateList(result))
     }).catch(() => {
       dispatch(updateList({

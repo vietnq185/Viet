@@ -68,8 +68,8 @@ router.route('/resetPassword')
   /** GET /api/subscriptions/resetPassword - Pay subscription */
   .post(subscriptionCtrl.resetPassword);
 
-router.route('/list-all/:page')
-  /** GET /api/subscriptions/list-all/:page - Get subscriptions - for Admin */
-  .get(authCtrl.verifyAccessToken, authCtrl.adminAuth, subscriptionCtrl.getSubscriptions);
+router.route('/list-all')
+  /** POST /api/subscriptions/list-all - Get (search) subscriptions - for Admin */
+  .post(authCtrl.verifyAccessToken, authCtrl.adminAuth, subscriptionCtrl.getSubscriptions);
 
 export default router;

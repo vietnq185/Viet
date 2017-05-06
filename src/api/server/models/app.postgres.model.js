@@ -251,8 +251,8 @@ class AppPostgresModel {
    */
   findCount(values = []) {
     const resultSql = buildQuery(this._table, this._params, FIND.COUNT);
-    const sqlWithJoin = `SELECT COUNT("___RESULT_TABLE"."TOTAL_RECORDS") AS "TOTAL_RECORDS" FROM (${resultSql}) AS "___RESULT_TABLE"`;
-    const sql = (Utils.isNotEmptyArray(this._params.join) ? sqlWithJoin : resultSql);
+    const sqlExt = `SELECT COUNT("___RESULT_TABLE"."TOTAL_RECORDS") AS "TOTAL_RECORDS" FROM (${resultSql}) AS "___RESULT_TABLE"`;
+    const sql = (Utils.isNotEmptyString(this._params.groupBy) ? sqlExt : resultSql);
     debug('COUNT COMMAND: ', sql);
     return this.execute(sql, values).then((result) => {  // eslint-disable-line
       const count = (result && result.rows && result.rows.length > 0 && typeof result.rows[0].TOTAL_RECORDS !== 'undefined' ? parseInt(result.rows[0].TOTAL_RECORDS, 10) : 0);

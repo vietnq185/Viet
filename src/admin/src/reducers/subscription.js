@@ -23,9 +23,9 @@ const updateList = (result) => {
   }
 }
 
-export const getSubscriptionList = (page) => (dispatch, getState) => {
+export const getSubscriptionList = (data) => (dispatch, getState) => {
   return authActions.checkAccessToken().then((jwt) => {
-    return API.getSubscriptionList(jwt.accessToken || '', page).then((result) => {
+    return API.getSubscriptionList(jwt.accessToken || '', data).then((result) => {
       dispatch(updateList(result))
     }).catch(() => {
       dispatch(updateList({

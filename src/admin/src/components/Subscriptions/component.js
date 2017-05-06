@@ -3,7 +3,7 @@ import ReactDataGrid from 'react-data-grid';
 const { Row } = ReactDataGrid;
 import moment from 'moment';
 
-import { Button, Modal, Pagination } from 'react-bootstrap';
+import { Button, Modal, Pagination, Panel, ButtonToolbar } from 'react-bootstrap';
 
 import API from '../../helpers/api'; // eslint-disable-line
 import Utils from '../../helpers/utils'; // eslint-disable-line
@@ -34,7 +34,9 @@ class RowRenderer extends React.Component {
   getRowStyle() {
     return {
       //color: this.getRowBackground()
-      cursor: 'pointer'
+      cursor: 'pointer',
+      display: 'block',
+      height: 'auto'
     };
   }
 
@@ -47,7 +49,7 @@ class RowRenderer extends React.Component {
   }
 
   render() {
-    return (<div onClick={() => this.onViewDetails()} style={this.getRowStyle()}><Row ref={node => this.row = node} {...this.props} /></div>);
+    return (<span onClick={() => this.onViewDetails()} style={this.getRowStyle()}><Row ref={node => this.row = node} {...this.props} /></span>);
   }
 }
 
@@ -56,16 +58,18 @@ export default class Component extends React.Component {
     super(props);
     this.state = {
       columns: [
-        { key: 'id', name: 'ID' },
-        { key: 'plan', name: 'Plan' },
-        { key: 'price', name: 'Price' },
-        { key: 'created', name: 'Created' },
-        { key: 'nextPayment', name: 'Next Payment' },
-        { key: 'status', name: 'Status' },
+        { key: 'id', name: 'ID', resizable: true, sortable: false, filterable: false },
+        { key: 'customer', name: 'customer', resizable: true, sortable: false, filterable: true },
+        { key: 'plan', name: 'Plan', resizable: true, sortable: false, filterable: true },
+        { key: 'price', name: 'Price', resizable: true, sortable: false, filterable: false },
+        { key: 'created', name: 'Created', resizable: true, sortable: false, filterable: false },
+        { key: 'nextPayment', name: 'Next Payment', resizable: true, sortable: false, filterable: false },
+        { key: 'status', name: 'Status', resizable: true, sortable: false, filterable: true },
       ],
       page: 1,
       objDetails: null,
-      updateMsg: ''
+      updateMsg: '',
+      filter: {}
     };
     this.listMap = {};
   }
@@ -74,8 +78,8 @@ export default class Component extends React.Component {
     this.getList(this.state.page)
   }
 
-  getList(page) {
-    this.props.getSubscriptionList(page)
+  getList(page = 1) {
+    this.props.getSubscriptionList({ page, ...this.state.filter })
     this.setState({ page: page })
   }
 
@@ -92,8 +96,16 @@ export default class Component extends React.Component {
       self.open(item);
     }}>{id}</a>);
 
+    const customer = (
+      <span style={{ display: 'block' }}>
+        <span style={{ display: 'block', marginBottom: '5px' }}>{item.firstName}&nbsp;{item.lastName}</span>
+        <span style={{ display: 'block' }}>{item.email}</span>
+      </span>
+    );
+
     const data = {
       id: isList ? viewLink : id,
+      customer,
       plan: item.courseTitles.join(' & '),
       price: `$${item.fee * theRate}/${theLabel} via ${item.channel === CREDIT_CARD ? 'Credit Card' : item.channel}`,
       created: moment.unix(item.dateCreated / 1000).format('MMM D, YYYY'),
@@ -122,12 +134,6 @@ export default class Component extends React.Component {
     this.setState({ objDetails: item, updateMsg: '' });
   }
 
-  onRowClick(idx, formattedData) {
-    console.info('onRowClick: ', idx, formattedData);
-    // const item = this.props.subscription.list.subscriptions[idx];
-    // this.open(item);
-  }
-
   viewDetails(idx) {
     const item = this.props.subscription.list.subscriptions[idx];
     this.open(item);
@@ -141,13 +147,15 @@ export default class Component extends React.Component {
 
         <h3>Subscriptions</h3>
 
+        {this.renderFilters()}
+
         <ReactDataGrid
           columns={this.state.columns}
           rowGetter={(i) => this.rowGetter(i)}
           rowsCount={this.props.subscription.list.subscriptions.length}
-          minHeight={500}
-          onRowClick={this.onRowClick.bind(this)}
+          minHeight={600}
           rowRenderer={<RowRenderer viewDetails={this.viewDetails.bind(this)} />}
+          rowHeight={60}
           emptyRowsView={EmptyRowsView} />
 
         <div className="text-center">
@@ -169,6 +177,50 @@ export default class Component extends React.Component {
       </div>
     );
   }
+
+  // render filter - START
+  filterChange(evt) {
+    const filter = Utils.copy(this.state.filter);
+    filter[evt.target.name] = evt.target.value;
+    this.setState({ filter });
+  }
+
+  renderFilters() {
+    const filterFotter = (
+      <ButtonToolbar>
+        <Button onClick={() => this.setState({ filter: {} })}>Clear</Button>
+        <Button onClick={() => this.getList()} bsStyle="primary">Search</Button>
+      </ButtonToolbar>
+    );
+    return (
+      <Panel footer={filterFotter}>
+        {this.renderFilterRow(
+          <input className='form-control' type='text' name='name' label='Customer name' value={this.state.filter.name || ''} onChange={this.filterChange.bind(this)} />,
+          <input className='form-control' type='text' name='email' label='Customer email' value={this.state.filter.email || ''} onChange={this.filterChange.bind(this)} />
+        )}
+      </Panel>
+    );
+  }
+
+  renderFilterRow(left, right) {
+    return (
+      <div className='row'>
+        <div className='col-sm-6 col-xs-12'>
+          <div className={['form-group'].join(' ')}>
+            <label>{left.props.label}</label>
+            {left}
+          </div>
+        </div>
+        <div className='col-sm-6 col-xs-12'>
+          <div className={['form-group'].join(' ')}>
+            <label>{right.props.label}</label>
+            {right}
+          </div>
+        </div>
+      </div>
+    );
+  }
+  // render filter - END
 
   // details page - START
   changeStatus(evt) {

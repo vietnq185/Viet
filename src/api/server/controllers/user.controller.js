@@ -209,14 +209,24 @@ export const update = (req, res, next) => {
 
 /**
  * Get user list.
- * @property {number} req.query.limit - Limit number of users to be returned.
- * @property {number} req.query.offset - Position to fetch data.
  * @returns {UserModel[]}
  */
 export const list = (req, res, next) => {
+  const { name = '', email = '' } = req.body;
+
   const uModel = new UserModel();
-  return uModel.reset().findCount().then((total) => {
-    let { page = 1, limit = 10 } = req.params; // eslint-disable-line
+
+  if (email) {
+    uModel.where(`lower(t1.email) LIKE '%${email.toLowerCase()}%'`);
+  }
+
+  if (name) {
+    uModel.where(`lower(t1."firstName") LIKE '%${name.toLowerCase()}%' OR lower(t1."lastName") LIKE '%${name.toLowerCase()}%'`);
+  }
+
+  return uModel.findCount().then((total) => {
+    let { page = 1 } = req.body;
+    const limit = 15;
     const offset = (parseInt(page, 10) - 1) * limit;
     const pages = Math.ceil(total / limit);
 
@@ -232,7 +242,7 @@ export const list = (req, res, next) => {
       }));
     }
 
-    return uModel.reset()
+    return uModel
       .limit(limit).offset(offset)
       .findAll().then((data) => { // eslint-disable-line
         return res.json(new APIResponse({

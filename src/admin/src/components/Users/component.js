@@ -3,7 +3,7 @@ import ReactDataGrid from 'react-data-grid';
 const { Row } = ReactDataGrid;
 import moment from 'moment';
 
-import { Button, Modal, Pagination } from 'react-bootstrap';
+import { Button, Modal, Pagination, Panel, ButtonToolbar } from 'react-bootstrap';
 
 import API from '../../helpers/api'; // eslint-disable-line
 import Utils from '../../helpers/utils'; // eslint-disable-line
@@ -47,13 +47,15 @@ export default class Component extends React.Component {
         //{ key: '_id', name: 'ID'},
         { key: 'firstName', name: 'FirstName' },
         { key: 'lastName', name: 'Last Name' },
+        { key: 'email', name: 'Email' },
         { key: 'role', name: 'Role' },
         { key: 'status', name: 'Status' },
         //{ key: 'dateCreated', name: 'Created' },
       ],
       page: 1,
       objDetails: null,
-      updateMsg: ''
+      updateMsg: '',
+      filter: {}
     };
     this.listMap = {};
   }
@@ -63,7 +65,7 @@ export default class Component extends React.Component {
   }
 
   getList(page) {
-    this.props.getUserList(page)
+    this.props.getUserList({ page, ...this.state.filter })
     this.setState({ page: page })
   }
 
@@ -96,10 +98,6 @@ export default class Component extends React.Component {
     this.setState({ objDetails: item, updateMsg: '' });
   }
 
-  onRowClick() {
-    console.info('onRowClick: ', arguments);
-  }
-
   render() {
     console.info('Users components => props: ', this.props);
 
@@ -108,12 +106,13 @@ export default class Component extends React.Component {
 
         <h3>Users</h3>
 
+        {this.renderFilters()}
+
         <ReactDataGrid
           columns={this.state.columns}
           rowGetter={(i) => this.rowGetter(i)}
           rowsCount={this.props.user.list.data.length}
-          minHeight={500}
-          onRowClick={this.onRowClick.bind(this)}
+          minHeight={600}
           rowRenderer={<RowRenderer viewDetails={this.open.bind(this)} />}
           emptyRowsView={EmptyRowsView} />
 
@@ -136,6 +135,50 @@ export default class Component extends React.Component {
       </div>
     );
   }
+
+  // render filter - START
+  filterChange(evt) {
+    const filter = Utils.copy(this.state.filter);
+    filter[evt.target.name] = evt.target.value;
+    this.setState({ filter });
+  }
+
+  renderFilters() {
+    const filterFotter = (
+      <ButtonToolbar>
+        <Button onClick={() => this.setState({ filter: {} })}>Clear</Button>
+        <Button onClick={() => this.getList()} bsStyle="primary">Search</Button>
+      </ButtonToolbar>
+    );
+    return (
+      <Panel footer={filterFotter}>
+        {this.renderFilterRow(
+          <input className='form-control' type='text' name='name' label='Customer name' value={this.state.filter.name || ''} onChange={this.filterChange.bind(this)} />,
+          <input className='form-control' type='text' name='email' label='Customer email' value={this.state.filter.email || ''} onChange={this.filterChange.bind(this)} />
+        )}
+      </Panel>
+    );
+  }
+
+  renderFilterRow(left, right) {
+    return (
+      <div className='row'>
+        <div className='col-sm-6 col-xs-12'>
+          <div className={['form-group'].join(' ')}>
+            <label>{left.props.label}</label>
+            {left}
+          </div>
+        </div>
+        <div className='col-sm-6 col-xs-12'>
+          <div className={['form-group'].join(' ')}>
+            <label>{right.props.label}</label>
+            {right}
+          </div>
+        </div>
+      </div>
+    );
+  }
+  // render filter - END
 
   // details page - START
   renderDetailsDialog() {

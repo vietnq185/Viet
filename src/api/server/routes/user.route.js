@@ -11,9 +11,9 @@ router.route('/')
   /** POST /api/users - Create new user */
   .post(validate(paramValidation.createUser), userCtrl.create);
 
-router.route('/list/:page/:limit')
-  /** GET /api/users - Get list of users */
-  .get(authCtrl.verifyAccessToken, authCtrl.adminAuth, userCtrl.list);
+router.route('/list')
+  /** POST /api/users/list - Get (search) list of users */
+  .post(authCtrl.verifyAccessToken, authCtrl.adminAuth, userCtrl.list);
 
 router.route('/:userId')
   /** GET /api/users/:userId - Get user */

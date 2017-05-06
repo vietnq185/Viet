@@ -45,14 +45,15 @@ export default class API {
     })
   }
 
-  static getUserList = (accessToken, page) => {
+  static getUserList = (accessToken, data) => {
     return new Promise((resolve, reject) => {
-      return fetch(config.api.getUserList.replace(/:page/g, page).replace(/:limit/g, 20), {
-        method: 'GET',
+      return fetch(config.api.getUserList, {
+        method: 'POST',
         headers: {
           'Content-type': 'application/json',
           'Authorization': `Bearer ${accessToken}`
-        }
+        },
+        body: JSON.stringify(data)
       }).then((response) => response.json()).then((jsonResponse) => {
         if (jsonResponse && jsonResponse.success) {
           return resolve(jsonResponse.result)
@@ -275,15 +276,16 @@ export default class API {
     })
   }
 
-  static getSubscriptionList = (accessToken, page) => {
-    console.info('get list urL :', config.api.getSubscriptionList.replace(/:page/g, page));
+  static getSubscriptionList = (accessToken, data) => {
+    console.log('filter data: ', data);
     return new Promise((resolve, reject) => {
-      return fetch(config.api.getSubscriptionList.replace(/:page/g, page), {
-        method: 'GET',
+      return fetch(config.api.getSubscriptionList, {
+        method: 'POST',
         headers: {
           'Content-type': 'application/json',
           'Authorization': `Bearer ${accessToken}`
-        }
+        },
+        body: JSON.stringify(data)
       }).then((response) => response.json()).then((jsonResponse) => {
         if (jsonResponse && jsonResponse.success) {
           return resolve(jsonResponse.result)

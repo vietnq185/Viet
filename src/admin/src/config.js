@@ -31,7 +31,7 @@ const config = {}
 // API
 config.apiServer = process.env.NODE_ENV === 'development' ? process.env.REACT_APP_DEV_API_URL : process.env.REACT_APP_API_URL;
 config.api = {
-  getUserList: '/api/users/list/:page/:limit',  // GET
+  getUserList: '/api/users/list',  // POST
   changeSubscriptionStatus: '/api/subscriptions/changeStatus/:subscriptionId/:newStatus', // GET
   getSubscriptionDetails: '/api/subscriptions/details/:subscriptionId', // GET
   signIn: '/api/auth/login', // POST
@@ -43,7 +43,7 @@ config.api = {
   createSubscription: '/api/subscriptions', // POST
   countSubscriptions: '/api/subscriptions/countSubscriptions', // GET
   assignStudent: '/api/subscriptions/AssignStudent', // POST
-  getSubscriptionList: '/api/subscriptions/list-all/:page', // GET
+  getSubscriptionList: '/api/subscriptions/list-all', // POST
   linkStudent: '/api/users/linkStudent', // POST
   upgradeSubscription: '/api/subscriptions/upgrade',  // POST
   getOptionList: '/api/options',  // GET
