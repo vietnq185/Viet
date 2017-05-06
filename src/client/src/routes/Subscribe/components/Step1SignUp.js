@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
 })
 
 class Step1SignUp extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.initialErrors = {
       firstName: '',
@@ -34,17 +34,17 @@ class Step1SignUp extends React.Component {
     }
   }
 
-  resetErrors () {
+  resetErrors() {
     this.errors = Utils.copy(this.initialErrors)
     this.setState({ hasError: false, errMsg: '' })
   }
 
-  setErrors (errors) {
+  setErrors(errors) {
     this.errors = errors
     this.setState({ hasError: true, errMsg: '' })
   }
 
-  extractdata () {
+  extractdata() {
     const data = {}
     for (let field in this.refs) {
       if (this.refs.hasOwnProperty(field)) {
@@ -55,27 +55,52 @@ class Step1SignUp extends React.Component {
     return data
   }
 
-  submitForm () {
+  submitForm() {
     const self = this
 
     this.resetErrors()
 
     const rules = {
       firstName: {
-        required: 'First name is required'
+        required: 'First name is required',
+        maxLen: {
+          value: 20,
+          msg: 'First Name length must be less than or equal to {value} characters long'
+        },
       },
       lastName: {
-        required: 'Last name is required'
+        required: 'Last name is required',
+        maxLen: {
+          value: 20,
+          msg: 'last Name length must be less than or equal to {value} characters long'
+        },
       },
       email: {
         required: 'Email is required',
         email: 'Please enter correct email format'
       },
       phone: {
-        required: 'Phone is required'
+        required: 'Phone is required',
+        number: 'Phone must be number',
+        minLen: {
+          value: 10,
+          msg: 'Phone length must be at least {value} characters long'
+        },
+        maxLen: {
+          value: 12,
+          msg: 'Phone length must be less than or equal to {value} characters long'
+        },
       },
       password: {
-        required: 'Password is required'
+        required: 'Password is required',
+        minLen: {
+          value: 6,
+          msg: 'Password length must be at least {value} characters long'
+        },
+        maxLen: {
+          value: 32,
+          msg: 'Password length must be less than or equal to {value} characters long'
+        },
       },
       confirmPassword: {
         match: {
@@ -85,7 +110,7 @@ class Step1SignUp extends React.Component {
       }
     }
 
-    const result = validate(rules, this.refs)  // result === null -> valid, result === error object -> invalid
+    const result = validate(rules, this.refs, false)  // result === null -> valid, result === error object -> invalid
 
     if (result === null) {
       // can submit
@@ -122,18 +147,30 @@ class Step1SignUp extends React.Component {
       })
       //
     } else {
-      this.setErrors(result)
+      this.setErrors(this.generateErrorList(result))
     }
   }
 
-  componentDidMount () {
+  generateErrorList(objErrors) {
+    const newErrors = {};
+    for (let key in objErrors) {
+      if (objErrors.hasOwnProperty(key)) {
+        newErrors[key] = Object.values(objErrors[key]).map(errItem => {
+          return (<span key={Utils.uuid()} style={{ display: 'block', marginBottom: '5px' }}>{errItem}</span>);
+        });
+      }
+    }
+    return newErrors;
+  }
+
+  componentDidMount() {
     const { changeStep, steps, auth: { isLoggedIn } } = this.props
     if (isLoggedIn) {
       changeStep(steps.plan)
     }
   }
 
-  render () {
+  render() {
     const requiredLabel = (<abbr className='dk-red-text'>&nbsp;*</abbr>)
     return (
       <div className={['form-subscribe'].join(' ')}>

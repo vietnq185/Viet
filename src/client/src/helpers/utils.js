@@ -149,6 +149,14 @@ Utils.guid = function () {
 }
 
 /**
+* Generate random hash
+* @return {string}
+*/
+Utils.uuid = function () {
+  return uuidV4();
+}
+
+/**
 * Deep compare two object
 * @param {object} obj1
 * @param {object} obj2

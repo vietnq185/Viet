@@ -18,14 +18,27 @@ import Utils from './utils'
  *    email: {
  *      required: 'Email is required',
  *      email: 'Invalid email',
- *    }
- * }
+ *      number: 'This field must be a number',
+ *      match: {
+ *        ref: 'password',
+ *        msg: 'Confirm password does not match'
+ *      },
+ *      minLen: {
+ *        value: 10,
+ *        msg: 'Phone length must be at least {value} characters long'
+ *      },
+ *      maxLen: {
+ *        value: 12,
+ *        msg: 'Phone length must be less than or equal to {value} characters long'
+ *      },
+ *    },
+ *  }
  **/
 // --------------------------------------------------------------------
 
 /** Parse react fields values from refs
  **/
-export default (rules, refs) => {
+export default (rules, refs, parseToString = true) => {
   // parse data
   const data = {}
   for (let field in rules) {
@@ -38,6 +51,9 @@ export default (rules, refs) => {
   if (inst.isValid()) return null
   // parse result
   const validateResult = inst.getErrors()
+  if (!parseToString) {
+    return validateResult;
+  }
   const result = {}
   for (let field in validateResult) {
     if (validateResult.hasOwnProperty(field)) {
@@ -122,6 +138,35 @@ export class CValidator { // eslint-disable-line
     const refValue = '' + this.data[obj.ref]
     if (value !== refValue) {
       this.errors[field][rule] = obj.msg
+    }
+  }
+
+  number(field, rule) {
+    const value = '' + this.data[field]
+    if (Validator.isEmpty(value)) return // do not validate on empty string
+    const pattern = new RegExp(/[0-9]+/g)
+    if (!pattern.test(value)) {
+      this.errors[field][rule] = this.rules[field][rule]
+    }
+  }
+
+  minLen(field, rule) {
+    const value = '' + this.data[field]
+    if (Validator.isEmpty(value)) return // do not validate on empty string
+    const obj = this.rules[field][rule]
+    const minLength = obj.value
+    if (value.length < minLength) {
+      this.errors[field][rule] = obj.msg.replace(/{value}/gi, minLength)
+    }
+  }
+
+  maxLen(field, rule) {
+    const value = '' + this.data[field]
+    if (Validator.isEmpty(value)) return // do not validate on empty string
+    const obj = this.rules[field][rule]
+    const maxLength = obj.value
+    if (value.length > maxLength) {
+      this.errors[field][rule] = obj.msg.replace(/{value}/gi, maxLength)
     }
   }
   // --------------------------------------------------------------------
