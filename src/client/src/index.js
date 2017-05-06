@@ -41,6 +41,25 @@ if (typeof Object.values === 'undefined') {
 }
 
 // ========================================================
+// Disable console.* on production
+// ========================================================
+if (process.env.NODE_ENV !== 'development') {
+  const disableConsole = () => {
+    if (typeof console !== 'undefined') {
+      for (var i in console) {
+        if (console.hasOwnProperty(i) && typeof console[i] === 'function') {
+          // Override function so that it will do nothing
+          console[i] = () => { };
+        }
+      }
+    }
+  }
+  //
+  disableConsole();
+  //
+}
+
+// ========================================================
 // Store Instantiation
 // ========================================================
 const initialState = window.___INITIAL_STATE__
