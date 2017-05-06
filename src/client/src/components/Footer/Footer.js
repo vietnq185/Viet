@@ -36,7 +36,7 @@ export default class Footer extends React.Component {
     }
 
     return (
-      <div className={['page-footer text-left', (this.state.show ? 'mb6' : '')].join(' ')}>
+      <div className={['page-footer text-left', (showPromotionBanner ? 'mb6' : '')].join(' ')}>
         < div className='container-fluid' >
           <div className='row'>
             <div className='col-md-6 col-xs-12 col-md-push-6 footer-follow'>
