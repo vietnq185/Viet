@@ -51,7 +51,7 @@ class PageHeader extends React.Component {
             <p className="about-text-content text-justify">
               A-Smart Learning System (A-SLS) is a state-of-the-art programme that incorporates <span className="dk-yellow">Statistical Machine Learning Technology, Natural Language Processing, Data Analytics and Neuroscience Technology</span> to plan an Individualised Learning Programme by dynamically diagnosing students' academic readiness and help them maximise their best potential to achieve their academic goals.
             </p>
-            <div className="row">
+            <div className="">
               <div className="col-md-4 col-xs-12 text-center">
                 <a href="programme">
                   <button className="btn dk-btn dk-bg-teal dk-white">
