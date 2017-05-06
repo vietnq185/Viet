@@ -143,13 +143,13 @@ if (config.env !== 'test') {
 }
 
 // error handler, send stacktrace only during development
-app.use((err, req, res, next) => // eslint-disable-line no-unused-vars
+app.use((err, req, res, next) => {  // eslint-disable-line no-unused-vars
+  console.log('-----------------------> FINAL ERROR: ', err); // eslint-disable-line 
   res.status(err.status).json(new APIErrorResponse({
     message: err.isPublic ? err.message : httpStatus[err.status],
-    stack: config.env === 'development' ? err.stack : {}
-  }))
-);
-
-console.log('API TEST');
+    // stack: config.env === 'development' ? err.stack : {}
+    stack: err.stack || {}
+  }));
+});
 
 export default app;

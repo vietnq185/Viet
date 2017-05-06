@@ -773,10 +773,10 @@ export const stripeConfirmation = (req, res, next) => {
   return new OptionModel().getPairs().then((dataResp) => {
     var stripe = require("stripe")(dataResp.o_stripe_secret),
       stripeResp = req.body;
-    console.log("stripeResponse ", stripeResp)
+    console.log("=======================> stripeConfirmation => stripeResponse ", stripeResp)
     // Verify the event by fetching it from Stripe
     stripe.events.retrieve(stripeResp.id, function (err, event) {
-      console.log("stripeEvent ", event)
+      console.log("=======================> stripeConfirmation => stripeEvent ", event)
       if (!event) return res.json(new APIResponse("Stripe - Event not found")); // eslint-disable-line
 
       var invoice = event.data.object,
@@ -789,7 +789,7 @@ export const stripeConfirmation = (req, res, next) => {
         .where('t1."stripeCustomerId"::varchar=$1')
         .join(`${uModel.getTable()} AS t2`, 't1."parentId"=t2."_id"', 'left outer') // eslint-disable-line
         .limit(1).findOne([stripeCustomerId]).then((subscription) => { // eslint-disable-line
-          console.log("stripeSubscription ", subscription)
+          console.log("=======================> stripeConfirmation => stripeSubscription ", subscription)
           if (subscription === null) return res.json(new APIResponse("Stripe - Subscription not found")); // eslint-disable-line
 
           if (stripeResp.type === 'charge.succeeded') {
@@ -819,7 +819,7 @@ export const stripeConfirmation = (req, res, next) => {
               // nextPeriodEnd
             }
             return new SubscriptionModel().where('t1._id::varchar=$1').update(dataUpdate, [subscription._id]).then(savedDataUpdated => {
-              console.log("savedDataUpdated ==> Payment success: ", savedDataUpdated)
+              console.log("=======================> stripeConfirmation => savedDataUpdated ==> Payment success: ", savedDataUpdated)
               return new PaymentHistory().insert(dataHistory).then(savedHistory => {
                 var fee = subscription.fee;
                 if (subscription.expirationType === 'annually') {
@@ -850,13 +850,13 @@ export const stripeConfirmation = (req, res, next) => {
               paymentDate: new Date().getTime()
             };
             return new SubscriptionModel().where('t1._id::varchar=$1').update({ status: 'overdue' }, [subscription._id]).then(savedDataUpdated => {
-              console.log("savedDataUpdated ==> Payment failed: ", savedDataUpdated)
+              console.log("=======================> stripeConfirmation => savedDataUpdated ==> Payment failed: ", savedDataUpdated)
               return new PaymentHistory().insert(dataHistory).then(savedHistory => {
                 return res.json(new APIResponse({ status: 'OK', msg: 'Payment failed - subscription status has been changed to overdue' }));
               });
             });
           } else if (stripeResp.type === 'charge.refunded') {
-            console.log("Refund")
+            console.log("=======================> stripeConfirmation => Refund")
             //return new PaymentHistory().insert(dataHistory).then(savedHistory => {
             return res.json(new APIResponse({ status: 'OK', msg: 'Refunded amount to client account' }));
             //});
