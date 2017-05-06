@@ -773,6 +773,7 @@ export const stripeConfirmation = (req, res, next) => {
   return new OptionModel().getPairs().then((dataResp) => {
     var stripe = require("stripe")(dataResp.o_stripe_secret),
       stripeResp = req.body;
+      
     // Verify the event by fetching it from Stripe
     stripe.events.retrieve(stripeResp.id, function (err, event) {
       if (!event) return res.json(new APIResponse("Stripe - Event not found")); // eslint-disable-line
@@ -793,12 +794,12 @@ export const stripeConfirmation = (req, res, next) => {
             _id: Utils.uuid(),
             subscriptionId: subscription._id,
             paymentMethod: 'stripe',
-            txnid: invoice.balance_transaction,
-            paymentStatus: invoice.status,
+            txnid: invoice.charge,
+            paymentStatus: invoice.paid === true ? 'paid' : 'not_paid',
             paymentDate: new Date().getTime()
           };
 
-          if (stripeResp.type === 'charge.succeeded') {
+          if (stripeResp.type === 'invoice.payment_succeeded') {
             var period = subscription.nextExpirationType == 'monthly' ? 'month' : 'year',
               ts = new Date().getTime(),
               expiryDateFrom = subscription.expiryDate > ts ? subscription.expiryDate : ts,
@@ -810,13 +811,13 @@ export const stripeConfirmation = (req, res, next) => {
               status: 'active',
               expiryDateFrom,
               expiryDate,
-              stripeChargeId: invoice.id,
+              stripeChargeId: invoice.charge,
+              cancelMetadata: ''
               // nextPeriodStart: expiryDate,
               // nextPeriodEnd
             }
             return new SubscriptionModel().where('t1._id::varchar=$1').update(dataUpdate, [subscription._id]).then(dataUpdated => {
               return new PaymentHistory().insert(dataHistory).then(savedHistory => {
-
                 var fee = subscription.fee;
                 if (subscription.expirationType === 'annually') {
                   fee = fee * 12;
@@ -836,11 +837,15 @@ export const stripeConfirmation = (req, res, next) => {
                 return res.json(new APIResponse({ status: 'OK', msg: 'Payment successful - subscription has been activated' }));
               });
             });
-          } else if (stripeResp.type === 'charge.failed') {
+          } else if (stripeResp.type === 'invoice.payment_failed') {
             return new SubscriptionModel().where('t1._id::varchar=$1').update({ status: 'overdue' }, [subscription._id]).then(dataUpdated => {
               return new PaymentHistory().insert(dataHistory).then(savedHistory => {
                 return res.json(new APIResponse({ status: 'OK', msg: 'Payment failed - subscription status has been changed to overdue' }));
               });
+            });
+          } else if (stripeResp.type === 'charge.refunded') {
+            return new PaymentHistory().insert(dataHistory).then(savedHistory => {
+              return res.json(new APIResponse({ status: 'OK', msg: 'Refunded amount to client account' }));
             });
           } else {
             return res.json(new APIResponse({ status: 'FAILED', msg: "Stripe - Do not update any because type is not 'charge.succeeded' or 'charge.failed'." })); // eslint-disable-line
