@@ -139,7 +139,7 @@ body {
 	}
 
 	.about-header {
-		background-image: url(https://cdn.zenquiz.net/uploaded/sls/about-header.jpeg);
+		background-image: url(images/about-header.jpeg);
 		background-repeat: no-repeat;
 		background-size: cover;
 		background-position: center top;
@@ -467,7 +467,7 @@ body {
 	}
 
 	.about-header {
-		background-image: url(https://cdn.zenquiz.net/uploaded/sls/about-header.jpeg);
+		background-image: url(images/about-header.jpeg);
 		background-repeat: no-repeat;
 		background-size: 100%;
 		background-position: center top;
