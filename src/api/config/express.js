@@ -115,7 +115,7 @@ const errorHandler = (err, req, res, next) => { // eslint-disable-line
 
 // if error is not an instanceOf APIError, convert it.
 app.use((err, req, res, next) => {
-  debug('********** ORIGINAL ERROR ********** ', err);
+  console.log('********** ORIGINAL ERROR ********** ', err);  // eslint-disable-line
   // res.status(httpStatus.OK).json(new APIErrorResponse(err))
   if (err instanceof expressValidation.ValidationError) {
     // validation error contains errors which is an array of error each containing message[]
