@@ -304,8 +304,8 @@ class PageContent extends React.Component {
               <div className='modal-body'>
                 <p className='text-center'>Are you a student or parent?</p><br />
                 <div className='text-center'>
-                  <a className='btn dk-bg-green dk-white mb5' data-dismiss='modal' data-toggle='modal' data-target='#modalFreeTrialConfirmStudent' onClick={() => this.setState({ showFreeTrialConfirm: false, showFreeTrialConfirmStudent: true })}>I AM A STUDENT</a>&nbsp;&nbsp;&nbsp;&nbsp;
-                  <a className='btn dk-bg-blue dk-white' href='/subscribe'>I AM A PARENT</a>
+                  <a className='btn dk-bg-green dk-white mb5' data-dismiss='modal' data-toggle='modal' data-target='#modalFreeTrialConfirmStudent' onClick={() => this.setState({ showFreeTrialConfirm: false, showFreeTrialConfirmStudent: true })}>I AM A STUDENT</a>
+                  <a className='btn dk-bg-blue dk-white mb5' href='/subscribe'>I AM A PARENT</a>
                 </div>
               </div>
             </div>

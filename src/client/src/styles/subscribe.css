@@ -921,4 +921,8 @@ color: #007fff;
 		margin: 0 auto;
 		width: 90%;
 	}
+
+	.btn{
+		font-size: 15px;
+	}
 }
