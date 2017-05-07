@@ -781,11 +781,7 @@ export const stripeConfirmation = (req, res, next) => {
 
       var invoice = event.data.object,
         stripeCustomerId = invoice.customer;
-      return new SubscriptionModel().select(`t1.*, t2."firstName", t2."lastName", t2."email",
-      ARRAY(SELECT t3.title FROM ${cModel.getTable()} AS t3 
-          INNER JOIN ${pModel.getTable()} AS t4 ON t3._id = ANY(ARRAY[t4."courseIds"])
-          WHERE t4._id=t1."planId") AS "courseTitles"
-      `)
+      return new SubscriptionModel().select(`t1.*, t2."firstName", t2."lastName", t2."email", ARRAY(SELECT t3.title FROM ${cModel.getTable()} AS t3  INNER JOIN ${pModel.getTable()} AS t4 ON t3._id = ANY(ARRAY[t4."courseIds"]) WHERE t4._id=t1."planId") AS "courseTitles"`)
         .where('t1."stripeCustomerId"::varchar=$1')
         .join(`${uModel.getTable()} AS t2`, 't1."parentId"=t2."_id"', 'left outer') // eslint-disable-line
         .limit(1).findOne([stripeCustomerId]).then((subscription) => { // eslint-disable-line
@@ -835,7 +831,7 @@ export const stripeConfirmation = (req, res, next) => {
                   }
                 });
                 return res.json(new APIResponse({ status: 'OK', msg: 'Payment successful - subscription has been activated' }));
-              });
+              }).catch(e => next(e));
             }).catch(e => next(e));
           } else if (stripeResp.type === 'charge.failed') {
             const dataHistory = {
@@ -850,81 +846,19 @@ export const stripeConfirmation = (req, res, next) => {
               console.log("=======================> stripeConfirmation => savedDataUpdated ==> Payment failed: ", savedDataUpdated)
               return new PaymentHistory().insert(dataHistory).then(savedHistory => {
                 return res.json(new APIResponse({ status: 'OK', msg: 'Payment failed - subscription status has been changed to overdue' }));
-              });
+              }).catch(e => next(e));
             }).catch(e => next(e));
           } else if (stripeResp.type === 'charge.refunded') {
             console.log("=======================> stripeConfirmation => Refund")
             //return new PaymentHistory().insert(dataHistory).then(savedHistory => {
             return res.json(new APIResponse({ status: 'OK', msg: 'Refunded amount to client account' }));
             //});
-          } /*else if (stripeResp.type === 'invoice.payment_succeeded') {
-            const dataHistory = {
-              _id: Utils.uuid(),
-              subscriptionId: subscription._id,
-              paymentMethod: 'stripe',
-              txnid: invoice.charge,
-              paymentStatus: invoice.paid === true ? 'paid' : 'not_paid',
-              paymentDate: new Date().getTime()
-            };
-
-            var period = subscription.nextExpirationType == 'monthly' ? 'month' : 'year',
-              ts = new Date().getTime(),
-              expiryDateFrom = subscription.expiryDate > ts ? subscription.expiryDate : ts,
-              tsExpiryDateFrom = moment.unix(expiryDateFrom / 1000),
-              expiryDate = moment(tsExpiryDateFrom.add(moment.duration(1, period))).unix() * 1000,
-              tsExpiryDate = moment.unix(expiryDate / 1000),
-              nextPeriodEnd = moment(tsExpiryDate.add(moment.duration(1, period))).unix() * 1000;
-            const dataUpdate = {
-              status: 'active',
-              expiryDateFrom,
-              expiryDate,
-              stripeChargeId: invoice.charge,
-              cancelMetadata: ''
-              // nextPeriodStart: expiryDate,
-              // nextPeriodEnd
-            }
-
-            return new SubscriptionModel().where('t1._id::varchar=$1').update(dataUpdate, [subscription._id]).then(savedDataUpdated => {
-              return new PaymentHistory().insert(dataHistory).then(savedHistory => {
-                var fee = subscription.fee;
-                if (subscription.expirationType === 'annually') {
-                  fee = fee * 12;
-                }
-                Utils.sendMail({
-                  to: subscription.email,
-                  template: 'mail_successful_charge',
-                  data: {
-                    firstName: subscription.firstName,
-                    lastName: subscription.lastName,
-                    price: '$' + fee,
-                    type: subscription.expirationType,
-                    subject: [subscription.courseTitles || ''].join(" & "),
-                    subscriptionDetailsLink: dataResp.o_website_url + '/subscription-details/' + subscription._id,
-                  }
-                });
-                return res.json(new APIResponse({ status: 'OK', msg: 'Payment successful - subscription has been activated' }));
-              });
-            });
-          } else if (stripeResp.type === 'invoice.payment_failed') {
-            const dataHistory = {
-              _id: Utils.uuid(),
-              subscriptionId: subscription._id,
-              paymentMethod: 'stripe',
-              txnid: invoice.charge,
-              paymentStatus: invoice.paid === true ? 'paid' : 'not_paid',
-              paymentDate: new Date().getTime()
-            };
-
-            return new SubscriptionModel().where('t1._id::varchar=$1').update({ status: 'overdue' }, [subscription._id]).then(savedDataUpdated => {
-              return new PaymentHistory().insert(dataHistory).then(savedHistory => {
-                return res.json(new APIResponse({ status: 'OK', msg: 'Payment failed - subscription status has been changed to overdue' }));
-              });
-            });
           } else {
-            return res.json(new APIResponse({ status: 'FAILED', msg: "Stripe - Do not update any because type is not 'charge.succeeded' or 'charge.failed'." })); // eslint-disable-line
-          }*/
-
+            return res.json(new APIResponse({ status: 'OK', msg: 'Different even type needed === Do not anything' }));
+          }
         }).catch(e => next(e));
+    }).catch((err) => {
+      return res.json(new APIResponse({ status: 'FAILED', msg: 'Event not found' }));
     });
   }).catch((err) => {
     return res.json(new APIResponse({ status: 'FAILED', msg: 'Can not get Options' }));
