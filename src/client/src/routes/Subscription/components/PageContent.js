@@ -97,7 +97,7 @@ class PageContent extends React.Component {
                     let theLabel = isAnnually ? 'year' : 'month'
                     let buttonsPanel = []
                     let cancelMetadata = item.cancelMetadata || ''
-                    if (item.status === 'active' || item.status === 'trailing') {
+                    if (item.status === 'active' || item.status === 'trialing') {
                       if (!isAnnually && parseInt(item.expiryDate) >= parseInt(item.nextPeriodEnd)) {
                         buttonsPanel.push(<a key={Utils.guid()} className='link-upgrade-subscription' href='javascript: void(0);' onClick={() => this.updateSubscription(item._id)}>Upgrade</a>)
                       }

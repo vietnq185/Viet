@@ -84,7 +84,7 @@ class SubscriptionTrailing extends React.Component {
         <h1>
           <div className='row'>
             <div className='col-sm-6 col-xs-12'>
-              {objSubscription.courseTitles.join(' & ')} <span className='status status-trailing'>Trailing</span>{trialExpiryTxt}
+              {objSubscription.courseTitles.join(' & ')} <span className='status status-trialing'>Trialing</span>{trialExpiryTxt}
             </div>
             <div className='col-sm-6 col-xs-12'>
               {buttonCancel}
