@@ -1105,53 +1105,90 @@ export const resetPassword = (req, res, next) => {
 };
 
 export const getSubscriptions = (req, res, next) => {
-  let { name = '', email = '' } = req.body;
+  try {
+    let { name, email, status, refid, planId, createdDateFrom, createdDateTo, nextPaymentDateFrom, nextPaymentDateTo } = req.body;
 
-  const sModel = new SubscriptionModel();
-  const iModel = new ItemModel();
-  const pModel = new PlanModel();
-  const cModel = new CourseModel();
-  const uModel = new UserModel();
+    console.log('#@#@#@#@#@#@#@#@#@=> req.body: ', req.body);
 
-  sModel.join(`${uModel.getTable()} AS t6`, 't6._id::varchar=t1."parentId"::varchar', 'LEFT')
+    const sModel = new SubscriptionModel();
+    const iModel = new ItemModel();
+    const pModel = new PlanModel();
+    const cModel = new CourseModel();
+    const uModel = new UserModel();
 
-  if (email) {
-    sModel.where(`lower(t6.email) LIKE '%${email.toLowerCase()}%'`);
-  }
+    sModel.join(`${uModel.getTable()} AS t6`, 't6._id::varchar=t1."parentId"::varchar', 'LEFT')
 
-  if (name) {
-    sModel.where(`lower(t6."firstName") LIKE '%${name.toLowerCase()}%' OR lower(t6."lastName") LIKE '%${name.toLowerCase()}%'`);
-  }
-
-  return sModel.findCount().then((total) => {
-    let limit = 15,
-      pages = Math.ceil(total / limit);
-    let { page = 1 } = req.body;
-    let offset = (parseInt(page) - 1) * limit;
-    if (page > pages) {
-      page = pages;
+    if (email) {
+      sModel.where(`lower(t6.email) LIKE '%${email.toLowerCase()}%'`);
     }
 
-    sModel
-      .select(`t1."_id", t1."parentId", t1."planId", t1."expirationType", t1."type", t1.refid,
+    if (name) {
+      sModel.where(`lower(t6."firstName") LIKE '%${name.toLowerCase()}%' OR lower(t6."lastName") LIKE '%${name.toLowerCase()}%'`);
+    }
+
+    if (refid) {
+      sModel.where(`t1.refid = '${refid}'`);
+    }
+
+    if (status) {
+      sModel.where(`lower(t1.status) = '${status.toLowerCase()}'`);
+    }
+
+    if (planId) {
+      sModel.where(`t1."planId"::varchar = '${planId}'`);
+    }
+
+    if (createdDateFrom && createdDateTo) {
+      if (createdDateFrom > createdDateTo) {
+        let tmpTs = createdDateFrom;
+        createdDateFrom = createdDateTo;
+        createdDateTo = tmpTs;
+      }
+      sModel.where(`t1."dateCreated" BETWEEN ${createdDateFrom} AND ${createdDateTo}`);
+    }
+
+    if (nextPaymentDateFrom && nextPaymentDateTo) {
+      if (nextPaymentDateFrom > nextPaymentDateTo) {
+        let tmpTs = nextPaymentDateFrom;
+        nextPaymentDateFrom = nextPaymentDateTo;
+        nextPaymentDateTo = tmpTs;
+      }
+      sModel.where(`t1."expiryDate" BETWEEN ${nextPaymentDateFrom} AND ${nextPaymentDateTo}`);
+    }
+
+    return sModel.findCount().then((total) => {
+      let limit = 15,
+        pages = Math.ceil(total / limit);
+      let { page = 1 } = req.body;
+      let offset = (parseInt(page) - 1) * limit;
+      if (page > pages) {
+        page = pages;
+      }
+
+      sModel
+        .select(`t1."_id", t1."parentId", t1."planId", t1."expirationType", t1."type", t1.refid,
         t1."expiryDate", t1.discount, t1.fee, t1.status, t1."dateCreated", t1.channel, t1."cardId", t1."nextPeriodStart", t1."nextPeriodEnd", t1."nextChannel", t1."nextExpirationType", 
         ARRAY(SELECT t2.title FROM ${cModel.getTable()} AS t2 
           INNER JOIN ${pModel.getTable()} AS t3 ON t2._id = ANY(ARRAY[t3."courseIds"])
           WHERE t3._id=t1."planId") AS "courseTitles", (SELECT t4.user FROM ${iModel.getTable()} AS t4 WHERE t4.order=t1._id Limit 1) AS "studentId",
           t6."firstName", t6."lastName", t6.email, t6.username`)
-      .orderBy('t1."dateCreated" DESC')
-      .limit(limit).offset(offset)
-      .findAll()
-      .then((subscriptions) => {
-        const result = {
-          subscriptions,
-          page,
-          totalPages: pages
-        };
-        return res.json(new APIResponse(result));
-      })
-      .catch(e => next(e));
-  }).catch(e => next(e));
+        .orderBy('t1."dateCreated" DESC')
+        .limit(limit).offset(offset)
+        .findAll()
+        .then((subscriptions) => {
+          const result = {
+            subscriptions,
+            page,
+            totalPages: pages
+          };
+          return res.json(new APIResponse(result));
+        })
+        .catch(e => next(e));
+    }).catch(e => next(e));
+  }
+  catch (ex) {
+    return next(ex);
+  }
 };
 
 export const cronSendTrialReminderEmail = (req) => {

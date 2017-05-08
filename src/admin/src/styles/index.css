@@ -29,3 +29,22 @@ body {
 .admin-nav-bar {
   z-index: 500;
 }
+
+.calendar {
+  font-size: 14px !important;
+}
+
+.calendar .react-datepicker__week-number {
+  width: 2.7rem;
+  line-height: 2.2rem;
+}
+
+.calendar .react-datepicker__day-name,
+.calendar .react-datepicker__day {
+  width: 2.7rem;
+  line-height: 2.2rem;
+}
+
+.calendar .react-datepicker__current-month {
+  font-size: 14px !important;
+}

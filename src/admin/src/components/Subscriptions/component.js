@@ -2,6 +2,9 @@ import React from 'react';
 import ReactDataGrid from 'react-data-grid';
 const { Row } = ReactDataGrid;
 import moment from 'moment';
+import DatePicker from 'react-datepicker';
+
+import 'react-datepicker/dist/react-datepicker.css';
 
 import { Button, Modal, Pagination, Panel, ButtonToolbar } from 'react-bootstrap';
 
@@ -72,14 +75,31 @@ export default class Component extends React.Component {
       filter: {}
     };
     this.listMap = {};
+    this.dateFormat = "DD-MM-YYYY";
   }
 
   componentDidMount() {
     this.getList(this.state.page)
+    this.props.getPlanList();
   }
 
   getList(page = 1) {
-    this.props.getSubscriptionList({ page, ...this.state.filter })
+
+    const obj = {};
+    if (this.state.filter.createdDateFrom) {
+      obj.createdDateFrom = this.state.filter.createdDateFrom.valueOf();
+    }
+    if (this.state.filter.createdDateTo) {
+      obj.createdDateTo = this.state.filter.createdDateTo.valueOf();
+    }
+    if (this.state.filter.nextPaymentDateFrom) {
+      obj.nextPaymentDateFrom = this.state.filter.nextPaymentDateFrom.valueOf();
+    }
+    if (this.state.filter.nextPaymentDateTo) {
+      obj.nextPaymentDateTo = this.state.filter.nextPaymentDateTo.valueOf();
+    }
+
+    this.props.getSubscriptionList({ page, ...this.state.filter, ...obj })
     this.setState({ page: page })
   }
 
@@ -142,6 +162,8 @@ export default class Component extends React.Component {
   render() {
     console.info('Subscriptions components => props: ', this.props);
 
+    console.info('Subscriptions components => state: ', this.state);
+
     return (
       <div>
 
@@ -180,23 +202,86 @@ export default class Component extends React.Component {
 
   // render filter - START
   filterChange(evt) {
-    const filter = Utils.copy(this.state.filter);
+    const filter = Object.assign({}, this.state.filter);
     filter[evt.target.name] = evt.target.value;
     this.setState({ filter });
   }
 
+  handleDateChange(key, date) {
+    const filter = Object.assign({}, this.state.filter);
+    filter[key] = date; //evt.target.value;
+    this.setState({ filter });
+  }
+
   renderFilters() {
+    const self = this;
     const filterFotter = (
-      <ButtonToolbar>
-        <Button onClick={() => this.setState({ filter: {} })}>Clear</Button>
-        <Button onClick={() => this.getList()} bsStyle="primary">Search</Button>
-      </ButtonToolbar>
+      <div className='text-center'>
+        <Button onClick={() => this.setState({ filter: {} })}>Clear</Button>&nbsp;<Button onClick={() => this.getList()} bsStyle="primary">Search</Button>
+      </div>
     );
+    const allowList = ['pending', 'trailing', 'active', 'overdue', 'cancelled'];
     return (
       <Panel footer={filterFotter}>
         {this.renderFilterRow(
+          <input className='form-control' type='text' name='refid' label='Subscription ID' value={this.state.filter.refid || ''} onChange={this.filterChange.bind(this)} />,
+          <select className='form-control' name='planId' label='Plan' value={this.state.filter.planId || ''} onChange={this.filterChange.bind(this)}>
+            <option key='plan_all' value=''> --- All --- </option>
+            {self.props.subscription.planList.map(item => {
+              return <option key={`plan_${item._id}`} value={item._id}>{item.courseTitles.join(' & ')}</option>
+            })}
+          </select>
+        )}
+        {this.renderFilterRow(
           <input className='form-control' type='text' name='name' label='Customer name' value={this.state.filter.name || ''} onChange={this.filterChange.bind(this)} />,
-          <input className='form-control' type='text' name='email' label='Customer email' value={this.state.filter.email || ''} onChange={this.filterChange.bind(this)} />
+          <div className='row' label='Created date'>
+            <div className='col-xs-6'>
+              <span>From:&nbsp;</span>
+              <DatePicker className='form-control' calendarClassName='calendar'
+                selected={this.state.filter.createdDateFrom || ''}
+                onChange={(date, evt) => this.handleDateChange('createdDateFrom', date)}
+                monthsShown={1}
+                dateFormat={this.dateFormat} />
+            </div>
+            <div className='col-xs-6'>
+              <span>To:&nbsp;</span>
+              <DatePicker className='form-control' calendarClassName='calendar'
+                selected={this.state.filter.createdDateTo || ''}
+                onChange={(date, evt) => this.handleDateChange('createdDateTo', date)}
+                monthsShown={1}
+                dateFormat={this.dateFormat} />
+            </div>
+          </div>
+        )}
+        {this.renderFilterRow(
+          <input className='form-control' type='text' name='email' label='Customer email' value={this.state.filter.email || ''} onChange={this.filterChange.bind(this)} />,
+          <div className='row' label='Next payment date'>
+            <div className='col-xs-6'>
+              <span>From:&nbsp;</span>
+              <DatePicker className='form-control' calendarClassName='calendar'
+                selected={this.state.filter.nextPaymentDateFrom || ''}
+                onChange={(date, evt) => this.handleDateChange('nextPaymentDateFrom', date)}
+                monthsShown={1}
+                dateFormat={this.dateFormat} />
+            </div>
+            <div className='col-xs-6'>
+              <span>To:&nbsp;</span>
+              <DatePicker className='form-control' calendarClassName='calendar'
+                selected={this.state.filter.nextPaymentDateTo || ''}
+                onChange={(date, evt) => this.handleDateChange('nextPaymentDateTo', date)}
+                monthsShown={1}
+                dateFormat={this.dateFormat} />
+            </div>
+          </div>
+        )}
+        {this.renderFilterRow(
+          <select className='form-control' name='status' label='Status' value={this.state.filter.status || ''} onChange={this.filterChange.bind(this)}>
+            <option key='all_statuses' value=''> --- All --- </option>
+            {allowList.map(stat => {
+              return <option key={`status_${stat}`} value={stat}>{Utils.ucfirst(stat)}</option>
+            })}
+          </select>,
+          <span></span>
         )}
       </Panel>
     );

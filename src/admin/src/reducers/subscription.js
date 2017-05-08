@@ -37,20 +37,40 @@ export const getSubscriptionList = (data) => (dispatch, getState) => {
   })
 }
 
+const PLAN_LIST = 'PLAN_LIST'
+
+const updatePlanList = (result) => {
+  return {
+    type: PLAN_LIST,
+    result
+  }
+}
+
+export const getPlanList = () => (dispatch, getState) => {
+  return API.getPlans().then((result) => {
+    dispatch(updatePlanList(result))
+  }).catch(() => {
+    dispatch(updatePlanList([]))
+  })
+}
+
 // ------------------------------------
 // Reducer
 // ------------------------------------
 const initialState = {
   list: {
     ...initialList
-  }
+  },
+  planList: []
 }
 
 export default (state = initialState, action) => {
   switch (action.type) {
     case GET_SUBSCRIPTION_LIST:
-      console.info('action.result: ', action.result)
       return Utils.merge(state, { list: { ...state.list, ...action.result } })
+      break // eslint-disable-line
+    case PLAN_LIST:
+      return Utils.merge(state, { planList: action.result })
       break // eslint-disable-line
     default:
       return state
