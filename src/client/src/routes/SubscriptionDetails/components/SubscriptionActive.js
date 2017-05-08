@@ -69,9 +69,16 @@ class SubscriptionActive extends React.Component {
 
     return (
       <div className='subscribe-details'>
-        <h1>{objSubscription.courseTitles.join(' & ')} <span className='status status-active'>Active</span>
-          {buttonCancel}
-          {buttonUpgrade}
+        <h1>
+          <div className='row'>
+            <div className='col-sm-6 col-xs-12'>
+              {objSubscription.courseTitles.join(' & ')} <span className='status status-active'>Active</span>
+            </div>
+            <div className='col-sm-6 col-xs-12'>
+              {buttonCancel}
+              {buttonUpgrade}
+            </div>
+          </div>
         </h1>
         <h3>Subscription details</h3>
         <div className='info'>
