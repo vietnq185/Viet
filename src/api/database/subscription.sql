@@ -62,7 +62,10 @@ CREATE TABLE payment_history (
     _id uuid NOT NULL,
     "subscriptionId" uuid NOT NULL,
     "paymentMethod" character varying(255) COLLATE pg_catalog."default" DEFAULT 'stripe'::character varying,
-    "txnid" character varying(255) COLLATE pg_catalog."default" DEFAULT NULL::character varying,
+    "chargeId" character varying(255) COLLATE pg_catalog."default" DEFAULT NULL::character varying,
+ 	"txnid" character varying(255) COLLATE pg_catalog."default" DEFAULT NULL::character varying,
+    "paymentType" character varying(255) COLLATE pg_catalog."default" DEFAULT NULL::character varying,
+    "amount" double precision DEFAULT 0,
     "paymentStatus" character varying(255) COLLATE pg_catalog."default" DEFAULT NULL::character varying,
     "paymentDate" bigint,
     CONSTRAINT payment_history_pkey PRIMARY KEY (_id)
