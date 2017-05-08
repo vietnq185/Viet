@@ -529,7 +529,7 @@ a{
 .subscribe-wrapper .my-subscription .tbl-subscriptions .subscribe-status.subscribe-status-pending{
 	color: #ff9900;
 }
-.subscribe-wrapper .my-subscription .tbl-subscriptions .subscribe-status.subscribe-status-trailing{
+.subscribe-wrapper .my-subscription .tbl-subscriptions .subscribe-status.subscribe-status-trialing{
 	color: #5578ed;
 }
 .subscribe-wrapper .my-subscription .tbl-subscriptions .subscribe-status.subscribe-status-overdue{
@@ -673,7 +673,7 @@ a{
 	background: #ff9900;
 	color: #fff;
 }
-.subscribe-wrapper .subscribe-details h1 span.status-trailing{
+.subscribe-wrapper .subscribe-details h1 span.status-trialing{
 	background: #2b78e4;
 	color: #fff;
 }

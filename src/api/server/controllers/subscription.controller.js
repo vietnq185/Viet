@@ -126,7 +126,7 @@ export const create = (req, res, next) => {
         channel,
         fee,
         discount: discountValue,
-        status: (channel === 'bank' ? 'pending' : 'trailing')
+        status: (channel === 'bank' ? 'pending' : 'trialing')
       };
       if (cardId !== '') {
         data.cardId = cardId;
@@ -396,7 +396,7 @@ export const changeStatus = (req, res, next) => {
       if (subscriptionData === null) {
         return next(new APIError('SUBSCRIPTION_NOT_FOUND', httpStatus.OK, true));
       }
-      const allowList = ['pending', 'trailing', 'active', 'overdue', 'cancelled'];
+      const allowList = ['pending', 'trialing', 'active', 'overdue', 'cancelled'];
       if (allowList.indexOf(status) === -1) {
         return next(new APIError('NOT_ALLOW_STATUS', httpStatus.OK, true));
       }
@@ -429,7 +429,7 @@ export const changeStatus = (req, res, next) => {
           .findOne([id]).then((subscription) => { // eslint-disable-line
             if (subscription !== null) {
               if (authData.isAdmin && subscription.channel === 'bank') {
-                if (status === 'trailing') {
+                if (status === 'trialing') {
                   Utils.sendMail({
                     to: subscription.email,
                     template: 'mail_bank_transfer_activation',
@@ -793,8 +793,11 @@ export const stripeConfirmation = (req, res, next) => {
               _id: Utils.uuid(),
               subscriptionId: subscription._id,
               paymentMethod: 'stripe',
-              txnid: invoice.id,
+              chargeId: invoice.id,
+              txnid: invoice.balance_transaction,
               paymentStatus: invoice.status,
+              paymentType: 'payment',
+              amount: (invoice.amount / 100),
               paymentDate: new Date().getTime()
             };
 
@@ -838,10 +841,14 @@ export const stripeConfirmation = (req, res, next) => {
               _id: Utils.uuid(),
               subscriptionId: subscription._id,
               paymentMethod: 'stripe',
-              txnid: invoice.id,
+              chargeId: invoice.id,
+              txnid: invoice.balance_transaction,
               paymentStatus: invoice.status,
+              paymentType: 'payment',
+              amount: (invoice.amount / 100),
               paymentDate: new Date().getTime()
             };
+
             return new SubscriptionModel().where('t1._id::varchar=$1').update({ status: 'overdue' }, [subscription._id]).then(savedDataUpdated => {
               console.log("=======================> stripeConfirmation => savedDataUpdated ==> Payment failed: ", savedDataUpdated)
               return new PaymentHistory().insert(dataHistory).then(savedHistory => {
@@ -850,9 +857,20 @@ export const stripeConfirmation = (req, res, next) => {
             }).catch(e => next(e));
           } else if (stripeResp.type === 'charge.refunded') {
             console.log("=======================> stripeConfirmation => Refund")
-            //return new PaymentHistory().insert(dataHistory).then(savedHistory => {
-            return res.json(new APIResponse({ status: 'OK', msg: 'Refunded amount to client account' }));
-            //});
+            const dataHistory = {
+              _id: Utils.uuid(),
+              subscriptionId: subscription._id,
+              paymentMethod: 'stripe',
+              chargeId: invoice.id,
+              txnid: invoice.balance_transaction,
+              paymentStatus: invoice.status,
+              paymentType: 'refund',
+              amount: (invoice.amount_refunded / 100),
+              paymentDate: new Date().getTime()
+            };
+            return new PaymentHistory().insert(dataHistory).then(savedHistory => {
+              return res.json(new APIResponse({ status: 'OK', msg: 'Refunded amount to client account' }));
+            });
           } else {
             return res.json(new APIResponse({ status: 'OK', msg: 'Different even type needed === Do not anything' }));
           }
@@ -933,7 +951,7 @@ export const cancelSubscription = (req, res, next) => {
         const dataUpdate = {
           cancelMetadata: req.body.cancellationData
         }
-        if (subscription.status === 'trailing') {
+        if (subscription.status === 'trialing') {
           dataUpdate.status = 'cancelled';
         } else if (subscription.status === 'active') {
           var date = new Date(),
@@ -952,7 +970,7 @@ export const cancelSubscription = (req, res, next) => {
             return res.json(new APIResponse({ status: 'ERR', msg: 'UPDATE_FAILED' }));
           }
 
-          if (subscription.status === 'trailing') {
+          if (subscription.status === 'trialing') {
             Utils.sendMail({
               to: user.email,
               template: 'mail_sorry_for_cancellation',
@@ -970,14 +988,14 @@ export const cancelSubscription = (req, res, next) => {
               function (err, confirmation) {
                 var amountRefund = (subscription.fee * 12) - (monthsUsed * subscription.fee) - dataResp.o_admin_fee;
                 if (refundCharge && amountRefund > 0 && subscription.stripeChargeId !== '') {
-                  stripe.refunds.create({
-                    charge: subscription.stripeChargeId,
-                    amount: amountRefund * 100
-                  }, function (err, refund) {
-                    // asynchronously called
-                  });
+                  stripe.charges.refund(subscription.stripeChargeId,
+                    {
+                      amount: amountRefund * 100
+                    }, function (err, refund) {
+                      // asynchronously called
+                    });
                 }
-                if (subscription.status !== 'trailing') {
+                if (subscription.status !== 'trialing') {
                   if (result.channel === 'annually') {
                     Utils.sendMail({
                       to: user.email,
@@ -1144,7 +1162,7 @@ export const cronSendTrialReminderEmail = (req) => {
       .select('t1.*, t2."firstName", t2."lastName", t2."email"')
       .where('t1.status = $1')
       .join(`${uModel.getTable()} AS t2`, 't1."parentId"=t2."_id"', 'left outer') // eslint-disable-line
-      .findAll(['trailing'])
+      .findAll(['trialing'])
       .then((subscriptions) => {
         if (subscriptions.length > 0) {
           for (var i = 0; i < subscriptions.length; i++) {
