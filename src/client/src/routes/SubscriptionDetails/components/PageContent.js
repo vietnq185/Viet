@@ -51,7 +51,7 @@ class PageContent extends React.Component {
       } else {
         const viewMap = {}
         viewMap['cancelled'] = (<SubscriptionCancelled key={Utils.guid()} {...this.props} objSubscription={objSubscription} assignSubscription={() => this.assignSubscription(objSubscription)} />)
-        viewMap['trailing'] = (<SubscriptionTrailing key={Utils.guid()} {...this.props} objSubscription={objSubscription} assignSubscription={() => this.assignSubscription(objSubscription)} />)
+        viewMap['trialing'] = (<SubscriptionTrailing key={Utils.guid()} {...this.props} objSubscription={objSubscription} assignSubscription={() => this.assignSubscription(objSubscription)} />)
         viewMap['overdue'] = (<SubscriptionOverdue key={Utils.guid()} {...this.props} objSubscription={objSubscription} assignSubscription={() => this.assignSubscription(objSubscription)} />)
         viewMap['pending'] = (<SubscriptionPending key={Utils.guid()} {...this.props} objSubscription={objSubscription} />)
         viewMap['active'] = (<SubscriptionActive key={Utils.guid()} {...this.props} objSubscription={objSubscription} assignSubscription={() => this.assignSubscription(objSubscription)} />)
