@@ -133,6 +133,10 @@ export const create = (req, res, next) => {
     if (Utils.isNotEmptyArray(req.body.status || [])) {
       data.status = req.body.status;
     }
+    // check to add linkCode if is Student
+    if (results.length > 2) {
+      data.linkCode = Utils.generateLinkCode();
+    }
     // insert
     return new UserModel().insert(data).then((savedUser) => {
       if (savedUser === null) {

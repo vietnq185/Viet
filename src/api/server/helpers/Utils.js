@@ -13,10 +13,20 @@ const uuidV4 = require('uuid/v4');
 
 const nodemailer = require('nodemailer');
 
+const RandomString = require("randomstring");
+
 /**
  * Constructor
  */
 var Utils = function () { };
+
+Utils.generateLinkCode = function () {
+  return RandomString.generate({
+    length: 6,
+    charset: 'alphanumeric',
+    capitalization: 'uppercase'
+  });
+}
 
 /**
 * Check if error is defined in constants.
