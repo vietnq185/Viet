@@ -949,5 +949,6 @@ color: #007fff;
 	}
 	#modalFreeTrialConfirm .btn{
 		margin: 5px 0;
+		display: block;
 	}
 }
