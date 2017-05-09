@@ -367,6 +367,57 @@ export default class Component extends React.Component {
       );
     }
 
+    let cancellationData = ''
+    if (objDetails.status === 'cancelled' && objDetails.cancelMetadata !== null) {
+      const chk1 = objDetails.cancelMetadata.chk1 || 0
+      const chk2 = objDetails.cancelMetadata.chk2 || 0
+      const chk3 = objDetails.cancelMetadata.chk3 || 0
+      const chk4 = objDetails.cancelMetadata.chk4 || 0
+      const chk5 = objDetails.cancelMetadata.chk5 || 0
+      const chk6 = objDetails.cancelMetadata.chk6 || 0
+      const chk7 = objDetails.cancelMetadata.chk7 || 0
+      const chk8 = objDetails.cancelMetadata.chk8 || 0
+      const chk9 = objDetails.cancelMetadata.chk9 || 0
+      cancellationData = (
+        <div>
+          <h4>Cancelllation reasons</h4>
+          <div className="checkbox">
+            <label><input type="checkbox" disabled name="chk1" defaultChecked={chk1 === 1 ? true : false} ref="chk1" />My child lacks of time to do it.</label>
+          </div>
+          <div className="checkbox">
+            <label><input type="checkbox" disabled name="chk2" defaultChecked={chk2 === 1 ? true : false} ref="chk2" />A-SLS is too expensive.</label>
+          </div>
+          <div className="checkbox">
+            <label><input type="checkbox" disabled name="chk3" defaultChecked={chk3 === 1 ? true : false} ref="chk3" />It is not user-friendly.</label>
+          </div>
+          <div className="checkbox">
+            <label><input type="checkbox" disabled name="chk4" defaultChecked={chk4 === 1 ? true : false} ref="chk4" />The quality of content is not good.</label>
+          </div>
+          <div className="checkbox">
+            <label><input type="checkbox" disabled name="chk5" defaultChecked={chk5 === 1 ? true : false} ref="chk5" />It does not help my child to improve.</label>
+          </div>
+          <div className="checkbox">
+            <label><input type="checkbox" disabled name="chk6" defaultChecked={chk6 === 1 ? true : false} ref="chk6" />It is not interesting to engage my child.</label>
+          </div>
+          <div className="checkbox">
+            <label><input type="checkbox" disabled name="chk7" defaultChecked={chk7 === 1 ? true : false} ref="chk7" />Your emails are too frequent or irrelevant.</label>
+          </div>
+          <div className="checkbox">
+            <label><input type="checkbox" disabled name="chk8" defaultChecked={chk8 === 1 ? true : false} ref="chk8" />I have signed up another e-learning application for my child.</label>
+          </div>
+          <div className="checkbox">
+            <label><input type="checkbox" disabled name="chk9" defaultChecked={chk9 === 1 ? true : false} ref="chk9" />My child has finished primary education.</label>
+          </div>
+          <div className="checkbox">
+            <label>Other reason(s):</label>
+          </div>
+          <div className="form-group">
+            <textarea ref="other_reasons" name="other_reasons" className="form-control" rows="5" readOnly>{objDetails.cancelMetadata.other_reasons}</textarea>
+          </div>
+        </div>
+      )
+    }
+
     const data = this.parseData(this.state.objDetails, false);
 
     return (
@@ -381,6 +432,7 @@ export default class Component extends React.Component {
           <div className={['form-group', this.state.updateMsg ? 'has-error' : 'hide'].join(' ')}>
             <span className='help-block'>{this.state.updateMsg}</span>
           </div>
+          <div>{cancellationData}</div>
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={() => this.close()}>Close</Button>
