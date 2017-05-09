@@ -62,10 +62,10 @@ class Step1SignIn extends React.Component {
       }).catch((errMsg) => {
         switch (errMsg) {
           case 'UNREGISTERED_USER':
-            this.setState({ errMsg: 'Email not found.' })
+            this.setState({ errMsg: 'Invalid Email/Password.' })
             break
           case 'WRONG_PASSWORD':
-            this.setState({ errMsg: 'Incorrect password.' })
+            this.setState({ errMsg: 'Invalid Email/Password.' })
             break
           default:
             this.setState({ errMsg })
