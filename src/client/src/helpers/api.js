@@ -377,7 +377,7 @@ export default class API {
     })
   }
 
-static getUserForgotPassword = (id, hash) => {
+  static getUserForgotPassword = (id, hash) => {
     return new Promise((resolve, reject) => {
       return fetch(config.api.getUserForgotPassword.replace(/:id/g, id).replace(/:hash/g, hash), {
         method: 'GET',
@@ -425,6 +425,28 @@ static getUserForgotPassword = (id, hash) => {
         headers: {
           'Content-type': 'application/json'
         }
+      }).then((response) => response.json()).then((jsonResponse) => {
+        if (jsonResponse && jsonResponse.success) {
+          return resolve(jsonResponse.result)
+        }
+        const msg = jsonResponse.error.message || ''
+        return reject(msg)
+      }).catch((error) => {
+        const msg = error.message || ''
+        return reject(msg)
+      })
+    })
+  }
+
+  static updateProfile = (accessToken, userId, data = { firstName: '', lastName: '' }) => {
+    return new Promise((resolve, reject) => {
+      return fetch(config.api.updateProfile.replace(/:userId/g, userId), {
+        method: 'PUT',
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify(data)
       }).then((response) => response.json()).then((jsonResponse) => {
         if (jsonResponse && jsonResponse.success) {
           return resolve(jsonResponse.result)

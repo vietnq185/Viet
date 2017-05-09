@@ -864,6 +864,17 @@ color: #007fff;
 #modalFreeTrialConfirm .btn{
 	margin: 0 10px;
 }
+.form-profile-container{
+	width: 60%;
+	margin: 0 auto;
+}
+.form-profile-container .form-title{
+	font-size: 22px;
+    font-weight: 600;
+    margin: 20px 0;
+    text-align: center;
+    text-transform: uppercase;
+}
 @media (max-width: 1199px){
 	.subscription-plan .subscription-plan-item{
 		min-height: 509px;
@@ -900,6 +911,9 @@ color: #007fff;
 	.reset-password-container{
 		width: 90%;
 		margin: 0 auto;
+	}
+	.form-profile-container{
+		width: 95%;
 	}
 }
 @media (max-width: 659px){
@@ -939,7 +953,7 @@ color: #007fff;
 	.subscribe-wrapper .subscribe-details .upgrade-plan-container table tr td:first-child{
 		font-size: 14px;
 	}
-	#modalFreeTrialConfirm, #modalFreeTrialConfirmStudent {
+	#modalFreeTrialConfirm, #modalFreeTrialConfirmStudent, #modalConfirmUpdateProfile {
 		margin: 0 auto;
 		width: 90%;
 	}
