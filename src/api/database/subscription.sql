@@ -222,3 +222,7 @@ SET "description" = 'You can learn all concepts about Math & Science',
         '24/7 assistance from teacher'
     ]
 WHERE _id::uuid='55148ffa-6ca0-4930-bb09-cd2a1158d655';
+
+
+INSERT INTO "options" ("foreign_id", "key", "tab_id", "value", "label", "description", "type", "order", "is_visible", "style", "is_public") VALUES
+(1, 'o_remaining_discount_subscription', 1, 200, NULL, 'Remaining discount subscription', 'float', 4, 2, NULL, 'F');

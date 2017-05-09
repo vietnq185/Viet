@@ -199,7 +199,7 @@ class Step1SignUp extends React.Component {
             <input className='form-control' name='email' id='email' required='' type='text' ref='email' />
             <span className={[this.errors.email ? 'help-block' : 'hide'].join(' ')}>{this.errors.email}</span>
           </div>
-          <div className={['form-group', this.errors.email ? 'has-error' : ''].join(' ')}>
+          <div className={['form-group', this.errors.phone ? 'has-error' : ''].join(' ')}>
             <label htmlFor='contact-name'>Phone Number{requiredLabel}</label>
             <input className='form-control' name='phone' id='phone' required='' type='text' ref='phone' />
             <span className={[this.errors.phone ? 'help-block' : 'hide'].join(' ')}>{this.errors.phone}</span>

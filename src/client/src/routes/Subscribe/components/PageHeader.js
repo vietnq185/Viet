@@ -33,6 +33,7 @@ class PageHeader extends React.Component {
       let userInfo = (<span><i className='fa fa-user' /> {auth.user.firstName} {auth.user.lastName}</span>)
       userLink = (
         <NavDropdown title={userInfo} id="nav-dropdown" className='side-nav-item dk-white route--item'>
+          <MenuItem href='/profile'>My Profile</MenuItem>
           <MenuItem href='/subscription'>My Subscriptions</MenuItem>
           <MenuItem onClick={() => this.doLogout()}>Logout</MenuItem>
         </NavDropdown>

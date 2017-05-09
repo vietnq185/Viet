@@ -13,6 +13,7 @@ import CancelSubscriptionRoute from './CancelSubscription'
 import ForgotPasswordRoute from './ForgotPassword'
 import NotFoundRoute from './NotFound'
 import AboutRoute from './About'
+import ProfileRoute from './Profile'
 
 /*  Note: Instead of using JSX, we recommend using react-router
     PlainRoute objects to build route definitions.   */
@@ -33,6 +34,7 @@ export const createRoutes = (store) => ({
     CancelSubscriptionRoute(store),
     ForgotPasswordRoute(store),
     AboutRoute(store),
+    ProfileRoute(store),
     NotFoundRoute(store)
   ]
 })

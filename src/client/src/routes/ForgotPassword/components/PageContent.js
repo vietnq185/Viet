@@ -45,8 +45,17 @@ class PageContent extends React.Component {
     this.resetErrors()
 
     const rules = {
+
       password: {
-        required: 'Password is required'
+        required: 'Password is required',
+        minLen: {
+          value: 6,
+          msg: 'Password length must be at least {value} characters long'
+        },
+        maxLen: {
+          value: 32,
+          msg: 'Password length must be less than or equal to {value} characters long'
+        },
       },
       confirmPassword: {
         required: 'Confirm password is required',

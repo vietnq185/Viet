@@ -176,7 +176,9 @@ export const update = (req, res, next) => {
 
   const promises = [];
   const userData = Utils.copy(req.user);
-
+  if (userData.roles) {
+    delete userData.roles;
+  }
   // validate email (if any)
   if (typeof req.body.email !== 'undefined') {
     const validateEmail = new UserModel().where('t1._id::varchar!=$1 AND lower(t1.email)=$2').findCount([userData._id, req.body.email]).then((cnt) => {
