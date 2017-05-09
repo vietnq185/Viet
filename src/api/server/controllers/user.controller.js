@@ -313,10 +313,9 @@ export const linkStudent = (req, res, next) => {
     return next(new APIError(constants.errors.notParent, httpStatus.OK, true));
   }
 
-  const email = req.body.email || '';
-  const linkCode = parseInt(req.body.linkCode || 0, 10);
+  const { email = '', linkCode = '' } = req.body;
 
-  if (isNaN(linkCode)) {
+  if (!(linkCode)) {
     return next(new APIError(constants.errors.linkCodeNotFound, httpStatus.OK, true));
   }
 
