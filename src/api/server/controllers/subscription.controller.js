@@ -100,8 +100,9 @@ export const create = (req, res, next) => {
         oAllowDiscount = optionResp.o_allow_discount || 0,
         oDiscountPercent = optionResp.o_discount_percent || 0,
         oDiscountLimit = optionResp.o_discount_limit | 0,
+        oRemainingDiscountSubscription = optionResp.o_remaining_discount_subscription | 0,
         fee = planData.fee;
-      if (parseInt(oAllowDiscount) === 1 && parseFloat(oDiscountPercent) > 0 && totalSubscriptions < oDiscountLimit) {
+      if (parseInt(oAllowDiscount) === 1 && parseFloat(oDiscountPercent) > 0 && oRemainingDiscountSubscription > 0) {
         discountValue = (fee * oDiscountPercent) / 100;
       }
       fee = fee - discountValue;
@@ -199,13 +200,20 @@ export const create = (req, res, next) => {
             if (!savedSubscription.cardId) {
               return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
             }
-            return processPayment(savedSubscription).then((dataResp) => {
-              savedSubscription.stripeStatus = dataResp.status;
-              savedSubscription.stripeMsg = data.msg;
-              return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
-            }).catch((err) => {
-              savedSubscription.stripeStatus = 'FAILED';
-              return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
+            if (oRemainingDiscountSubscription > 0) {
+              oRemainingDiscountSubscription -= 1;
+            } else {
+              oRemainingDiscountSubscription = 0;
+            }
+            return new OptionModel().reset().where('t1.key::varchar=$1').update({value: oRemainingDiscountSubscription}, ['o_remaining_discount_subscription']).then((updateOptions) => {
+              return processPayment(savedSubscription).then((dataResp) => {
+                savedSubscription.stripeStatus = dataResp.status;
+                savedSubscription.stripeMsg = data.msg;
+                return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
+              }).catch((err) => {
+                savedSubscription.stripeStatus = 'FAILED';
+                return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
+              });
             });
           }).catch(e => next(e));
 
@@ -883,13 +891,14 @@ export const stripeConfirmation = (req, res, next) => {
   });
 };
 
-export const checkToShowBannerDiscount = (req, res, next) => new SubscriptionModel().findCount().then((total) => {
+export const checkToShowBannerDiscount = (req, res, next) => {
   return new OptionModel().getPairs(1).then((dataResp) => {
     var isDisabled = parseInt(dataResp.o_allow_discount) === 1 ? true : false,
       limit = dataResp.o_discount_limit || 0,
+      remaining_discount_subscription = dataResp.o_remaining_discount_subscription || 0,
       discount = dataResp.o_discount_percent || 0;
 
-    if (!isDisabled || total >= limit) {
+    if (!isDisabled || remaining_discount_subscription <= 0) {
       return res.json(new APIResponse({ showBanner: 0, discount: 0, limit: 0 }));
     } else {
       return res.json(new APIResponse({ showBanner: 1, discount: discount, limit: limit }));
@@ -897,7 +906,7 @@ export const checkToShowBannerDiscount = (req, res, next) => new SubscriptionMod
   }).catch((err) => {
     return res.json(new APIResponse({ status: 'FAILED', msg: 'Can not get Options' }));
   });
-}).catch(e => next(e));
+};
 
 export const cronUpdateSubscriptionStatus = (req) => {
   const uModel = new UserModel();

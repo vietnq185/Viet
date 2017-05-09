@@ -16,7 +16,7 @@ export default class Footer extends React.Component {
     super(props)
     this.showBannerDiscount = {}
     this.state = {
-      show: true,
+      show: false,
       showBannerDiscount: Utils.copy(this.showBannerDiscount)
     }
   }
@@ -28,8 +28,8 @@ export default class Footer extends React.Component {
   }
   render() {
     let showPromotionBanner = this.state.show;
-    if (this.state.showBannerDiscount.showBanner === 0) {
-      showPromotionBanner = false;
+    if (this.state.showBannerDiscount.showBanner === 1) {
+      showPromotionBanner = true;
     }
     if (this.props.auth.isLoggedIn) {
       showPromotionBanner = false;
