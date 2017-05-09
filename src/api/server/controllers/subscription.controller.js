@@ -205,7 +205,7 @@ export const create = (req, res, next) => {
             } else {
               oRemainingDiscountSubscription = 0;
             }
-            return new OptionModel().reset().where('t1.key::varchar=$1').update({value: oRemainingDiscountSubscription}, ['o_remaining_discount_subscription']).then((updateOptions) => {
+            return new OptionModel().reset().where('t1.key::varchar=$1').update({ value: oRemainingDiscountSubscription }, ['o_remaining_discount_subscription']).then((updateOptions) => {
               return processPayment(savedSubscription).then((dataResp) => {
                 savedSubscription.stripeStatus = dataResp.status;
                 savedSubscription.stripeMsg = data.msg;
@@ -935,8 +935,11 @@ export const cronUpdateSubscriptionStatus = (req) => {
           new SubscriptionModel().reset().where('t1._id::varchar=$1').update({ status: 'cancelled' }, [subscription._id]);
         }
       }
-    })
-    .catch(e => next(e));
+      return;
+    }).catch(e => {
+      return;
+    });
+
 }
 
 export const cancelSubscription = (req, res, next) => {
