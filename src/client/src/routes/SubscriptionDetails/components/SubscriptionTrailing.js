@@ -32,7 +32,7 @@ class SubscriptionTrailing extends React.Component {
           </div>
           <div className='col-sm-6 col-xs-12'>
             <div>School: {sSchool}</div>
-            <div>Level: {studentData.studentInfo.class || ''}</div>
+            <div>Level: {(studentData.studentInfo !== null ? studentData.studentInfo.class : '')}</div>
           </div>
         </div>
       )
