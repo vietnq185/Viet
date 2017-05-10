@@ -10,8 +10,6 @@ CREATE TABLE plans (
     CONSTRAINT plans_course_ids_ukey UNIQUE ("courseIds")
 );
 
-ALTER TABLE plans OWNER TO postgres;
-
 INSERT INTO plans(_id, "courseIds", fee, description, "keyBenefits") VALUES 
 (
     '121bbca5-3f43-4374-a176-243a095cf852'::uuid, ARRAY['406add37-2263-4a70-96aa-2b2c30f3e92b'::uuid], 60, 
@@ -82,8 +80,6 @@ ALTER TABLE items DROP CONSTRAINT "items_parentItem_fkey" CASCADE;
 ALTER TABLE items DROP CONSTRAINT items_user_fkey CASCADE;
 
 ALTER TABLE subscriptions ADD COLUMN refid SERIAL UNIQUE;
-
-ALTER TABLE users ADD COLUMN "linkCode" SERIAL UNIQUE;
 
 ALTER TABLE subscriptions ADD COLUMN "nextPeriodStart" bigint;
 ALTER TABLE subscriptions ADD COLUMN "nextPeriodEnd" bigint;
@@ -226,3 +222,5 @@ WHERE _id::uuid='55148ffa-6ca0-4930-bb09-cd2a1158d655';
 
 INSERT INTO "options" ("foreign_id", "key", "tab_id", "value", "label", "description", "type", "order", "is_visible", "style", "is_public") VALUES
 (1, 'o_remaining_discount_subscription', 1, 200, NULL, 'Remaining discount subscription', 'float', 4, 2, NULL, 'F');
+
+INSERT INTO users (_id, email, role, salt, "firstName", "lastName", phone, "profilePicture", "coverPicture", "userQuote", "hashedPassword", "userToken", provider, facebook, "facebookId", "facebookToken", google, "googleId", "googleToken", username, status, "lastLoginDate", "lastActivityDate", metadata, "dateCreated", "linkCode") VALUES ('c5ec6dfc-6aaf-4a51-970e-1031ae56a930', 'admin@admin.com', 'admin', 'v9gx/S9pLff95exkQS8rzQ==', 'Super', 'Administrator', '84909091101', '', '', '', 'VeiPU5lNvEjfwOIQl6PqwnxWaqORcIQLyc1CnVeXcLuBhCnPxpYQketTG+FGuRR+qCINCXJ8WlBcZ2/lybD7FA==', 'b6af34ad5be7c7198972aa189833dca7e0d6e00c3e16d24e3f0949fc64dba904', 'local', NULL, NULL, NULL, NULL, NULL, NULL, 'c5ec6dfc-6aaf-4a51-970e-1031ae56a930', '{parent}', NULL, NULL, NULL, 1493637306162, 546);

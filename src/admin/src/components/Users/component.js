@@ -55,6 +55,7 @@ export default class Component extends React.Component {
         { key: 'email', name: 'Email', resizable: true },
         { key: 'role', name: 'Role', resizable: true },
         { key: 'status', name: 'Status', resizable: true },
+        { key: 'linkCode', name: 'Link Code', width: 120 },
         //{ key: 'dateCreated', name: 'Created' },
         { key: 'deleteRow', name: '', width: 70 },
       ],
