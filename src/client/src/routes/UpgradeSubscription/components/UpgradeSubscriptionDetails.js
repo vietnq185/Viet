@@ -272,13 +272,6 @@ class UpgradeSubscriptionDetails extends React.Component {
       ccyearList.push(selected ? <option key={'ccyear' + val} value={val} selected>{val}</option> : <option key={'ccyear' + val} value={val}>{val}</option>)
     }
 
-    let bankTransferOption = (
-      <li>
-        <input type='radio' name='payment_method' id='bank' disabled value={BANK_TRANSFER} />
-        <label htmlFor='bank'><i className='fa fa-money' aria-hidden='true' />Bank Transfer</label>
-      </li>
-    )
-
     return (
       <div className='payment-method'>
         <div className='payment-method-form'>
@@ -288,7 +281,6 @@ class UpgradeSubscriptionDetails extends React.Component {
                 {this.state.paymentMethod === CREDIT_CARD ? (<input type='radio' name='payment_method' id='cc' value={CREDIT_CARD} defaultChecked />) : (<input type='radio' name='payment_method' id='cc' value={CREDIT_CARD} />)}
                 <label htmlFor='cc'><i className='fa fa-credit-card' aria-hidden='true' />Credit/Debit Card</label>
               </li>
-              {bankTransferOption}
             </ul>
             <div className={this.state.paymentMethod === CREDIT_CARD ? 'cc-container' : 'hide'}>
               <ul className='list-inline'>
