@@ -17,6 +17,7 @@ export default class Footer extends React.Component {
     this.showBannerDiscount = {}
     this.state = {
       show: false,
+      isClosed: false,
       showBannerDiscount: Utils.copy(this.showBannerDiscount)
     }
   }
@@ -34,9 +35,9 @@ export default class Footer extends React.Component {
     if (this.props.auth.isLoggedIn) {
       showPromotionBanner = false;
     }
-
+    
     return (
-      <div className={['page-footer text-left', (showPromotionBanner ? 'mb6' : '')].join(' ')}>
+      <div className={['page-footer text-left', (showPromotionBanner && !this.state.isClosed ? 'mb6' : '')].join(' ')}>
         < div className='container-fluid' >
           <div className='row'>
             <div className='col-md-6 col-xs-12 col-md-push-6 footer-follow'>
@@ -59,7 +60,7 @@ export default class Footer extends React.Component {
               </div>
             </div>
           </div>
-          <div className={['banner-discount-container', (showPromotionBanner ? '' : 'hide')].join(' ')}>
+          <div className={['banner-discount-container', (showPromotionBanner && !this.state.isClosed ? '' : 'hide')].join(' ')}>
             <nav className='navbar-fixed-bottom'>
               <div className='banner-discount'>
                 <span className='left-bg-special-offer'><img src={LeftBGSpecialOffer} /></span>
@@ -68,7 +69,7 @@ export default class Footer extends React.Component {
                     Discount {this.state.showBannerDiscount.discount}% for the first {this.state.showBannerDiscount.limit} subscriptions
 								<Link to='/subscribe' className='btn dk-bg-green dk-white ml2'>Subscribe Now</Link>
                   </span>
-                  <span className='banner-discount-close'><a className='close' onClick={() => this.setState({ show: false })}>&times;</a></span>
+                  <span className='banner-discount-close'><a className='close' onClick={() => this.setState({ show: false, isClosed: true })}>&times;</a></span>
                 </span>
               </div>
             </nav>

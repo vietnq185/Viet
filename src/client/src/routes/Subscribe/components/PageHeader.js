@@ -27,9 +27,7 @@ class PageHeader extends React.Component {
     const { auth } = this.props
     const isLoggedIn = auth && auth.isLoggedIn
     let userLink = ''
-    let theLink = (<li className='signin'><a href='https://app.a-smartlearning.com/en/sml/login' className='text-signin'> <span className='side-nav-item'>Sign In</span></a></li>)
     if (isLoggedIn) {
-      theLink = ''
       let userInfo = (<span><i className='fa fa-user' /> {auth.user.firstName} {auth.user.lastName}</span>)
       userLink = (
         <NavDropdown title={userInfo} id="nav-dropdown" className='side-nav-item dk-white route--item'>
@@ -56,7 +54,6 @@ class PageHeader extends React.Component {
               <li><Link to='/parent' className='side-nav-item dk-white route--link' activeClassName='route--link--active dk-yellow'>For Parent</Link></li>
               <li><Link to='/subscribe' className='side-nav-item dk-white route--link' activeClassName='route--link--active dk-yellow'>Free Trial</Link></li>
               {userLink}
-              {theLink}
             </ul>
           </Navbar.Collapse>
         </Navbar>

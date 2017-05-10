@@ -167,15 +167,6 @@ export const create = (req, res, next) => {
         /* send email to parent */
         return new UserModel().reset().select(`t1.*`)
           .where('t1._id::varchar=$1').findOne([parentId]).then((user) => { // eslint-disable-line
-            Utils.sendMail({
-              to: user.email,
-              template: 'mail_sign_up_confirmation',
-              data: {
-                firstName: user.firstName,
-                lastName: user.lastName
-              }
-            });
-
             if (savedSubscription.channel === 'bank') {
               Utils.sendMail({
                 to: user.email,
@@ -913,9 +904,9 @@ export const cronUpdateSubscriptionStatus = (req) => {
   var now = new Date().getTime();
   return new SubscriptionModel()
     .select('t1.*, t2."firstName", t2."lastName", t2."email"')
-    .where('t1."expiryDate" < $1 AND t1.status != $2')
+    .where('t1."expiryDate" < $1 AND t1.status NOT IN ($2, $3)')
     .join(`${uModel.getTable()} AS t2`, 't1."parentId"=t2."_id"', 'left outer') // eslint-disable-line
-    .findAll([now, 'cancelled'])
+    .findAll([now, 'cancelled', 'overdue'])
     .then((subscriptions) => {
       for (var i = 0; i < subscriptions.length; i++) {
         const subscription = subscriptions[i];

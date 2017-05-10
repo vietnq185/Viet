@@ -50,7 +50,7 @@ class Header extends React.Component {
     const { auth } = this.props
     const isLoggedIn = auth && auth.isLoggedIn
     let userLink = ''
-    let theLink = (<li className='signin'><a href='https://app.a-smartlearning.com/en/sml/login' className='text-signin'> <span className='side-nav-item dk-white'>Sign In</span></a></li>)
+    let theLink = (<li className='signin'><a href='/subscribe' className='text-signin'> <span className='side-nav-item dk-white'>Sign In</span></a></li>)
     let trialLink = (<li><a className='side-nav-item dk-white route--item' href='javascript: void(0);' data-toggle='modal' data-target='#modalFreeTrialConfirm' onClick={() => this.setState({ showFreeTrialConfirm: true })}>Free Trial</a></li>)
     if (isLoggedIn) {
       theLink = ''
