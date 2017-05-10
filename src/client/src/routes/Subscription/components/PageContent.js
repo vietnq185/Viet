@@ -125,7 +125,7 @@ class PageContent extends React.Component {
             </div>
             <div className='row'>
               <div className='col-xs-12 text-right'>
-                <ul className='list-inline subscriptions-paging'>
+                <ul className={['list-inline subscriptions-paging', this.props.list.totalPages <= 1 ? 'hide' : ''].join(' ')}>
                   {Utils.range(1, this.props.list.totalPages).map(page => { // eslint-disable-line
                     return (
                       <li key={`page${page}`} className={this.state.page == page ? 'active' : ''}><a href='javascript: void(0);' onClick={() => this.getList(page)}>{page}</a></li>
