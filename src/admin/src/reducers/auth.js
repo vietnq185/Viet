@@ -58,9 +58,12 @@ export const logout = (nextAction = () => { }) => (dispatch, getState) => {
   })
 }
 
+const UPDATE_CHECK_AT_STARTUP = 'UPDATE_CHECK_AT_STARTUP';
+
 // in case user has already login, then press F5,
 // now wee need to check if accessToken is still valid, then we need to get login info
 export const checkTokensAtStartUp = () => (dispatch, getState) => {
+  const finishChecking = { type: UPDATE_CHECK_AT_STARTUP, result: true }
   return new Promise((resolve, reject) => {
     const jwt = TokenStorage.get()
     const { accessToken, userId } = jwt
@@ -69,11 +72,15 @@ export const checkTokensAtStartUp = () => (dispatch, getState) => {
     }
     return API.checkLogin(accessToken, userId).then((result) => resolve(Utils.copy({ jwt, user: result }))).catch(reject) // eslint-disable-line
   }).then((result) => {
+    dispatch(finishChecking)
     if (Utils.isNotEmptyObject(result)) {
       console.info('result of check login: ', result)
       return dispatch(updateLoginResult({ isLoggedIn: true, jwt: result.jwt }))
     }
-  }).catch(() => dispatch(logout()))
+  }).catch(() => {
+    dispatch(finishChecking)
+    dispatch(logout())
+  })
 }
 
 // ------------------------------------
@@ -96,6 +103,7 @@ export const checkAccessToken = () => {
 // Reducer
 // ------------------------------------
 const initialState = {
+  finishedCheckStartup: false,
   isLoggedIn: false,
   jwt: {},
   user: {},
@@ -107,6 +115,9 @@ export default (state = initialState, action) => {
     case UPDATE_LOGIN_RESULT:
       return Utils.merge(state, action.result)
       break // eslint-disable-line
+    case UPDATE_CHECK_AT_STARTUP:
+      return { ...state, finishedCheckStartup: action.result }
+      break
     default:
       return state
   }

@@ -18,10 +18,15 @@ import { withRouter } from 'react-router';
 const RequireLoginComponent = (props) => {
   console.info('RequireLoginComponent components => props: ', props);
 
-  const { auth: { isLoggedIn }, component: Component, ...rest } = props;
+  const { auth: { finishedCheckStartup, isLoggedIn }, component: Component, ...rest } = props;
 
   const loginPath = Utils.adminLink('/login');
   const isOnLoginPath = props.location.pathname === loginPath;
+
+  if(!finishedCheckStartup) {
+    // show loading component (if any)
+    return (<div></div>)
+  }
 
   // Authenticated
   if (isLoggedIn) {
