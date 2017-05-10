@@ -143,7 +143,13 @@ export const create = (req, res, next) => {
       if (savedUser === null) {
         return Promise.reject(new APIError(constants.errors.registerError, httpStatus.OK, true));
       }
+
       if (results.length === 2) {
+        Utils.sendMail({
+          to: email,
+          template: 'mail_sign_up_confirmation',
+          data
+        });
         return Promise.resolve(savedUser);
       }
       // in this case, now the savedUser is student, then insert to user_roles

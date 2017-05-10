@@ -167,15 +167,6 @@ export const create = (req, res, next) => {
         /* send email to parent */
         return new UserModel().reset().select(`t1.*`)
           .where('t1._id::varchar=$1').findOne([parentId]).then((user) => { // eslint-disable-line
-            Utils.sendMail({
-              to: user.email,
-              template: 'mail_sign_up_confirmation',
-              data: {
-                firstName: user.firstName,
-                lastName: user.lastName
-              }
-            });
-
             if (savedSubscription.channel === 'bank') {
               Utils.sendMail({
                 to: user.email,
