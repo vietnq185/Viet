@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from 'react';
 import ReactDataGrid from 'react-data-grid';
 const { Row } = ReactDataGrid;
@@ -7,6 +8,8 @@ import { Button, Modal, Pagination, Panel, ButtonToolbar } from 'react-bootstrap
 
 import API from '../../helpers/api'; // eslint-disable-line
 import Utils from '../../helpers/utils'; // eslint-disable-line
+
+import * as authActions from '../../reducers/auth';
 
 const EmptyRowsView = () => {
   return (<div>No data found</div>);
@@ -30,12 +33,14 @@ class RowRenderer extends React.Component {
     return this.props.idx % 2 ? 'green' : 'blue';
   }
 
-  onViewDetails() {
+  onViewDetails(evt) {
+    console.info("evt.target: ", evt.target, this.row);
+    if (evt.target['data-type']) console.info("evt.target['data-type']: ", evt.target['data-type']);
     this.props.viewDetails(this.row.props.idx);
   }
 
   render() {
-    return (<div onClick={() => this.onViewDetails()} style={this.getRowStyle()}><Row ref={node => this.row = node} {...this.props} /></div>);
+    return (<div onClick={(evt) => this.onViewDetails(evt)} style={this.getRowStyle()}><Row ref={node => this.row = node} {...this.props} /></div>);
   }
 }
 
@@ -44,18 +49,22 @@ export default class Component extends React.Component {
     super(props);
     this.state = {
       columns: [
-        //{ key: '_id', name: 'ID'},
-        { key: 'firstName', name: 'FirstName' },
-        { key: 'lastName', name: 'Last Name' },
-        { key: 'email', name: 'Email' },
-        { key: 'role', name: 'Role' },
-        { key: 'status', name: 'Status' },
+        // { key: '_id', name: 'ID' },
+        { key: 'firstName', name: 'FirstName', resizable: true },
+        { key: 'lastName', name: 'Last Name', resizable: true },
+        { key: 'email', name: 'Email', resizable: true },
+        { key: 'role', name: 'Role', resizable: true },
+        { key: 'status', name: 'Status', resizable: true },
         //{ key: 'dateCreated', name: 'Created' },
+        { key: 'deleteRow', name: '', width: 70 },
       ],
       page: 1,
       objDetails: null,
       updateMsg: '',
-      filter: {}
+      filter: {},
+      deleteId: '',
+      deleteMsg: '',
+      deleteSuccess: false
     };
     this.listMap = {};
   }
@@ -74,6 +83,15 @@ export default class Component extends React.Component {
 
     data.status = data.status.join(", ");
     data.dateCreated = moment.unix(data.dateCreated / 1000).format('MMM D, YYYY');
+
+    if (isList) {
+      data.deleteRow = (
+        <span>
+          <i onClick={(evt) => this.open(this.listMap[item._id])} className="fa fa-lg fa-edit" style={{ cursor: 'pointer' }} title='view'></i>&nbsp;&nbsp;&nbsp;
+          <i onClick={(evt) => this.deleteItem(item._id)} className="fa fa-lg fa-remove" style={{ cursor: 'pointer', color: 'red' }} title='delete'></i>
+        </span>
+      );
+    }
 
     return data;
   }
@@ -98,8 +116,15 @@ export default class Component extends React.Component {
     this.setState({ objDetails: item, updateMsg: '' });
   }
 
+  deleteItem(deleteId) {
+    this.setState({ deleteId, deleteMsg: '', deleteSuccess: false });
+  }
+
   render() {
     console.info('Users components => props: ', this.props);
+    console.info('Users components => state: ', this.state);
+
+    // rowRenderer={<RowRenderer viewDetails={this.open.bind(this)} />}
 
     return (
       <div>
@@ -113,7 +138,6 @@ export default class Component extends React.Component {
           rowGetter={(i) => this.rowGetter(i)}
           rowsCount={this.props.user.list.data.length}
           minHeight={600}
-          rowRenderer={<RowRenderer viewDetails={this.open.bind(this)} />}
           emptyRowsView={EmptyRowsView} />
 
         <div className="text-center">
@@ -132,9 +156,82 @@ export default class Component extends React.Component {
 
         {this.renderDetailsDialog()}
 
+        {this.renderDeleteConfirmationDialog()}
+
       </div>
     );
   }
+
+  // render delete confirmation - START
+  cancelDelete() {
+    this.setState({ deleteId: '', deleteMsg: '', deleteSuccess: false });
+  }
+
+  confirmDelete() {
+    const self = this;
+    const { deleteId } = this.state;
+    return authActions.checkAccessToken().then((jwt) => {
+      return API.deleteUser(jwt.accessToken || '', deleteId).then((result) => {
+        console.info('deleteUser => result: ', result)
+        self.setState({ deleteSuccess: true, deleteMsg: 'User updated successfully!' })
+        self.getList(self.state.page)
+      }).catch((error) => {
+        console.info('deleteUser => error: ', error)
+        self.setState({ deleteSuccess: false, deleteMsg: error })
+      })
+    }).catch((error) => {
+      console.info('deleteUser => checkAccessToken => error: ', error)
+      self.setState({ deleteSuccess: false, deleteMsg: error })
+    });
+  }
+
+  renderDeleteConfirmationDialog() {
+    const self = this;  // eslint-disable-line
+    const { deleteId, deleteSuccess, deleteMsg } = this.state;
+    const showModal = (typeof deleteId === 'string' && deleteId.length > 0);
+    if (!showModal) {
+      return (<div></div>);
+    }
+
+    let confirmationMessage = (
+      <Modal show={showModal} onHide={() => this.cancelDelete()}>
+        <Modal.Header closeButton>
+          <Modal.Title>Delete user confirmation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Are you sure to delete this user?</p>
+          <div className={['form-group', deleteMsg ? 'has-error' : 'hide'].join(' ')}>
+            <span className='help-block'>{deleteMsg}</span>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={() => this.cancelDelete()}>Cancel</Button>
+          <Button onClick={() => this.confirmDelete()} bsStyle='primary'>Confirm</Button>
+        </Modal.Footer>
+      </Modal>
+    );
+
+    if (deleteSuccess) {
+      confirmationMessage = (
+        <Modal show={showModal} onHide={() => this.cancelDelete()}>
+          <Modal.Header closeButton>
+            <Modal.Title>User deleted</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className={['form-group', deleteMsg ? 'has-error' : 'hide'].join(' ')}>
+              <span className='help-block'>{deleteMsg}</span>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={() => this.cancelDelete()}>Close</Button>
+          </Modal.Footer>
+        </Modal>
+      );
+    }
+
+    return confirmationMessage;
+  }
+  // render delete confirmation - END
 
   // render filter - START
   filterChange(evt) {
@@ -211,6 +308,7 @@ export default class Component extends React.Component {
         </Modal.Header>
         <Modal.Body>
           {this.state.columns.map(col => {
+            if (col.key === 'deleteRow') return '';
             return renderDetailsRow(col.name, data[col.key], col.key);
           })}
           <div className={['form-group', this.state.updateMsg ? 'has-error' : 'hide'].join(' ')}>

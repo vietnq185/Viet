@@ -48,6 +48,7 @@ config.api = {
   upgradeSubscription: '/api/subscriptions/upgrade',  // POST
   getOptionList: '/api/options',  // GET
   updateOption: '/api/options', // POST
+  deleteUser: '/api/users/:userId'  // DELETE
 }
 config.api = concatHost(config.apiServer, config.api)
 

@@ -2,6 +2,28 @@ import config from '../config'
 
 export default class API {
 
+  static deleteUser = (accessToken, userId) => {
+    console.info('delete url: ', config.api.deleteUser.replace(/:userId/g, userId));
+    return new Promise((resolve, reject) => {
+      return fetch(config.api.deleteUser.replace(/:userId/g, userId), {
+        method: 'DELETE',
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        }
+      }).then((response) => response.json()).then((jsonResponse) => {
+        if (jsonResponse && jsonResponse.success) {
+          return resolve(jsonResponse.result)
+        }
+        const msg = jsonResponse.error.message || ''
+        return reject(msg)
+      }).catch((error) => {
+        const msg = error.message || ''
+        return reject(msg)
+      })
+    })
+  }
+
   static getOptionList = (accessToken) => {
     return new Promise((resolve, reject) => {
       return fetch(config.api.getOptionList, {

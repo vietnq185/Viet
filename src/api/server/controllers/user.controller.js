@@ -1,3 +1,4 @@
+/* eslint-disable */
 import httpStatus from 'http-status';
 
 import * as authCtrl from './auth.controller';
@@ -266,8 +267,9 @@ export const list = (req, res, next) => {
  */
 export const remove = (req, res, next) => {
   const jwtInfo = authCtrl.getJwtInfo(req);
-  if (authCtrl.isUser(req) && jwtInfo.userId !== req.user._id) {
-    return next(new APIError('Forbidden', httpStatus.FORBIDDEN, true));
+
+  if (jwtInfo.userId === req.user._id) {
+    return next(new APIError('Current login account cannot be deleted.', httpStatus.FORBIDDEN, true));
   }
 
   const userData = req.user;

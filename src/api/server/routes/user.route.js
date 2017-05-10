@@ -23,7 +23,7 @@ router.route('/:userId')
   .put(validate(paramValidation.updateUser), authCtrl.verifyAccessToken, userCtrl.update)
 
   /** DELETE /api/users/:userId - Delete user */
-  .delete(authCtrl.verifyAccessToken, userCtrl.remove);
+  .delete(authCtrl.verifyAccessToken, authCtrl.adminAuth, userCtrl.remove);
 
 router.route('/cclist/:userId')
   /** GET /api/users/cclist/:userId - Get cclist of user */

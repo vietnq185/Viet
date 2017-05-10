@@ -342,26 +342,26 @@ export const isUser = req => (isAuth(req) && req[requestProperty].role.toLowerCa
 
 export const adminAuth = (req, res, next) => {
   if (!isAdmin(req)) {
-    return next(new APIError('Forbidden (1).', httpStatus.FORBIDDEN, true));
+    return next(new APIError('Forbidden. Only admin can do this action.', httpStatus.FORBIDDEN, true));
   }
   return next();
 };
 
 export const editorAuth = (req, res, next) => {
   if (!isEditor(req)) {
-    return next(new APIError('Forbidden (2).', httpStatus.FORBIDDEN, true));
+    return next(new APIError('Forbidden. Only editor can do this action.', httpStatus.FORBIDDEN, true));
   }
   return next();
 };
 
 export const adminOrEditorAuth = (req, res, next) => {
   if (isAdmin(req) || isEditor(req)) return next();
-  return next(new APIError('Forbidden (3).', httpStatus.FORBIDDEN, true));
+  return next(new APIError('Forbidden. Only admin or editor can do this action.', httpStatus.FORBIDDEN, true));
 };
 
 export const userAuth = (req, res, next) => {
   if (!isUser(req)) {
-    return next(new APIError('Forbidden (4).', httpStatus.FORBIDDEN, true));
+    return next(new APIError('Forbidden. Only logged-in user can do this action.', httpStatus.FORBIDDEN, true));
   }
   return next();
 };
