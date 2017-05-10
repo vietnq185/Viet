@@ -913,9 +913,9 @@ export const cronUpdateSubscriptionStatus = (req) => {
   var now = new Date().getTime();
   return new SubscriptionModel()
     .select('t1.*, t2."firstName", t2."lastName", t2."email"')
-    .where('t1."expiryDate" < $1')
+    .where('t1."expiryDate" < $1 AND t1.status != $2')
     .join(`${uModel.getTable()} AS t2`, 't1."parentId"=t2."_id"', 'left outer') // eslint-disable-line
-    .findAll([now])
+    .findAll([now, 'cancelled'])
     .then((subscriptions) => {
       for (var i = 0; i < subscriptions.length; i++) {
         const subscription = subscriptions[i];
