@@ -2,7 +2,7 @@
 import React from 'react'
 import { fadeIn } from 'react-animations'
 import { StyleSheet, css } from 'aphrodite'
-
+import ReactTooltip from 'react-tooltip'
 import constants from '../../../constants'
 import Utils from '../../../helpers/utils'
 import validate from '../../../helpers/validate'
@@ -257,7 +257,7 @@ class Step3Payment extends React.Component {
                     </div>
                     <div className='col-sm-4 col-xs-12'>
                       <div className={['form-group', this.errors.cvv ? 'has-error' : ''].join(' ')}>
-                        <label htmlFor='contact-name'>CVV{requiredLabel}</label>
+                        <label htmlFor='contact-name'>CVV{requiredLabel} <span className='cvv-info'><a href='javascript:void(0);' data-tip="The last 3 digits displayed on the back of your card" data-html={true}><i className='fa fa-question-circle' /></a><ReactTooltip className="cvv-info-tooltip" place="top" type="dark" html={true} /></span></label>
                         <input className='form-control' name='cvv' id='cvv' required='' type='text' value={this.state.newCC.cvv} ref='cvv' onChange={(e) => this.setNewCC('cvv', e.target.value)} />
                         <span className={[this.errors.cvv ? 'help-block' : 'hide'].join(' ')}>{this.errors.cvv}</span>
                       </div>

@@ -3,7 +3,7 @@
 import React from 'react'
 import { fadeIn } from 'react-animations'
 import { StyleSheet, css } from 'aphrodite'
-
+import IntlTelInput from 'react-bootstrap-intl-tel-input'
 import API from '../../../helpers/api'
 import Utils from '../../../helpers/utils'
 import validate from '../../../helpers/validate'
@@ -30,7 +30,8 @@ class Step1SignUp extends React.Component {
     this.state = {
       hasError: false,
       errMsg: '',
-      showTerms: false
+      showTerms: false,
+      phoneNumber: ''
     }
   }
 
@@ -80,16 +81,7 @@ class Step1SignUp extends React.Component {
         email: 'Please enter correct email format'
       },
       phone: {
-        required: 'Phone is required',
-        number: 'Phone must be number',
-        minLen: {
-          value: 10,
-          msg: 'Phone length must be at least {value} characters long'
-        },
-        maxLen: {
-          value: 12,
-          msg: 'Phone length must be less than or equal to {value} characters long'
-        },
+        required: 'Please enter a valid phone number'
       },
       password: {
         required: 'Password is required',
@@ -170,6 +162,14 @@ class Step1SignUp extends React.Component {
     }
   }
 
+  onPhoneChangeHandler(data) {
+    if (data.valid !== undefined && data.valid) {
+      this.setState({ phoneNumber: data.intlPhoneNumber })
+    } else {
+      this.setState({ phoneNumber: '' })
+    }
+  }
+
   render() {
     const requiredLabel = (<abbr className='dk-red-text'>&nbsp;*</abbr>)
     return (
@@ -201,7 +201,15 @@ class Step1SignUp extends React.Component {
           </div>
           <div className={['form-group', this.errors.phone ? 'has-error' : ''].join(' ')}>
             <label htmlFor='contact-name'>Phone Number{requiredLabel}</label>
-            <input className='form-control' name='phone' id='phone' required='' type='text' ref='phone' />
+            <input className='form-control hide' name='phone' id='phone' required='' value={this.state.phoneNumber} type='text' ref='phone' />
+
+            <IntlTelInput
+              preferredCountries={['SG']}
+              defaultCountry={'SG'}
+              placeholder={'+6599999999'}
+              onChange={(data) => this.onPhoneChangeHandler(data)}
+            />
+
             <span className={[this.errors.phone ? 'help-block' : 'hide'].join(' ')}>{this.errors.phone}</span>
           </div>
           <div className={['form-group', this.errors.password ? 'has-error' : ''].join(' ')}>

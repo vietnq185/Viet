@@ -177,9 +177,9 @@ class Step4CreateStudent extends React.Component {
                   <div className='form-group'>
                     <label htmlFor='contact-name'>Level</label>
                     <select className='form-control' name='level' id='level' ref='class'>
-                      <option value='P1'>P1</option>
-                      <option value='P2'>P2</option>
-                      <option value='P3'>P3</option>
+                      <option value='P4'>P4</option>
+                      <option value='P5'>P5</option>
+                      <option value='P6'>P6</option>
                     </select>
                   </div>
                 </div>
