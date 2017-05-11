@@ -21,6 +21,8 @@
     text-align: center;
     padding-left: 50px;
     padding-right: 10px;
+    padding-top: 5px;
+    width: 95%
 }
 .banner-discount-container .banner-discount span.banner-discount-info .banner-discount-text{
     width: 97%;
@@ -36,6 +38,10 @@
     font-size: 25px;
     opacity: 1;
     padding-right: 5px;
+}
+.banner-discount-container .banner-discount span.banner-discount-info .btn{
+    display: inline-block;
+    margin-top: 0;
 }
 .ml2 {
 	margin-left: 20px;
