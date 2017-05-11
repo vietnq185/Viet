@@ -63,10 +63,10 @@ export default class Footer extends React.Component {
           <div className={['banner-discount-container', (showPromotionBanner && !this.state.isClosed ? '' : 'hide')].join(' ')}>
             <nav className='navbar-fixed-bottom'>
               <div className='banner-discount'>
-                <span className='left-bg-special-offer'><img src={LeftBGSpecialOffer} /></span>
+                <span className='left-bg-special-offer hidden-xs'><img src={LeftBGSpecialOffer} /></span>
                 <span className='banner-discount-info'>
                   <span className='banner-discount-text'>
-                    Discount {this.state.showBannerDiscount.discount}% for the first {this.state.showBannerDiscount.limit} subscriptions
+                    {this.state.showBannerDiscount.msgPromotion}
 								<Link to='/subscribe' className='btn dk-bg-green dk-white ml2'>Subscribe Now</Link>
                   </span>
                   <span className='banner-discount-close'><a className='close' onClick={() => this.setState({ show: false, isClosed: true })}>&times;</a></span>

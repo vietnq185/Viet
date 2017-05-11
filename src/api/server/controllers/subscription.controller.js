@@ -35,22 +35,37 @@ const createCard = (req) => {
       dateCreated: new Date().getTime()
     };
 
-    return new OptionModel().getPairs(1).then((dataResp) => {
-      var stripe = require("stripe")(dataResp.o_stripe_secret)
-      stripe.tokens.create({
-        card: {
-          "number": req.body.ccnum,
-          "exp_month": req.body.ccmonth,
-          "exp_year": req.body.ccyear,
-          "cvc": req.body.cvv
+    return new CCListModel().where('t1."userId"::varchar=$1').findAll([parentId]).then((cards) => {
+      var isExisted = false;
+      for (var i = 0; i < cards.length; i++) {
+        var _ccnum = Utils.aesDecrypt(cards[i].ccnum, constants.ccSecret);
+        if (_ccnum === req.body.ccnum) {
+          isExisted = true;
         }
-      }, function (err, token) {
-        if (token) return new CCListModel().insert(cardData).then(resolve).catch(reject);
-        return reject(new APIError(constants.errors.invalidCard, httpStatus.OK, true));
+      }
+      if (isExisted) {
+        return reject(new APIError(constants.errors.cardNumberExisted, httpStatus.OK, true));
+      }
+      return new OptionModel().getPairs(1).then((dataResp) => {
+        var stripe = require("stripe")(dataResp.o_stripe_secret)
+        stripe.tokens.create({
+          card: {
+            "number": req.body.ccnum,
+            "exp_month": req.body.ccmonth,
+            "exp_year": req.body.ccyear,
+            "cvc": req.body.cvv
+          }
+        }, function (err, token) {
+          if (token) return new CCListModel().reset().insert(cardData).then(resolve).catch(reject);
+          return reject(new APIError(constants.errors.invalidCard, httpStatus.OK, true));
+        });
+      }).catch((err) => {
+        return res.json(new APIResponse({ status: 'FAILED', msg: 'Can not get Options' }));
       });
     }).catch((err) => {
-      return res.json(new APIResponse({ status: 'FAILED', msg: 'Can not get Options' }));
+      return res.json(new APIResponse({ status: 'FAILED', msg: 'Can not get data' }));
     });
+
   });
 }
 
@@ -887,12 +902,12 @@ export const checkToShowBannerDiscount = (req, res, next) => {
     var isDisabled = parseInt(dataResp.o_allow_discount) === 1 ? true : false,
       limit = dataResp.o_discount_limit || 0,
       remaining_discount_subscription = dataResp.o_remaining_discount_subscription || 0,
-      discount = dataResp.o_discount_percent || 0;
-
+      discount = dataResp.o_discount_percent || 0,
+      msgPromotion = dataResp.o_message_promotion_banner.replace(/{discount}/g, discount).replace(/{numberOfPeople}/g, limit);
     if (!isDisabled || remaining_discount_subscription <= 0) {
-      return res.json(new APIResponse({ showBanner: 0, discount: 0, limit: 0 }));
+      return res.json(new APIResponse({ showBanner: 0, discount: 0, limit: 0, msgPromotion: msgPromotion }));
     } else {
-      return res.json(new APIResponse({ showBanner: 1, discount: discount, limit: limit }));
+      return res.json(new APIResponse({ showBanner: 1, discount: discount, limit: limit, msgPromotion: msgPromotion }));
     }
   }).catch((err) => {
     return res.json(new APIResponse({ status: 'FAILED', msg: 'Can not get Options' }));

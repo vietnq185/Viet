@@ -123,7 +123,8 @@ INSERT INTO "options" ("foreign_id", "key", "tab_id", "value", "label", "descrip
 (1, 'o_admin_email', 1, NULL, NULL, 'Admin email', 'string', 9, 1, NULL, 'F'),
 (1, 'o_trial_days', 1, '14', NULL, 'Number of trial days', 'float', 10, 1, NULL, 'T'),
 (1, 'o_website_url', 1, 'http://domain.com', NULL, 'Website URL', 'string', 11, 1, NULL, 'T'),
-(1, 'o_admin_fee', 1, 10.7, NULL, 'Admin fee for refund', 'float', 12, 2, NULL, 'F');
+(1, 'o_admin_fee', 1, 10.7, NULL, 'Admin fee for refund', 'float', 12, 1, NULL, 'F'),
+(1, 'o_message_promotion_banner', 1, 'Discount {discount}% for the first {numberOfPeople} subscriptions', NULL, 'Message on promotion banner', 'text', 13, 12, NULL, 'T');
 
 
 INSERT INTO "options" ("foreign_id", "key", "tab_id", "value", "label", "description", "type", "order", "is_visible", "style", "is_public") VALUES

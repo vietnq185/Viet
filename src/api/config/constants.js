@@ -31,6 +31,7 @@ export default {
     subscriptionUpgradeSuccessful: 'SUBSCRIPTION_UPGRADE_SUCCESSFUL',
     subscriptionUpgradeUnSuccessful: 'SUBSCRIPTION_UPGRADE_UNSUCCESSFUL',
     invalidCard: 'INVALID_CARD',
+    cardNumberExisted: 'CARD_NUMBER_EXISTED',
     notParent: 'YOU_ARE_NOT_PARENT',
     studentEmailNotFound: 'UNREGISTERED_STUDENT',
     linkCodeNotFound: 'LINK_CODE_NOT_FOUND',
