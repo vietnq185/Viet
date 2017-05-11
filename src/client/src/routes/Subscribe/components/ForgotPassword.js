@@ -106,7 +106,7 @@ class ForgotPassword extends React.Component {
       </div>
     )
 
-    if (this.state.emailSent) {
+    /*if (this.state.emailSent) {
       resetForm = (
         <div className='subscribe-success-content'>
           <p><img src={successImage} /></p>
@@ -115,7 +115,7 @@ class ForgotPassword extends React.Component {
           <p>Follow the instruction in the email to reset your password.</p>
         </div>
       )
-    }
+    }*/
 
     return resetForm;
   }
