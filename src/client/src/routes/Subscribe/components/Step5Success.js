@@ -1,6 +1,8 @@
 /* eslint-disable */
 import React from 'react'
+import { IndexLink, Link } from 'react-router'
 
+import constants from '../../../constants'
 import Utils from '../../../helpers/utils'
 
 import successImage from '../../../styles/images/icon-success.png'
@@ -21,21 +23,41 @@ class Step1SignIn extends React.Component {
 
   render() {
     console.info('Subscribe => PageContent => Success component => props: ', this.props)
+
+    const objSubscription = this.props.subscriptionResult.result;
+
+    console.info('Subscribe => PageContent => Success component => objSubscription: ', objSubscription)
+
     const studentLogin = this.props.assignment && this.props.assignment.success ? (
       <span>
         <br /><br />or sign into <strong>Student Account</strong> to enjoy free trial version
           <br /><br /><a href='https://app.a-smartlearning.com/en/sml/login' className='btn dk-bg-blue dk-white'>Sign into student account</a>
       </span>
     ) : ''
+    const channelStripe = (
+      <div className='thank-you-msg'>
+        <p>The subscription has been assigned to a student.</p>
+        <p>You can check all your subscriptions in My Subscription page</p>
+      </div>
+    )
+
+    const channelBank = (
+      <div className='thank-you-msg'>
+        <p>Thanks for signing up with us, your subscription ID is: <Link to={`/subscription-details/${objSubscription._id}`}>#{objSubscription.refid}</Link>.</p>
+        <p>We will contact you via phone to confirm your subscription and give you futher instruction.</p>
+        <p>For instant information, please contact us via: +65 7432 3421.</p>
+        <p>You can check all your subscription in My Subscription page.</p>
+      </div>
+    )
+
+    const channelMsg = (objSubscription.channel === constants.paymentMethod.creditCard ? channelStripe : channelBank)
+
     return (
       <div className='subscribe-success-content'>
         <p><img src={successImage} /></p>
         <h1>SUCCESS!</h1>
-        <div className='thank-you-msg'>
-          <p>The subscription has been assigned to a student.</p>
-          <p>You can check all your subscriptions in My Subscription page</p>
-        </div>
-        <br /><br /><a href='javascript: void(0);' className='btn dk-bg-green dk-white' onClick={() => this.showSubscription()}>See your subscription</a>
+        {channelMsg}
+        <br /><a href='javascript: void(0);' className='btn dk-bg-green dk-white' onClick={() => this.showSubscription()}>See your subscription</a>
         {studentLogin}
         <br /><br /><br />Download <strong>Parent App</strong> for iOS or Android and enjoy the learning journey with your child
         <br /><br />
