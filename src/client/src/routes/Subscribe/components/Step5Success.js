@@ -26,7 +26,11 @@ class Step1SignIn extends React.Component {
 
     const objSubscription = this.props.subscriptionResult.result;
 
+    const { assignment } = this.props;
+
     console.info('Subscribe => PageContent => Success component => objSubscription: ', objSubscription)
+
+    console.info('Subscribe => PageContent => Success component => assignment: ', assignment)
 
     const studentLogin = this.props.assignment && this.props.assignment.success ? (
       <span>
@@ -34,16 +38,43 @@ class Step1SignIn extends React.Component {
           <br /><br /><a href='https://app.a-smartlearning.com/en/sml/login' className='btn dk-bg-blue dk-white'>Sign into student account</a>
       </span>
     ) : ''
-    const channelStripe = (
+
+    const detailsLink = (<p>Thanks for signing up with us, your subscription ID is: <Link to={`/subscription-details/${objSubscription._id}`}>#{objSubscription.refid}</Link>.</p>)
+
+    let channelStripe = (
       <div className='thank-you-msg'>
-        <p>The subscription has been assigned to a student.</p>
-        <p>You can check all your subscriptions in My Subscription page</p>
+        {detailsLink}
+        <p>You can check all your subscriptions in My Subscription page.</p>
       </div>
     )
 
+    const isFromListPage = (Utils.isNotEmptyObject(assignment) && assignment.isFromListPage);
+
+    const alreadyAssigned = (Utils.isNotEmptyObject(assignment) && assignment.success && objSubscription._id === assignment.subscriptionId && (!!assignment.studentId))
+
+    if (alreadyAssigned) {
+      if (isFromListPage) {
+        channelStripe = (
+          <div className='thank-you-msg'>
+            <p>The subscription has been assigned to a student.</p>
+            <p>You can check all your subscriptions in My Subscription page.</p>
+          </div>
+        )
+      }
+      else {
+        channelStripe = (
+          <div className='thank-you-msg'>
+            {detailsLink}
+            <p>The subscription has been assigned to a student.</p>
+            <p>You can check all your subscriptions in My Subscription page.</p>
+          </div>
+        )
+      }
+    }
+
     const channelBank = (
       <div className='thank-you-msg'>
-        <p>Thanks for signing up with us, your subscription ID is: <Link to={`/subscription-details/${objSubscription._id}`}>#{objSubscription.refid}</Link>.</p>
+        {detailsLink}
         <p>We will contact you via phone to confirm your subscription and give you futher instruction.</p>
         <p>For instant information, please contact us via: +65 7432 3421.</p>
         <p>You can check all your subscription in My Subscription page.</p>

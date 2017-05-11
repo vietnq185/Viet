@@ -227,7 +227,8 @@ export const initialState = {
   assignment: {
     subscriptionId: '',
     studentId: '',
-    success: false
+    success: false,
+    isFromListPage: false
   }
 }
 
