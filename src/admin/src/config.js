@@ -53,7 +53,7 @@ config.api = {
 config.api = concatHost(config.apiServer, config.api)
 
 // storage
-config.storageName = 'ASLS_ADMIN'
-config.tokenKey = 'ASLS_TOKEN_ADMIN'
+config.storageName = 'ASLS_ADMIN_506655ab2af8153589f4d1cbad9e924a70bbf0aa31314a092263422c22f270f2'
+config.tokenKey = 'ASLS_TOKEN_ADMIN_506655ab2af8153589f4d1cbad9e924a70bbf0aa31314a092263422c22f270f2'
 
 export default config

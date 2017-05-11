@@ -37,7 +37,7 @@ class PageContent extends React.Component {
 
     const stepContent = viewMap[step]
 
-    return (
+    let pageView = (
       <div className='subscribe-wrapper'>
         <div className='breadcrumb'>
           <IndexLink to='/' className='passed'>Home</IndexLink> <i className='fa fa-chevron-right' />
@@ -55,6 +55,22 @@ class PageContent extends React.Component {
         </div>
       </div>
     )
+
+    if (step === steps.success) {
+      pageView = (
+        <div className='subscribe-wrapper'>
+          <div className='breadcrumb'>
+            <IndexLink to='/' className='passed'>Home</IndexLink> <i className='fa fa-chevron-right' />
+            <span className='active'>Subscribe</span>
+          </div>
+          <div className='subscribe-content-container'>
+            <div className='subscribe-content'>{stepContent}</div>
+          </div>
+        </div>
+      )
+    }
+
+    return pageView
   }
 }
 

@@ -79,7 +79,7 @@ class ForgotPassword extends React.Component {
     return (
       <div className='form-subscribe'>
         <div className='form-title'>Forgot Password</div>
-        <div className='form-title-desc text-center'>Please enter your email to retrieve password.</div>
+        <div className='form-title-desc text-center'>Already got an account but can’t log in? Enter your email address below and we’ll send you password reset instruction.</div>
         <br />
         <form className='form form-subscribe-login'>
           <div className={['form-group', this.errors.email ? 'has-error' : ''].join(' ')}>
