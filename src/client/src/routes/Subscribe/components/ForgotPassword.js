@@ -8,6 +8,8 @@ import API from '../../../helpers/api'
 import Utils from '../../../helpers/utils'
 import validate from '../../../helpers/validate'
 
+import successImage from '../../../styles/images/icon-success.png'
+
 class ForgotPassword extends React.Component {
   constructor(props) {
     super(props)
@@ -17,7 +19,8 @@ class ForgotPassword extends React.Component {
     this.errors = Utils.copy(this.initialErrors)
     this.state = {
       hasError: false,
-      errMsg: ''
+      errMsg: '',
+      emailSent: false
     }
   }
 
@@ -51,7 +54,10 @@ class ForgotPassword extends React.Component {
         console.info('the response: ', result);
         switch (result.msg) {
           case 'EMAIL_SENT':
-            this.setState({ errMsg: 'An email has been sent to your email. Futhur information please check your email.' })
+            this.setState({
+              emailSent: true,
+              errMsg: 'An email has been sent to your email. Futhur information please check your email.'
+            })
             break
           case 'EMAIL_NOT_SENT':
             this.setState({ errMsg: 'Failed to send email. Please try again' })
@@ -76,7 +82,7 @@ class ForgotPassword extends React.Component {
 
   render() {
     const requiredLabel = (<abbr className='dk-red-text'>&nbsp;*</abbr>)
-    return (
+    let resetForm = (
       <div className='form-subscribe'>
         <div className='form-title'>Forgot Password</div>
         <div className='form-title-desc text-center'>Already got an account but can’t log in? Enter your email address below and we’ll send you password reset instruction.</div>
@@ -99,6 +105,19 @@ class ForgotPassword extends React.Component {
         </form>
       </div>
     )
+
+    if (this.state.emailSent) {
+      resetForm = (
+        <div className='subscribe-success-content'>
+          <p><img src={successImage} /></p>
+          <p>Request for Password Reset Email Sent.</p>
+          <p>An instruction has been sent to your email address.</p>
+          <p>Follow the instruction in the email to reset your password.</p>
+        </div>
+      )
+    }
+
+    return resetForm;
   }
 }
 

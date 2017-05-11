@@ -4,6 +4,8 @@ import Utils from '../../../helpers/utils'
 import API from '../../../helpers/api'
 import validate from '../../../helpers/validate'
 
+import successImage from '../../../styles/images/icon-success.png'
+
 class PageContent extends React.Component {
   constructor(props) {
     super(props)
@@ -17,13 +19,14 @@ class PageContent extends React.Component {
       hash: this.props.params.hash || '',
       isValid: false,
       hasError: false,
-      errMsg: ''
+      errMsg: '',
+      resetSuccess: false
     }
   }
 
   resetErrors() {
     this.errors = Utils.copy(this.initialErrors)
-    this.setState({ hasError: false })
+    this.setState({ hasError: false, errMsg: '' })
   }
 
   setErrors(errors) {
@@ -71,16 +74,19 @@ class PageContent extends React.Component {
       return API.resetPassword({ id: this.state.id, password: self.refs.password.value }).then((result) => {
         switch (result.msg) {
           case 'PASSWORD_WAS_RESET_AND_EMAIL_SENT':
-            this.setState({ errMsg: 'Your password has been reset. You can login now with the new password' })
+            self.setState({
+              resetSuccess: true,
+              errMsg: 'Your password has been reset. You can login now with the new password'
+            })
             break
           case 'PASSWORD_WAS_RESET_AND_EMAIL_NOT_SENT':
-            this.setState({ errMsg: 'Your password has been reset but failed to send email. You can login now with the new password' })
+            self.setState({ errMsg: 'Your password has been reset but failed to send email. You can login now with the new password' })
             break
           case 'PASSWORD_WAS_NOT_RESET':
-            this.setState({ errMsg: 'Failed to reset password. Please try again' })
+            self.setState({ errMsg: 'Failed to reset password. Please try again' })
             break
           default:
-            this.setState({ errMsg })
+            self.setState({ errMsg })
         }
       }).catch((errMsg) => {
 
@@ -90,10 +96,16 @@ class PageContent extends React.Component {
     }
   }
 
+  onParentLogin() {
+    this.props.changeStep(this.props.subscribe.steps.signIn) // eslint-disable-line
+    Utils.redirect('/subscribe')
+  }
+
   render() {
     const requiredLabel = (<abbr className='dk-red-text'>&nbsp;*</abbr>)
     if (this.state.isValid) {
-      return (
+
+      let resetForm = (
         <div className='subscribe-wrapper'>
           <div className='reset-password-container'>
             <div className='form-subscribe'>
@@ -120,6 +132,20 @@ class PageContent extends React.Component {
           </div>
         </div>
       )
+      if (this.state.resetSuccess) {
+        resetForm = (
+          <div className='subscribe-wrapper'>
+            <div className='subscribe-success-content'>
+              <p><img src={successImage} /></p>
+              <p>Password Reset Email Sent.</p>
+              <p>An instruction has been sent to your email address.</p>
+              <p>Follow the instruction in the email to reset your password.</p>
+              <a href='javascript: void(0);' className='btn dk-bg-green dk-white' onClick={() => this.onParentLogin()}>Sign In</a>
+            </div>
+          </div>
+        )
+      }
+      return resetForm;
     } else {
       return (
         <div className='subscribe-wrapper'>
