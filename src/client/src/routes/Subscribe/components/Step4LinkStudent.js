@@ -60,7 +60,7 @@ class Step1SignIn extends React.Component {
       // can submit
       console.info('can submit form link student')
       const { accessToken, userId } = self.props.auth.jwt // eslint-disable-line
-      API.linkStudent(accessToken, this.extractdata()).then((jsonResponse) => {
+      API.linkStudent(accessToken, self.extractdata()).then((jsonResponse) => {
         console.info('linkstudent => result: ', jsonResponse)
         // do assignment
         API.assignStudent(accessToken, {
@@ -71,7 +71,8 @@ class Step1SignIn extends React.Component {
           self.props.changeStep(self.props.steps.success)
         }).catch((errMsg) => {
           // this.setState({ errMsg })
-          this.setState({ errMsg: 'Cannot link student. Please try again later' })
+          self.setState({ errMsg: 'Cannot link student. Please try again later' })
+          self.linkFailed()
         })
         // END - do login
       }).catch((errMsg) => {
@@ -83,16 +84,26 @@ class Step1SignIn extends React.Component {
           ALREADY_LINKED_BEFORE: 'The student has been already linked before',
           ALREADY_LINKED_TO_ANOTHER_PARENT: 'The student has been already linked to another parent account before'
         };
-        this.setState({ errMsg: (typeof predefinedMsg[errMsg] !== 'undefined' ? predefinedMsg[errMsg] : errMsg) })
+        self.setState({ errMsg: (typeof predefinedMsg[errMsg] !== 'undefined' ? predefinedMsg[errMsg] : errMsg) })
+        self.linkFailed()
       })
       //
     } else {
-      this.setErrors(result)
+      self.setErrors(result)
+    }
+  }
+
+  linkFailed() {
+    console.info('Subscribe => PageContent => LinkStudent component => linkFailed => props: ', this.props)
+    const { assignment } = this.props
+    if (!assignment.isFromListPage && !assignment.success) {
+      console.info('Subscribe => PageContent => LinkStudent component => linkFailed => Should SKIP: ')
+      this.props.changeStep(this.props.steps.success)
     }
   }
 
   render() {
-    console.info('Subscribe => PageContent => SignIn component => props: ', this.props)
+    console.info('Subscribe => PageContent => LinkStudent component => props: ', this.props)
     const requiredLabel = (<abbr className='dk-red-text'>&nbsp;*</abbr>)
     return (
       <div className='subscription-assign-student-container'>

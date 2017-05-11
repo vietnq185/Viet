@@ -32,12 +32,15 @@ class Step1SignIn extends React.Component {
 
     console.info('Subscribe => PageContent => Success component => assignment: ', assignment)
 
-    const studentLogin = this.props.assignment && this.props.assignment.success ? (
+    const studentLoginLink = (
       <span>
         <br /><br />or sign into <strong>Student Account</strong> to enjoy free trial version
           <br /><br /><a href='https://app.a-smartlearning.com/en/sml/login' className='btn dk-bg-blue dk-white'>Sign into student account</a>
       </span>
-    ) : ''
+    )
+
+    // const studentLogin = this.props.assignment && this.props.assignment.success ? studentLoginLink : ''
+    const studentLogin = studentLoginLink
 
     const detailsLink = (<p>Thanks for signing up with us, your subscription ID is: <Link to={`/subscription-details/${objSubscription._id}`}>#{objSubscription.refid}</Link>.</p>)
 
