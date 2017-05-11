@@ -989,7 +989,11 @@ export const cancelSubscription = (req, res, next) => {
             var stripe = require("stripe")(dataResp.o_stripe_secret);
             stripe.subscriptions.del(req.body.stripeSubscriptionId,
               function (err, confirmation) {
-                var amountRefund = (subscription.fee * 12) - (monthsUsed * subscription.fee) - dataResp.o_admin_fee;
+                var o_admin_fee = dataResp.o_admin_fee;
+                if (monthsUsed === 1) {
+                  o_admin_fee = 0;
+                }
+                var amountRefund = (subscription.fee * 12) - (monthsUsed * subscription.fee) - o_admin_fee;
                 if (refundCharge && amountRefund > 0 && subscription.stripeChargeId !== '') {
                   stripe.charges.refund(subscription.stripeChargeId,
                     {
