@@ -109,9 +109,12 @@ export default class Component extends React.Component {
     let isAnnually = (item.expirationType === ANNUALLY)
     let theRate = isAnnually ? 12 : 1
     let theLabel = isAnnually ? 'year' : 'month'
-
-    const id = `#${item.refid || (item._id.substring(0, 7) + '...')}`;
-
+    var zpad = require('zpad')
+    var _refid = `#${(item._id.substring(0, 7) + '...')}`;
+    if (item.refid !== '') {
+      _refid = `#${(zpad(item.refid, 6))}`;
+    }
+    const id = _refid
     const viewLink = (<a href="javascript: void(0);" onClick={() => {
       self.open(item);
     }}>{id}</a>);
