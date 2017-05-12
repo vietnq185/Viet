@@ -223,7 +223,7 @@ export default class Component extends React.Component {
         <Button onClick={() => this.setState({ filter: {} })}>Clear</Button>&nbsp;<Button onClick={() => this.getList()} bsStyle="primary">Search</Button>
       </div>
     );
-    const allowList = ['pending', 'trialing', 'active', 'overdue', 'cancelled'];
+    const allowList = ['pending', 'trial', 'active', 'overdue', 'cancelled'];
     return (
       <Panel footer={filterFotter}>
         {this.renderFilterRow(

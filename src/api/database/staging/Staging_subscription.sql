@@ -227,3 +227,6 @@ INSERT INTO users (_id, email, role, salt, "firstName", "lastName", phone, "prof
 
 INSERT INTO "options" ("foreign_id", "key", "tab_id", "value", "label", "description", "type", "order", "is_visible", "style", "is_public") VALUES
 (1, 'o_message_promotion_banner', 1, 'Discount {discount}% for the first {numberOfPeople} subscriptions', NULL, 'Message on promotion banner', 'text', 13, 12, NULL, 'T');
+
+
+UPDATE subscriptions SET status='trial' WHERE status='trialing';

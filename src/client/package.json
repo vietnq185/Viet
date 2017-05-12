@@ -21,7 +21,8 @@
     "redux": "^3.6.0",
     "redux-thunk": "^2.2.0",
     "uuid": "^3.0.1",
-    "validator": "^7.0.0"
+    "validator": "^7.0.0",
+    "zpad": "^0.5.0"
   },
   "devDependencies": {
     "flow-bin": "^0.44.2",

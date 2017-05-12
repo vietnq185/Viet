@@ -46,6 +46,7 @@ class UpgradeSubscriptionDetails extends React.Component {
       errMsg: '',
       showFailedDialog: false,
       showSuccessDialog: false,
+      msgFailed: 'Sorry, an error has occured. Please check your payment detail and try again. Thank you!'
     }
   }
 
@@ -110,9 +111,13 @@ class UpgradeSubscriptionDetails extends React.Component {
 
     }).catch(errMsg => {
       console.info('upgrade error: ', errMsg);
+      if (errMsg === 'CARD_NUMBER_EXISTED') {
+        errMsg = 'Your card has been existed. Please select from your list.'
+      }
       this.setState({
         showFailedDialog: true,
-        showSuccessDialog: false
+        showSuccessDialog: false,
+        msgFailed: errMsg
       })
     });
   }
@@ -352,7 +357,7 @@ class UpgradeSubscriptionDetails extends React.Component {
                 <div className='modal-body text-center'>
                   <div><img src={FailImage} /></div>
                   <h1>FAILED!</h1>
-                  <p>Sorry, an error has occured.<br />Please check your payment detail and try again. Thank you!</p>
+                  <p>{this.state.msgFailed}</p>
                   <div><button className='btn dk-bg-green dk-white btn-close-modal' type='button' data-dismiss='modal' onClick={() => this.setState({ showFailedDialog: false })}>Try Again</button></div>
                 </div>
               </div>

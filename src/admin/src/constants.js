@@ -11,7 +11,7 @@ constants.paymentMethod = {
   creditCard: 'stripe'
 }
 
-constants.subscriptionStatuses = ["pending", "trialing", "active", "overdue", "cancelled"]
+constants.subscriptionStatuses = ["pending", "trial", "active", "overdue", "cancelled"]
 
 constants.emailTokens = {
   mail_forgot_password: ['{firstName}', '{lastName}', '{email}', '{resetPasswordUrl}'],  // DONE

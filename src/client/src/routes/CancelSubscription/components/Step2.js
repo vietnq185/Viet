@@ -66,27 +66,41 @@ class Step2 extends React.Component {
 					cancellationData
 				}
 				return API.cancelSubscription(jwt.accessToken || '', dataUpdate).then((result) => {
-					if (result.status === 'ERR') {
-						switch (result.msg) {
-							case 'UNREGISTERED_USER':
-								this.setState({ errMsg: 'Email not found.' })
-								break
-							case 'WRONG_PASSWORD':
-								this.setState({ errMsg: 'Incorrect password.' })
-								break
-							default:
-								this.setState({ errMsg })
-						}
-					} else {
-						this.props.changeStep(3)
-					}
-				}).catch((errMsg) => {
-					switch (errMsg) {
+					switch (result) {
+						case 'UPDATE_SUCCESSFUL':
+							this.props.changeStep(3)
+							break
 						case 'UNREGISTERED_USER':
 							this.setState({ errMsg: 'Email not found.' })
 							break
 						case 'WRONG_PASSWORD':
 							this.setState({ errMsg: 'Incorrect password.' })
+							break
+						case 'SUBSCRIPTION_NOT_FOUND':
+							this.setState({ errMsg: 'Subscription not found.' })
+							break
+						case 'UPDATE_FAILED':
+							this.setState({ errMsg: 'Failed to cancel subscription.' })
+							break
+						default:
+							this.setState({ errMsg })
+					}
+				}).catch((errMsg) => {
+					switch (errMsg) {
+						case 'UPDATE_SUCCESSFUL':
+							this.props.changeStep(3)
+							break
+						case 'UNREGISTERED_USER':
+							this.setState({ errMsg: 'Email not found.' })
+							break
+						case 'WRONG_PASSWORD':
+							this.setState({ errMsg: 'Incorrect password.' })
+							break
+						case 'SUBSCRIPTION_NOT_FOUND':
+							this.setState({ errMsg: 'Subscription not found.' })
+							break
+						case 'UPDATE_FAILED':
+							this.setState({ errMsg: 'Failed to cancel subscription.' })
 							break
 						default:
 							this.setState({ errMsg })

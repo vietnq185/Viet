@@ -56,7 +56,7 @@ class SubscriptionActive extends React.Component {
       )
     }
 
-    if (cancelMetadata === '') {
+    if (cancelMetadata === '' && parseInt(objSubscription.nextPeriodEnd) <= parseInt(objSubscription.expiryDate)) {
       buttonCancel = (<a href={['/cancel-subscription/', objSubscription._id].join('')} className='cancel-link'>Cancel</a>)
     } else {
       upgradedInfo = ''
