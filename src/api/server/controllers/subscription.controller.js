@@ -57,7 +57,7 @@ const createCard = (req) => {
           }
         }, function (err, token) {
           if (token) return new CCListModel().reset().insert(cardData).then(resolve).catch(reject);
-          return reject(new APIError(constants.errors.invalidCard, httpStatus.OK, true));
+          return reject(new APIError(err.message, httpStatus.OK, true));
         });
       }).catch((err) => {
         return reject(new APIError(constants.errors.cannotRetrieveOptions, httpStatus.OK, true));
@@ -214,7 +214,6 @@ export const create = (req, res, next) => {
             return new OptionModel().reset().where('t1.key::varchar=$1').update({ value: oRemainingDiscountSubscription }, ['o_remaining_discount_subscription']).then((updateOptions) => {
               return processPayment(savedSubscription).then((dataResp) => {
                 savedSubscription.stripeStatus = dataResp.status;
-                savedSubscription.stripeMsg = data.msg;
                 return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
               }).catch((err) => {
                 savedSubscription.stripeStatus = 'FAILED';
@@ -294,7 +293,6 @@ export const upgrade = (req, res, next) => {
         savedSubscription = savedSubscription[0];
         return processPayment(Object.assign({}, savedSubscription, paymentMeta)).then((dataResp) => {
           savedSubscription.stripeStatus = dataResp.status;
-          savedSubscription.stripeMsg = dataResp.msg;
           return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
         }).catch((err) => {
           savedSubscription.stripeStatus = 'FAILED';
@@ -955,7 +953,7 @@ export const cancelSubscription = (req, res, next) => {
   return new OptionModel().getPairs().then((dataResp) => {
     return new UserModel().where('t1._id::varchar=$1').findOne([authData.userId]).then((user) => {
       if (user === null) {
-        return res.json(new APIResponse({ status: 'ERR', msg: 'UNREGISTERED_USER' }));
+        return next(new APIError('UNREGISTERED_USER', httpStatus.OK, true));
       }
       if (user.hashedPassword !== Utils.encrypt(req.body.password, user.salt)) {
         return next(new APIError('WRONG_PASSWORD', httpStatus.OK, true));

@@ -32,13 +32,22 @@ class Step3Payment extends React.Component {
       ccyear: '',
       cvv: ''
     }
+    let msgFailed = 'Sorry, an error has occured. Please check your payment detail and try again. Thank you!'
+    if (this.props.subscriptionResult.error !== null) {
+      if (this.props.subscriptionResult.error === 'CARD_NUMBER_EXISTED') {
+        msgFailed = 'Your card has been existed. Please select from your list.'
+      } else {
+        msgFailed = this.props.subscriptionResult.error
+      }
+    }
+
     this.errors = Utils.copy(this.initialErrors)
     this.state = {
       paymentMethod: this.props.paymentMethod,
       selectedCardId: this.props.selectedCardId || '',
       newCC: this.props.newCC || {},
       hasError: false,
-      errMsg: '',
+      errMsg: msgFailed,
       showFailedDialog: (this.props.subscriptionResult.success === false && this.props.subscriptionResult.error !== null)
     }
   }
@@ -285,7 +294,7 @@ class Step3Payment extends React.Component {
                   <div className='modal-body text-center'>
                     <div><img src={FailImage} /></div>
                     <h1>FAILED!</h1>
-                    <p>Sorry, an error has occured.<br />Please check your payment detail and try again. Thank you!</p>
+                    <p>{this.state.errMsg}</p>
                     <div><button className='btn dk-bg-green dk-white btn-close-modal' type='button' data-dismiss='modal' onClick={() => this.setState({ showFailedDialog: false })}>Try Again</button></div>
                   </div>
                 </div>
