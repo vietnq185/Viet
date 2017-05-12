@@ -70,7 +70,7 @@ class SubscriptionTrailing extends React.Component {
 
     if (cancelMetadata === '' && parseInt(objSubscription.nextPeriodEnd) <= parseInt(objSubscription.expiryDate)) {
       buttonCancel = (<a href={['/cancel-subscription/', objSubscription._id].join('')} className='cancel-link'>Cancel</a>)
-    } else {
+    } else if (parseInt(objSubscription.nextPeriodEnd) <= parseInt(objSubscription.expiryDate)){
       upgradedInfo = ''
       cancelledInfo = (
         <div className='alert alert-danger'>
