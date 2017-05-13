@@ -95,20 +95,26 @@ a{
 .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus{
 	background-color: transparent;
 }
-.navbar-nav li.side-nav-item .dropdown-menu li a{
-	color: #007FFF !important;
-}
-
 .subscribe-header .navbar-nav li.side-nav-item a{
 	color: #000 !important;
 }
 .subscribe-header .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus{
 	background-color: transparent;
 }
-.subscribe-header .navbar-nav li.side-nav-item .dropdown-menu li a{
-	color: #007FFF !important;
+.navbar-default .dropdown-menu{
+	border: 1px solid #ccc;
 }
-
+.navbar-default .dropdown-menu li{
+	border-bottom: 1px solid #ccc;
+	padding: 5px 0;
+}
+.navbar-default .dropdown-menu li:last-child{
+	border-bottom: none;
+}
+.navbar-default .dropdown-menu li a{
+	color: #000 !important;
+	padding-bottom: 0;
+}
 .page-footer{
 	background-color: #FFFFFF;
 	border-top: 1px solid #ddd;
@@ -896,6 +902,9 @@ color: #007fff;
 	height: 34px;
     line-height: 25px;
 }
+.subscribe-header .route--link--active{
+	text-decoration: none !important;
+}
 @media (max-width: 1199px){
 	.subscription-plan .subscription-plan-item{
 		min-height: 509px;
@@ -935,6 +944,9 @@ color: #007fff;
 	}
 	.form-profile-container{
 		width: 95%;
+	}
+	.navbar-default .dropdown-menu li a{
+		color: #fff !important;
 	}
 }
 @media (max-width: 659px){

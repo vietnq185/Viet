@@ -6,9 +6,14 @@ import '../../../styles/subscribe.css'
 const moment = require('moment')
 
 class SubscriptionPending extends React.Component {
-  render () {
+  render() {
     const { objSubscription } = this.props
     let theRate = (objSubscription.expirationType === 'annually' ? 12 : 1)
+    var zpad = require('zpad')
+    let _refid = (objSubscription._id.substring(0, 7) + '...')
+    if (objSubscription.refid !== '') {
+      _refid = zpad(objSubscription.refid, 6)
+    }
     return (
       <div className='subscribe-details'>
         <h1>{objSubscription.courseTitles.join(' & ')} <span className='status status-pending'>Pending</span></h1>
@@ -16,7 +21,7 @@ class SubscriptionPending extends React.Component {
         <div className='info'>
           <div className='row'>
             <div className='col-sm-6 col-xs-12'>
-              <div>ID: #{objSubscription.refid || objSubscription._id}</div>
+              <div>ID: #{_refid}</div>
               <div>Plan: <span className='dk-blue'>{objSubscription.courseTitles.join(' & ')} (${parseFloat(objSubscription.fee * theRate).toFixed(2)}/{objSubscription.expirationType == 'annually' ? 'year' : 'month'})</span></div>
               <div>Payment method: {objSubscription.channel == 'bank' ? 'Bank Transfer' : 'VISA ******' + objSubscription.ccnum}</div>
             </div>
@@ -28,8 +33,8 @@ class SubscriptionPending extends React.Component {
 
         <div className='row'>
           <div className='col-xs-12 pending-account-info'>
-						This account is not activated yet. Please contact us to activate your account.<br />
-						If you have already contacted us, we appreciate your patience to allow us to activate the account for you in 2 workings days
+            This account is not activated yet. Please contact us to activate your account.<br />
+            If you have already contacted us, we appreciate your patience to allow us to activate the account for you in 2 workings days
 					</div>
         </div>
 

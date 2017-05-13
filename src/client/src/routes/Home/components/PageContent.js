@@ -1,141 +1,355 @@
+/* eslint-disable */
+
 import React from 'react'
+import ReactTooltip from 'react-tooltip'
+import { fadeIn } from 'react-animations'
+import { StyleSheet, css } from 'aphrodite'
+import { connect } from 'react-redux'
 
-import CaculatorImage from '../../../styles/images/caculator.svg'
-import MicroscopeImage from '../../../styles/images/microscope.svg'
+import * as subscribeActions from '../../Subscribe/modules/subscribe'
 
-import ConceptmapImage from '../../../styles/images/conceptmap.png'
-import EstimationImage from '../../../styles/images/estimation.png'
-import WorksheetImage from '../../../styles/images/worksheet.png'
-import ReportImage from '../../../styles/images/report.png'
+import Utils from '../../../helpers/utils'
+
+import LocatingImage from '../../../styles/images/locating.svg'
+import RouteImage from '../../../styles/images/route.svg'
+
+import CompassImage from '../../../styles/images/compass.svg'
+import SignsImage from '../../../styles/images/signs.svg'
+import LocationImage from '../../../styles/images/location.svg'
+import ScreendeviceImage from '../../../styles/images/screendevice.png'
+import ScreenDevice2Image from '../../../styles/images/screen-device2.png'
+
+const styles = StyleSheet.create({
+  fadeIn: {
+    animationName: fadeIn,
+    animationDuration: '1s'
+  }
+})
+
 
 class PageContent extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      showFreeTrialConfirmStudent: false,
+      showFreeTrialConfirm: false,
+      testimonialIndex: 1
+    }
+  }
+
+  changeTestimonial(index) {
+    this.setupActiveTestimonial(index);
+  }
+
+  setupActiveTestimonial(index) {
+    this.setState({ testimonialIndex: index })
+  }
+
+  componentDidMount() {
+    this.setupActiveTestimonial(this.state.testimonialIndex)
+  }
+
+  onCreateParent() {
+    this.props.changeStep(this.props.subscribe.steps.signUp) // eslint-disable-line
+    Utils.redirect('/subscribe')
+  }
+
   render() {
     return (
       <div>
+        <div className="page-section1 text-center">
+          <h3 className="native dk-blue-text section1-text-header" id="scrollTo">How it Works ?</h3>
+          <div className="container-fluid">
 
-        <div className='programme-section1 text-left'>
-          <div className='container-fluid'>
-            {/* <!-- Page Section1 --> */}
-            <div className='row programme-container'>
-              <div className='container-fluid'>
-                <div className='col-md-6'>
-                  <div className='row'>
-                    <div className='col-md-2'>
-                      <img src={CaculatorImage} alt='Caculator' />
-                    </div>
-                    <div className='col-md-10 text-map'>
-                      <p className='discription-tittle'>PSLE MATHEMATICS</p>
-                      <p className='discription-sub'>Preparation</p>
-                    </div>
+            <div className="row page-container">
+              <div className="col-md-15 col-md-3 col-sm-3 col-sm-3-edit map-item1">
+                <div className="row map-image">
+                  <div className="col-md-3 col-xs-3 native">
+                    <img className="image-map" src={LocatingImage} alt="Locating" />
                   </div>
-                  <div className='discription-group-item'>
-                    <p className='discription-item mb'>Singapore MOE Latest Syllabus</p>
-                    <p className='discription-item mb'>
-                      <span className='dk-blue'>78&nbsp;</span>Concepts in Mathematics Concept System</p>
-                    <p className='discription-item mb'>Big Questions Bank in the 78 Concepts</p>
-                    <p className='discription-item mb'>Each Concept has Questions of Various Difficulty Levels and Diverse Heuristic Methods</p>
-                    <p className='discription-item'>Subscribable for Primary 5 & 6 Students</p>
-                  </div>
-                </div>
-                <div className='col-md-6'>
-                  <div className='row'>
-                    <div className='col-md-2'>
-                      <img src={MicroscopeImage} alt='MicroScope' />
+                  <div className="col-md-9 col-xs-9 text-map dk-blue-text">
+                    <div className="map-description">
+                      Locating the
+                          Learning Needs
+                          <a className="map-learnmore dk-red-text" tabIndex="0" data-tip="<span>SLS conducts ongoing analysis</span> of all Test and Practice Papers for all topics to <span>identify</span> the student's <span>learning needs.</span>" data-html={true}>learn more <i className="fa fa-fw fa-angle-right"></i></a>
+                      <ReactTooltip className="about-tooltip" place="bottom" type="light" html={true} />
                     </div>
-                    <div className='col-md-10 text-map'>
-                      <p className='discription-tittle'>PSLE SCIENCE</p>
-                      <p className='discription-sub'>Preparation</p>
-                    </div>
-                  </div>
-                  <div className='discription-group-item'>
-                    <p className='discription-item mb'>Singapore MOE Latest Syllabus</p>
-                    <p className='discription-item mb'>
-                      <span className='dk-blue'>71&nbsp;</span>Concepts in Sience Concept System</p>
-                    <p className='discription-item mb'>Big Questions Bank in the 71 Concepts</p>
-                    <p className='discription-item mb'>Each Concept has Questions of Various Higher-order Thinking and Skills and Processes</p>
-                    <p className='discription-item'>Subscribable for Primary 5 & 6 Students</p>
                   </div>
                 </div>
               </div>
+              <div className="col-md-15 col-md-3 col-sm-3 col-sm-3-edit map-item2">
+                <div className="row map-image">
+                  <div className="col-md-3 col-xs-3 native">
+                    <img className="image-map" src={RouteImage} alt="Route" />
+                  </div>
+                  <div className="col-md-9 col-xs-9 text-map dk-blue-text">
+                    <div className="map-description">
+                      Planning the
+                          Learning Route
+                          <a className="map-learnmore dk-red-text" data-toggle="popover" data-trigger="focus" tabIndex="0" data-placement="bottom" data-html={true} data-tip="<span>It generates a Personalised Learning Road Map</span> based on the identified learning needs.">learn more <i className="fa fa-fw fa-angle-right"></i></a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="col-md-15 col-md-3 col-sm-3 col-sm-3-edit map-item3">
+                <div className="row map-image">
+                  <div className="col-md-3 col-xs-3 native">
+                    <img className="image-map" src={CompassImage} alt="Map" />
+                  </div>
+                  <div className="col-md-9 col-xs-9 text-map dk-blue-text">
+                    <div className="map-description">
+                      Navigating the
+                          Concept Map
+                          <a className="map-learnmore dk-red-text" data-toggle="popover" data-trigger="focus" tabIndex="0" data-placement="bottom" data-html={true} data-tip="Each worksheet is individualised based on performance from previous practice paper to <span>guide</span> the student in <span>navigating</span> the <span>Concept Map.</span>">learn more <i className="fa fa-fw fa-angle-right"></i></a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="col-md-15 col-md-3 col-sm-3 col-sm-3-edit map-item4">
+                <div className="row map-image">
+                  <div className="col-md-3 col-xs-3 native">
+                    <img className="image-map" src={SignsImage} alt="Destination" />
+                  </div>
+                  <div className="col-md-9 col-xs-9 text-map dk-blue-text">
+                    <div className="map-description">
+                      Arriving at Learning
+                          Destination
+                          <a className="map-learnmore dk-red-text" data-toggle="popover" data-trigger="focus" tabIndex="0" data-placement="bottom" data-html={true} data-tip="Through targeted practice, the student <span>masters content</span> for all topics in the subject and <span>achieves</span> his/her <span>learning goals.</span>">learn more <i className="fa fa-fw fa-angle-right"></i></a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="col-md-15 col-md-3 col-sm-3 col-sm-3-edit map-item5">
+                <div className="row map-image">
+                  <div className="col-md-3 col-xs-3 native">
+                    <img className="image-map" src={LocationImage} alt="Location" />
+                  </div>
+                  <div className="col-md-9 col-xs-9 text-map dk-blue-text">
+                    <div className="map-description">
+                      Receiving
+                          Comprehensive
+                          Real-time Updates
+                          <a className="map-learnmore dk-red-text" data-toggle="popover" data-trigger="focus" tabIndex="0" data-placement="bottom" data-html={true} data-tip="Parents receive <span>comprehensive,  accurate</span> and <span>timely</span> updates of their child's progress on their mobile devices anytime, anywhere.">learn more <i className="fa fa-fw fa-angle-right"></i></a>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            {/* <!-- /.row --> */}
           </div>
-          {/* <!-- /.container-fluid --> */}
-        </div>
-        {/* <!--/.page-section1--> */}
 
-        {/* <!-- page-section2--> */}
-        <div className='programme-section2 text-center'>
-          <h3 className='dk-blue-text section2-text-header'>
-            Our Free Features
-      </h3>
-          <div className='row text-left'>
-            <div className='col-md-6'>
-              <div>
-                <img className='product-icon' src={ConceptmapImage} alt='ConceptMap' />
-                <span className='dk-blue-text programme-product'>Concept Map</span>
-              </div>
-              <p className='programme-description'>
-                Our Concept Map highlights the individual student's strengths and areas for improvement in all concepts and sub-concepts in both PSLE Mathematics and Science
-          </p>
-            </div>
-            <div className='col-md-6'>
-              <div>
-                <img className='product-icon' src={EstimationImage} alt='Estimation' />
-                <span className='dk-blue-text programme-product'>Academic Ability Estimation</span>
-              </div>
-              <p className='programme-description'>
-                Our algorithm dynamically identifies every single practice that a student attempts and estimates his/her academic ability based on his/her latest performance
-          </p>
-            </div>
-          </div>
-          <div className='row text-left'>
-            <div className='col-md-6'>
-              <div>
-                <img className='product-icon' src={WorksheetImage} alt='WorkSheet' />
-                <span className='dk-blue-text programme-product'>Individualised Worksheet</span>
-              </div>
-              <p className='programme-description'>
-                Every worksheet assigned to the student is individualised and generated by the algorithm based on the result of his/her latest academic ability estimation
-          </p>
-            </div>
-            <div className='col-md-6'>
-              <div>
-                <img className='product-icon' src={ReportImage} alt='Report' />
-                <span className='dk-blue-text programme-product'>Visual Reports</span>
-              </div>
-              <p className='programme-description'>
-                Timely and accurate reports displayed in the form of bar graphs and texts are sent to the student and parent
-          </p>
-            </div>
+          <h3 className="dk-blue-text section1-text-footer">
+            Parent and child together on a happy
+              and fulfilling learning journey
+            </h3>
+          <div className="section1-btn-group">
+            <a href="programme">
+              <button className="btn dk-btn dk-bg-blue dk-white">
+                OUR PROGRAMME
+                </button>
+            </a>
           </div>
         </div>
-        {/* <!--/.page-section2--> */}
 
-        {/* !-- page-section3--> */}
-        <div className='programme-section3 text-center dk-bg-gray'>
-          <div>
-            <h3 className='dk-blue1 tree-trial'>
-              Join our learning group today!
-        </h3>
-            <button className='btn dk-btn dk-bg-blue dk-white' data-toggle='modal' data-target='#loginModal'>
-              START A FREE TRIAL
-        </button>
-          </div>
-          <div className='section3-paging'>
-            <div className='section3-paging-item dk-bg-green' />
-            <div className='section3-paging-item dk-bg-gray' />
-            <div className='section3-paging-item dk-bg-gray' />
-            <div className='section3-paging-item dk-bg-gray' />
+        <div className="page-section2 text-center">
+          <h3 className="dk-blue-text section2-text-header">
+            Access anytime, anywhere, on the go and<br /> on your own schedule
+            </h3>
+          <div className="row">
+            <div className="col-md-6 col-sm-6 col-xs-12">
+              <p className="description-highlight">
+                Practice
+                </p>
+              <p className="description-screen-device">
+                An online Web-Application available on <br /> Desktops and Tablets
+                </p>
+              <img className="image-device" src={ScreendeviceImage} alt="screenDevice" />
+            </div>
+            <div className="col-md-6 col-sm-6 col-xs-12">
+              <p className="description-highlight">
+                Track Their Child's Learning
+                </p>
+              <p className="description-screen-device">
+                An application available on Smartphones and Tablets
+                </p>
+              <img className="image-device image-device2" src={ScreenDevice2Image} alt="screendevice2" />
+            </div>
           </div>
         </div>
-        {/* <!--/.page-section3--> */}
+
+        {this.renderTestimonials()}
 
       </div>
     )
   }
+
+  renderTestimonials() {
+    return (
+      <div>
+
+        <div className="page-section3 text-center">
+          <h3 className="dk-blue-text section2-text-header">What Others Say About Us</h3>
+          <div className="container">
+            <div className="row">
+              {this.renderTestimonialLeft()}
+              {this.renderTestimonialRight()}
+            </div>
+          </div>
+          <div className="section3-paging">
+            <input type="radio" name="testimonial-paging" id="first" onChange={() => this.changeTestimonial(1)} checked={this.state.testimonialIndex === 1} />
+            <input type="radio" name="testimonial-paging" id="second" onChange={() => this.changeTestimonial(2)} checked={this.state.testimonialIndex === 2} />
+            <input type="radio" name="testimonial-paging" id="third" onChange={() => this.changeTestimonial(3)} checked={this.state.testimonialIndex === 3} />
+            <input type="radio" name="testimonial-paging" id="forth" onChange={() => this.changeTestimonial(4)} checked={this.state.testimonialIndex === 4} />
+            <label className="section3-paging-item dk-bg-gray" htmlFor="first"><span></span></label>
+            <label className="section3-paging-item dk-bg-gray" htmlFor="second"><span></span></label>
+            <label className="section3-paging-item dk-bg-gray" htmlFor="third"><span></span></label>
+            <label className="section3-paging-item dk-bg-gray" htmlFor="forth"><span></span></label>
+          </div>
+          <div>
+            <h3 className="dk-blue1 tree-trial">
+              Join our learning group today!
+              </h3>
+            <button className="btn dk-btn dk-bg-blue dk-white" data-toggle='modal' data-target='#modalFreeTrialConfirm' onClick={() => this.setState({ showFreeTrialConfirm: true })}>
+              START A FREE TRIAL
+            </button>
+          </div>
+        </div>
+
+        {/* <!-- Modal --> */}
+        <div id='modalFreeTrialConfirm' aria-hidden='false' className={['modal fade', this.state.showFreeTrialConfirm ? 'in' : '', css(styles.fadeIn)].join(' ')} role='dialog' style={this.state.showFreeTrialConfirm ? { display: 'block' } : { display: 'none' }}>
+          <div className='modal-dialog'>
+            {/* <!-- Modal content--> */}
+            <div className='modal-content'>
+              <div className='modal-header text-center'>
+                <span className='modalFreeTrialConfirmTitle'>Free Trial</span>
+                <button type='button' className='close' data-dismiss='modal' onClick={() => this.setState({ showFreeTrialConfirm: false })}>&times;</button>
+              </div>
+              <div className='modal-body'>
+                <p className='text-center'>Are you a student or parent?</p><br />
+                <div className='text-center'>
+                  <a className='btn dk-bg-green dk-white mb5' href='https://app.a-smartlearning.com/en/sml/login?mode=register'>I AM A STUDENT</a>
+                  <a className='btn dk-bg-blue dk-white mb5' href='/subscribe'>I AM A PARENT</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id='modalFreeTrialConfirmStudent' aria-hidden='false' className={['modal fade', this.state.showFreeTrialConfirmStudent ? 'in' : '', css(styles.fadeIn)].join(' ')} role='dialog' style={this.state.showFreeTrialConfirmStudent ? { display: 'block' } : { display: 'none' }}>
+          <div className='modal-dialog'>
+            {/* <!-- Modal content--> */}
+            <div className='modal-content'>
+              <div className='modal-header text-center'>
+                <span className='modalFreeTrialConfirmTitle'>Free Trial</span>
+                <button type='button' className='close' data-dismiss='modal' onClick={() => this.setState({ showFreeTrialConfirmStudent: false })}>&times;</button>
+              </div>
+              <div className='modal-body'>
+                <p className='text-center'>Thank you for your interest! Please let your parents to create an account and signup ASLS for you!</p><br />
+                <div className='text-center'>
+                  <a className='btn dk-bg-green dk-white' href='javascript: void(0);' onClick={() => this.onCreateParent()}>PARENT? SIGNUP FOR A-SLS</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  renderTestimonialLeft() {
+    return (
+      <div className="col-md-6 col-sm-12 col-xs-12 left-testimonial-container">
+        <div className={['section3-testimonial', 'left-1', this.state.testimonialIndex === 1 ? 'active' : ''].join(' ')}>
+          <div className="section3-text-highlight dk-blue-text text-left">
+            <p>I think it is very helpful</p>
+          </div>
+          <div className="section3-text-comment text-left">"My son is hard-working. He does lots of practice and corrections for Math and Science yet he doesn't improve much. I think this is because he does not know which concepts to focus. Here I think the A-SLS is very helpful because it identifies his weaknesses, and generates the individualised worksheets for him so he can focus on his weak areas to work and improve."</div>
+          <div className="section3-text-writter text-right">
+            <h4 className="native dk-green-text">Susan, 40 years old</h4>
+            <p className="native">Parent with P5 son in 2016</p>
+          </div>
+        </div>
+        <div className={['section3-testimonial', 'left-2', this.state.testimonialIndex === 2 ? 'active' : ''].join(' ')}>
+          <div className="section3-text-highlight dk-blue-text text-left">
+            <p>The Parent App provides this information to me so I can help him</p>
+          </div>
+          <div className="section3-text-comment text-left">"Being a parent, I want to and can only help my son if I monitor him closely especially know what are the areas he needs help. The Parent App provides this information to me so I can help him."</div>
+          <div className="section3-text-writter text-right">
+            <h4 className="native dk-green-text">MeiLing, 45 years old</h4>
+            <p className="native">Parent with P6 son in 2016</p>
+          </div>
+        </div>
+        <div className={['section3-testimonial', 'left-3', this.state.testimonialIndex === 3 ? 'active' : ''].join(' ')}>
+          <div className="section3-text-highlight dk-blue-text text-left">
+            <p>The A-SLS is a fantastic tool</p>
+          </div>
+          <div className="section3-text-comment text-left">"The A-SLS allows my daughter to study at home while I can monitor her progress on the Parent App even when I am not with her at home. The A-SLS is a fantastic tool, it helps both of us save a lot of cost, time and energy."</div>
+          <div className="section3-text-writter text-right">
+            <h4 className="native dk-green-text">Karen, 42 years old</h4>
+            <p className="native">Parent with P5 daughter in 2016</p>
+          </div>
+        </div>
+        <div className={['section3-testimonial', 'left-4', this.state.testimonialIndex === 4 ? 'active' : ''].join(' ')}>
+          <div className="section3-text-highlight dk-blue-text text-left">
+            <p>Best of all, I can monitor my child study anywhere and anytime.</p>
+          </div>
+          <div className="section3-text-comment text-left">"I find the Concept Map very useful as it helps me to know exactly the areas which my child needs to work on. Best of all, I can monitor my child study anywhere and anytime."</div>
+          <div className="section3-text-writter text-right">
+            <h4 className="native dk-green-text">Josephine, 39 years old</h4>
+            <p className="native">Parent with P5 son in 2016</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  renderTestimonialRight() {
+    return (
+      <div className="col-md-6 col-sm-12 col-xs-12 right-testimonial-container">
+        <div className={['section3-testimonial', 'right-1', this.state.testimonialIndex === 1 ? 'active' : ''].join(' ')}>
+          <div className="section3-text-highlight dk-blue-text text-left">
+            <p>It is the best I have seen in the market</p>
+          </div>
+          <div className="section3-text-comment text-left">"I am impressed with the advanced technology of the A-SLS. Especially this system provides not only questions for practice, but also, most importantly, instant analysis for users. It is the best I have seen in the market."</div>
+          <div className="section3-text-writter text-right">
+            <h4 className="native dk-green-text">David, 48 years old</h4>
+            <p className="native">Parent with P6 daughter in 2016</p>
+          </div>
+        </div>
+        <div className={['section3-testimonial', 'right-2', this.state.testimonialIndex === 2 ? 'active' : ''].join(' ')}>
+          <div className="section3-text-highlight dk-blue-text text-left">
+            <p>This A-SLS allows me to study from home</p>
+          </div>
+          <div className="section3-text-comment text-left">"I don't like to rush to the tuition centre for classes after school. This A-SLS allows me to study from home and I can also receive immediate feedback from doing the worksheets."</div>
+          <div className="section3-text-writter text-right">
+            <h4 className="native dk-green-text">Chloe, 12 years old</h4>
+            <p className="native">Student who is P6 in 2016</p>
+          </div>
+        </div>
+        <div className={['section3-testimonial', 'right-3', this.state.testimonialIndex === 3 ? 'active' : ''].join(' ')}>
+          <div className="section3-text-highlight dk-blue-text text-left">
+            <p>I am more focused on my studies</p>
+          </div>
+          <div className="section3-text-comment text-left">"I like to do questions on computer. It is more fun. I am more focused on my studies while doing the worksheets on the computer than on paper."</div>
+          <div className="section3-text-writter text-right">
+            <h4 className="native dk-green-text">Michael, 11 years old</h4>
+            <p className="native">Student who is P5 in 2016</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  //
 }
 
 PageContent.propTypes = {}
 
-export default PageContent
+const mapDispatchToProps = {
+  ...subscribeActions
+}
+
+const mapStateToProps = (state) => ({
+  subscribe: state.subscribe
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(PageContent)

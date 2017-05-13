@@ -517,13 +517,15 @@ var processPayment = function (subscription) {
           var upgradePlan = subscription.isUpgradePlan || '',
             stripe = require("stripe")(dataResp.o_stripe_secret),
             planFee = parseInt(subscriptionData.fee) * 100,
-            planSubscription = "subscription-asls-monthly-fee-" + planFee,
+            planSubscription = "subscription-asls-monthly-fee-" + planFee + '-SGD',
+            planName = 'ASLS Subscription Monthly Fee ' + planFee + ' SGD',
             planInterval = 'month',
             curentTs = new Date().getTime(),
             nextTsApplyUpgrade = subscriptionData.expiryDate > curentTs ? subscriptionData.expiryDate : curentTs;
           if (subscriptionData.expirationType === 'annually' || upgradePlan === 1) {
             planFee = parseInt(subscriptionData.fee) * 12 * 100;
-            planSubscription = 'subscription-asls-yearly-fee' + planFee;
+            planSubscription = 'subscription-asls-yearly-fee-' + (planFee/100) + '-SGD';
+            planName = 'ASLS Subscription Yearly Fee ' + (planFee/100) + ' SGD',
             planInterval = 'year';
           };
 
@@ -533,10 +535,10 @@ var processPayment = function (subscription) {
             function (err, plan) {
               if (!plan) {
                 var planMonthly = stripe.plans.create({
-                  name: "ASLS Subscription Fee",
+                  name: planName,
                   id: planSubscription,
                   interval: planInterval,
-                  currency: "usd",
+                  currency: "SGD",
                   amount: planFee,
                 }, function (err, plan) {
 

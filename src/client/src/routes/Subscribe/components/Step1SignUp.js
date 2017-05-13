@@ -204,9 +204,10 @@ class Step1SignUp extends React.Component {
             <input className='form-control hide' name='phone' id='phone' required='' value={this.state.phoneNumber} type='text' ref='phone' />
 
             <IntlTelInput
+              placeholder={'+6599999999'}
+              defaultValue={'+6599999999'}
               preferredCountries={['SG']}
               defaultCountry={'SG'}
-              placeholder={'+6599999999'}
               onChange={(data) => this.onPhoneChangeHandler(data)}
             />
 

@@ -35,7 +35,7 @@ class Header extends React.Component {
     const self = this
     setTimeout(function () {
       const nextAction = () => {
-        Utils.redirect('/about')
+        Utils.redirect('/')
       }
       self.props.logout(nextAction)
     }, 500);
@@ -78,7 +78,7 @@ class Header extends React.Component {
           </Navbar.Header>
           <Navbar.Collapse className='navbar-right dk-white'>
             <ul className='nav navbar-nav side-nav'>
-              <li><Link to='/about' className='side-nav-item dk-white route--item' activeClassName='route--active dk-yellow'>Home</Link></li>
+              <li><IndexLink to='/' className='side-nav-item dk-white route--item nav-home' activeClassName='route--active dk-yellow'>Home</IndexLink></li>
               <li><Link to='/programme' className='side-nav-item dk-white route--item' activeClassName='route--active dk-yellow'>Our Programme</Link></li>
               <li><Link to='/student' className='side-nav-item dk-white route--item' activeClassName='route--active dk-yellow'>For Student</Link></li>
               <li><Link to='/parent' className='side-nav-item dk-white route--item' activeClassName='route--active dk-yellow'>For Parent</Link></li>
@@ -100,7 +100,7 @@ class Header extends React.Component {
               <div className='modal-body'>
                 <p className='text-center'>Are you a student or parent?</p><br />
                 <div className='text-center'>
-                  <a className='btn dk-bg-green dk-white mb5' data-dismiss='modal' data-toggle='modal' data-target='#modalFreeTrialConfirmStudent' onClick={() => this.setState({ showFreeTrialConfirm: false, showFreeTrialConfirmStudent: true })}>I AM A STUDENT</a>
+                  <a className='btn dk-bg-green dk-white mb5' href='https://app.a-smartlearning.com/en/sml/login?mode=register'>I AM A STUDENT</a>
                   <a className='btn dk-bg-blue dk-white mb5' href='/subscribe'>I AM A PARENT</a>
                 </div>
               </div>

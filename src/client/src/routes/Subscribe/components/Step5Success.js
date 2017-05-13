@@ -38,11 +38,15 @@ class Step1SignIn extends React.Component {
           <br /><br /><a href='https://app.a-smartlearning.com/en/sml/login' className='btn dk-bg-blue dk-white'>Sign into student account</a>
       </span>
     )
-
+    var zpad = require('zpad')
+    let _refid = (objSubscription._id.substring(0, 7) + '...')
+    if (objSubscription.refid !== '') {
+      _refid = zpad(objSubscription.refid, 6)
+    }
     // const studentLogin = this.props.assignment && this.props.assignment.success ? studentLoginLink : ''
     const studentLogin = studentLoginLink
 
-    const detailsLink = (<p>Thanks for signing up with us, your subscription ID is: <Link to={`/subscription-details/${objSubscription._id}`}>#{objSubscription.refid}</Link>.</p>)
+    const detailsLink = (<p>Thanks for signing up with us, your subscription ID is: <Link to={`/subscription-details/${objSubscription._id}`}>#{_refid}</Link>.</p>)
 
     let channelStripe = (
       <div className='thank-you-msg'>
