@@ -426,6 +426,7 @@ export const changeStatus = (req, res, next) => {
           expiryDate = moment(tsExpiryDateFrom.add(moment.duration(1, period))).unix() * 1000;
         dataUpdate.expiryDateFrom = expiryDateFrom;
         dataUpdate.expiryDate = expiryDate;
+        dataUpdate.cancelMetadata = {};
       }
       return sModel.reset().where('t1._id::varchar=$1').update(dataUpdate, [id]).then(result => {
         if (result === null) {
@@ -741,7 +742,7 @@ var processPayment = function (subscription) {
                 customer: source.customer,
                 plan: planSubscription,
                 //trial_period_days: dataResp.o_trial_days,
-                //trial_end: moment.unix(nextTsApplyUpgrade / 1000).unix()
+                trial_end: moment.unix(nextTsApplyUpgrade / 1000).unix()
               }, function (err, subscriptionResp) {
                 if (subscriptionResp) {
                   return new SubscriptionModel().where('t1._id::varchar=$1').update({ stripeCustomerId: subscriptionResp.customer, stripeSubscriptionId: subscriptionResp.id }, [subscriptionData._id]).then(dataUpdated => {

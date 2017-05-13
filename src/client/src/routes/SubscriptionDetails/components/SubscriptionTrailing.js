@@ -55,7 +55,7 @@ class SubscriptionTrailing extends React.Component {
     let upgradedInfo = ''
     let buttonCancel = ''
     let cancelledInfo = ''
-    let cancelMetadata = objSubscription.cancelMetadata || ''
+    let cancelMetadata = objSubscription.cancelMetadata || {}
     if (parseInt(objSubscription.nextPeriodEnd) > parseInt(objSubscription.expiryDate)) {
       upgradedInfo = (
         <div className='alert alert-danger'>
@@ -68,7 +68,7 @@ class SubscriptionTrailing extends React.Component {
       )
     }
 
-    if (cancelMetadata === '' && parseInt(objSubscription.nextPeriodEnd) <= parseInt(objSubscription.expiryDate)) {
+    if (cancelMetadata.chk1 === undefined && parseInt(objSubscription.nextPeriodEnd) <= parseInt(objSubscription.expiryDate)) {
       buttonCancel = (<a href={['/cancel-subscription/', objSubscription._id].join('')} className='cancel-link'>Cancel</a>)
     } else if (parseInt(objSubscription.nextPeriodEnd) <= parseInt(objSubscription.expiryDate)){
       upgradedInfo = ''

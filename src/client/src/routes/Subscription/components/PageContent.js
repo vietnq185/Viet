@@ -96,7 +96,7 @@ class PageContent extends React.Component {
                     let theRate = isAnnually ? 12 : 1
                     let theLabel = isAnnually ? 'year' : 'month'
                     let buttonsPanel = []
-                    let cancelMetadata = item.cancelMetadata || ''
+                    let cancelMetadata = item.cancelMetadata || {}
                     let _refid = (item._id.substring(0, 7) + '...')
                     if (item.refid !== '') {
                       _refid = zpad(item.refid, 6)
@@ -105,7 +105,7 @@ class PageContent extends React.Component {
                       if (!isAnnually && parseInt(item.expiryDate) >= parseInt(item.nextPeriodEnd)) {
                         buttonsPanel.push(<a key={Utils.guid()} className='link-upgrade-subscription' href='javascript: void(0);' onClick={() => this.updateSubscription(item._id)}>Upgrade</a>)
                       }
-                      if (cancelMetadata === '' && parseInt(item.nextPeriodEnd) <= parseInt(item.expiryDate)) {
+                      if (cancelMetadata.chk1 === undefined && parseInt(item.nextPeriodEnd) <= parseInt(item.expiryDate)) {
                         buttonsPanel.push(<a key={Utils.guid()} className='link-cancel-subscription' href='javascript: void(0);' onClick={() => this.cancelSubscription(item._id)}>Cancel</a>)
                       }
                       if ((item.studentId || '').length === 0) {
