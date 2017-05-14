@@ -752,7 +752,8 @@ body {
 	transform: translateX(0);
 }
 #modalFreeTrialConfirm,
-#modalFreeTrialConfirmStudent{
+#modalFreeTrialConfirmStudent,
+#modalFreeTrialConfirmSignin{
 	color: #000;
 }
 #modalFreeTrialConfirm .modalFreeTrialConfirmTitle,
