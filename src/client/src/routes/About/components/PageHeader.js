@@ -91,7 +91,7 @@ class PageHeader extends React.Component {
               <div className='modal-body'>
                 <p className='text-center'>Are you a student or parent?</p><br />
                 <div className='text-center'>
-                  <a className='btn dk-bg-green dk-white mb5' href='https://app.a-smartlearning.com/en/sml/login?mode=register'>I AM A STUDENT</a>
+                  <a className='btn dk-bg-green dk-white mb5' onClick={() => this.setState({ showFreeTrialConfirm: false, showFreeTrialConfirmStudent: true })}>I AM A STUDENT</a>
                   <a className='btn dk-bg-blue dk-white mb5' href='/subscribe'>I AM A PARENT</a>
                 </div>
               </div>

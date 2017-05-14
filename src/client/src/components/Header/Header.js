@@ -27,7 +27,8 @@ class Header extends React.Component {
     super(props)
     this.state = {
       showFreeTrialConfirmStudent: false,
-      showFreeTrialConfirm: false
+      showFreeTrialConfirm: false,
+      showFreeTrialConfirmSignin: false
     }
   }
 
@@ -50,7 +51,7 @@ class Header extends React.Component {
     const { auth } = this.props
     const isLoggedIn = auth && auth.isLoggedIn
     let userLink = ''
-    let theLink = (<li className='signin'><a href='/subscribe' className='text-signin'> <span className='side-nav-item dk-white'>Sign In</span></a></li>)
+    let theLink = (<li className='signin'><a className='text-signin' href='javascript: void(0);' data-toggle='modal' data-target='#modalFreeTrialConfirmSignin' onClick={() => this.setState({ showFreeTrialConfirmSignin: true })}> <span className='side-nav-item dk-white'>Sign In</span></a></li>)
     let trialLink = (<li><a className='side-nav-item dk-white route--item' href='javascript: void(0);' data-toggle='modal' data-target='#modalFreeTrialConfirm' onClick={() => this.setState({ showFreeTrialConfirm: true })}>Free Trial</a></li>)
     if (isLoggedIn) {
       theLink = ''
@@ -100,7 +101,7 @@ class Header extends React.Component {
               <div className='modal-body'>
                 <p className='text-center'>Are you a student or parent?</p><br />
                 <div className='text-center'>
-                  <a className='btn dk-bg-green dk-white mb5' href='https://app.a-smartlearning.com/en/sml/login?mode=register'>I AM A STUDENT</a>
+                  <a className='btn dk-bg-green dk-white mb5' onClick={() => this.setState({ showFreeTrialConfirm: false, showFreeTrialConfirmStudent: true })}>I AM A STUDENT</a>
                   <a className='btn dk-bg-blue dk-white mb5' href='/subscribe'>I AM A PARENT</a>
                 </div>
               </div>
@@ -120,6 +121,25 @@ class Header extends React.Component {
                 <p className='text-center'>Thank you for your interest! Please let your parents to create an account and signup ASLS for you!</p><br />
                 <div className='text-center'>
                   <a className='btn dk-bg-green dk-white' href='javascript: void(0);' onClick={() => this.onCreateParent()}>PARENT? SIGNUP FOR A-SLS</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id='modalFreeTrialConfirmSignin' aria-hidden='false' className={['modal fade', this.state.showFreeTrialConfirmSignin ? 'in' : '', css(styles.fadeIn)].join(' ')} role='dialog' style={this.state.showFreeTrialConfirmSignin ? { display: 'block' } : { display: 'none' }}>
+          <div className='modal-dialog'>
+            {/* <!-- Modal content--> */}
+            <div className='modal-content'>
+              <div className='modal-header text-center'>
+                <span className='modalFreeTrialConfirmTitle'>Free Trial</span>
+                <button type='button' className='close' data-dismiss='modal' onClick={() => this.setState({ showFreeTrialConfirmSignin: false })}>&times;</button>
+              </div>
+              <div className='modal-body'>
+                <p className='text-center'>Are you a student or parent?</p><br />
+                <div className='text-center'>
+                  <a className='btn dk-bg-green dk-white mb5' href='https://app.a-smartlearning.com/en/sml/login'>I AM A STUDENT</a>
+                  <a className='btn dk-bg-blue dk-white mb5' href='/subscribe'>I AM A PARENT</a>
                 </div>
               </div>
             </div>

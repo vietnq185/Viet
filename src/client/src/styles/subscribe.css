@@ -867,7 +867,8 @@ color: #007fff;
 .right-testimonial-container{
 	height: 216px;
 }
-#modalFreeTrialConfirm .btn{
+#modalFreeTrialConfirm .btn,
+#modalFreeTrialConfirmSignin .btn{
 	margin: 0 10px;
 }
 .form-profile-container{
@@ -994,7 +995,8 @@ color: #007fff;
 	.btn{
 		font-size: 15px;
 	}
-	#modalFreeTrialConfirm .btn{
+	#modalFreeTrialConfirm .btn,
+	#modalFreeTrialConfirmSignin .btn{
 		margin: 5px 0;
 		display: block;
 	}
