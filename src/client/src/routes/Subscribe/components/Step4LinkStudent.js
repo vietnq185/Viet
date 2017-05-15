@@ -72,7 +72,7 @@ class Step1SignIn extends React.Component {
         }).catch((errMsg) => {
           // this.setState({ errMsg })
           self.setState({ errMsg: 'Cannot link student. Please try again later' })
-          self.linkFailed()
+          //self.linkFailed()
         })
         // END - do login
       }).catch((errMsg) => {
@@ -85,7 +85,7 @@ class Step1SignIn extends React.Component {
           ALREADY_LINKED_TO_ANOTHER_PARENT: 'The student has been already linked to another parent account before'
         };
         self.setState({ errMsg: (typeof predefinedMsg[errMsg] !== 'undefined' ? predefinedMsg[errMsg] : errMsg) })
-        self.linkFailed()
+        //self.linkFailed()
       })
       //
     } else {

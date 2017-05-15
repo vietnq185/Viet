@@ -482,6 +482,7 @@ a{
 .subscribe-wrapper .subscribe-success-content{
 	text-align: center;
 	padding: 15px 0;
+	font-size: 16px;
 }
 .subscribe-wrapper .subscribe-success-content .thank-you-msg{
 	font-size: 16px;
@@ -905,6 +906,11 @@ color: #007fff;
 }
 .subscribe-header .route--link--active{
 	text-decoration: none !important;
+}
+.phone-info{
+	font-size: 12px;
+	padding-left: 55px;
+	font-style: italic;
 }
 @media (max-width: 1199px){
 	.subscription-plan .subscription-plan-item{

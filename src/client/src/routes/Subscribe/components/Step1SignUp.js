@@ -202,15 +202,13 @@ class Step1SignUp extends React.Component {
           <div className={['form-group', this.errors.phone ? 'has-error' : ''].join(' ')}>
             <label htmlFor='contact-name'>Phone Number{requiredLabel}</label>
             <input className='form-control hide' name='phone' id='phone' required='' value={this.state.phoneNumber} type='text' ref='phone' />
-
             <IntlTelInput
               placeholder={'+6599999999'}
-              defaultValue={'+6599999999'}
               preferredCountries={['SG']}
               defaultCountry={'SG'}
               onChange={(data) => this.onPhoneChangeHandler(data)}
             />
-
+            <span className='phone-info block'>(Example: 65 9999 9999)</span>
             <span className={[this.errors.phone ? 'help-block' : 'hide'].join(' ')}>{this.errors.phone}</span>
           </div>
           <div className={['form-group', this.errors.password ? 'has-error' : ''].join(' ')}>

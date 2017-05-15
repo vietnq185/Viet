@@ -95,7 +95,7 @@ class Step1SignIn extends React.Component {
         <p><img src={successImage} /></p>
         <h1>SUCCESS!</h1>
         {channelMsg}
-        <br /><a href='javascript: void(0);' className='btn dk-bg-green dk-white' onClick={() => this.showSubscription()}>See your subscription</a>
+        <br /><a href='/subscription' className='btn dk-bg-green dk-white' /*onClick={() => this.showSubscription()}*/>See your subscription</a>
         {studentLogin}
         <br /><br /><br />Download <strong>Parent App</strong> for iOS or Android and enjoy the learning journey with your child
         <br /><br />
