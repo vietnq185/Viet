@@ -835,7 +835,8 @@ export const stripeConfirmation = (req, res, next) => {
               expiryDateFrom,
               expiryDate,
               stripeChargeId: invoice.id,
-              expirationType: subscription.nextExpirationType || subscription.expirationType
+              expirationType: subscription.nextExpirationType || subscription.expirationType,
+              cancelMetadata: {}
             }
             return new SubscriptionModel().where('t1._id::varchar=$1').update(dataUpdate, [subscription._id]).then(savedDataUpdated => {
               console.log("=======================> stripeConfirmation => savedDataUpdated ==> Payment success: ", savedDataUpdated)
