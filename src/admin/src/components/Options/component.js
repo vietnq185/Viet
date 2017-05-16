@@ -170,7 +170,11 @@ export default class Component extends React.Component {
         return (<input type="text" ref={name} name={name} defaultValue={value} className="form-control" />);
         break; // eslint-disable-line
       case 'float':
-        return (<input type="text" ref={name} name={name} defaultValue={value} className="form-control" />);
+        if (item.key === 'o_remaining_discount_subscription') {
+          return (<div><input type="text" ref={name} name={name} defaultValue={value} className="form-control" /><span className='block'><strong>If you set 200 users, please enter 201.</strong></span></div>);
+        } else {
+          return (<input type="text" ref={name} name={name} defaultValue={value} className="form-control" />);
+        }
         break; // eslint-disable-line
       case 'bool':
         return (<input type="checkbox" ref={name} name={name} defaultValue="1|0::1" defaultChecked={value === '1|0::1'} className="form-control" />);

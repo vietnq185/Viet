@@ -913,7 +913,7 @@ export const checkToShowBannerDiscount = (req, res, next) => {
       remaining_discount_subscription = dataResp.o_remaining_discount_subscription || 0,
       discount = dataResp.o_discount_percent || 0,
       msgPromotion = dataResp.o_message_promotion_banner.replace(/{discount}/g, discount).replace(/{numberOfPeople}/g, limit);
-    if (!isDisabled || remaining_discount_subscription <= 0) {
+    if (!isDisabled || remaining_discount_subscription <= 1) {
       return res.json(new APIResponse({ showBanner: 0, discount: 0, limit: 0, msgPromotion: msgPromotion }));
     } else {
       return res.json(new APIResponse({ showBanner: 1, discount: discount, limit: limit, msgPromotion: msgPromotion }));
