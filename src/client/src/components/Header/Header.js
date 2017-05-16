@@ -102,7 +102,7 @@ class Header extends React.Component {
                 <p className='text-center'>Are you a student or parent?</p><br />
                 <div className='text-center'>
                   <a className='btn dk-bg-green dk-white mb5' onClick={() => this.setState({ showFreeTrialConfirm: false, showFreeTrialConfirmStudent: true })}>I AM A STUDENT</a>
-                  <a className='btn dk-bg-blue dk-white mb5' href='/subscribe'>I AM A PARENT</a>
+                  <a className='btn dk-bg-blue dk-white mb5' href='javascript: void(0);' onClick={() => this.onCreateParent()}>I AM A PARENT</a>
                 </div>
               </div>
             </div>

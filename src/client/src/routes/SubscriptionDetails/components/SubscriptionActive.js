@@ -44,16 +44,19 @@ class SubscriptionActive extends React.Component {
     let buttonCancel = ''
     let cancelledInfo = ''
     let cancelMetadata = objSubscription.cancelMetadata || {}
-    if (parseInt(objSubscription.nextPeriodEnd) > parseInt(objSubscription.expiryDate)) {
-      upgradedInfo = (
-        <div className='alert alert-danger'>
-          <p>Your plan will be upgraded to annual plan on {moment.unix(objSubscription.nextPeriodStart / 1000).format('MMM D, YYYY')}</p>
-        </div>
-      )
-    } else if (objSubscription.expirationType !== 'annually') {
-      buttonUpgrade = (
-        <a href={['/upgrade-subscription/', objSubscription._id].join('')} className='upgrade-link'>Upgrade</a>
-      )
+
+    if (cancelMetadata.chk1 === undefined) {
+      if (parseInt(objSubscription.nextPeriodEnd) > parseInt(objSubscription.expiryDate)) {
+        upgradedInfo = (
+          <div className='alert alert-danger'>
+            <p>Your plan will be upgraded to annual plan on {moment.unix(objSubscription.nextPeriodStart / 1000).format('MMM D, YYYY')}</p>
+          </div>
+        )
+      } else if (objSubscription.expirationType !== 'annually') {
+        buttonUpgrade = (
+          <a href={['/upgrade-subscription/', objSubscription._id].join('')} className='upgrade-link'>Upgrade</a>
+        )
+      }
     }
 
     if (cancelMetadata.chk1 === undefined && parseInt(objSubscription.nextPeriodEnd) <= parseInt(objSubscription.expiryDate)) {

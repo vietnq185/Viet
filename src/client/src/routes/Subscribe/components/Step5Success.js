@@ -3,8 +3,9 @@ import React from 'react'
 import { IndexLink, Link } from 'react-router'
 
 import constants from '../../../constants'
+import API from '../../../helpers/api'
 import Utils from '../../../helpers/utils'
-
+import * as authActions from '../../../store/auth'
 import successImage from '../../../styles/images/icon-success.png'
 import appleImage from '../../../styles/images/ico-app-store.png'
 import androidImage from '../../../styles/images/ico-google-play.png'
@@ -13,6 +14,7 @@ class Step1SignIn extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      
     }
   }
 
@@ -46,7 +48,10 @@ class Step1SignIn extends React.Component {
     // const studentLogin = this.props.assignment && this.props.assignment.success ? studentLoginLink : ''
     const studentLogin = studentLoginLink
 
-    const detailsLink = (<p>Thanks for signing up with us, your subscription ID is: <Link to={`/subscription-details/${objSubscription._id}`}>#{_refid}</Link>.</p>)
+    let detailsLink = (<p>Thanks for signing up with us.</p>)
+    if (objSubscription.numberOfSubscriptions > 1) {
+      detailsLink = ''
+    }
 
     let channelStripe = (
       <div className='thank-you-msg'>

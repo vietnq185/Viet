@@ -203,15 +203,18 @@ export const create = (req, res, next) => {
               });
             }
 
+            savedSubscription.numberOfSubscriptions = 0;
             if (!savedSubscription.cardId) {
-              return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
+              return new SubscriptionModel().reset().where('t1."parentId"::varchar=$1').findCount([parentId]).then((total) => {
+                savedSubscription.numberOfSubscriptions = total;
+                return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
+              }).catch((err) => {
+                return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
+              });
             }
-            if (oRemainingDiscountSubscription > 0) {
-              oRemainingDiscountSubscription -= 1;
-            } else {
-              oRemainingDiscountSubscription = 0;
-            }
-            return new OptionModel().reset().where('t1.key::varchar=$1').update({ value: oRemainingDiscountSubscription }, ['o_remaining_discount_subscription']).then((updateOptions) => {
+
+            return new SubscriptionModel().reset().where('t1."parentId"::varchar=$1').findCount([parentId]).then((total) => {
+              savedSubscription.numberOfSubscriptions = total;
               return processPayment(savedSubscription).then((dataResp) => {
                 savedSubscription.stripeStatus = dataResp.status;
                 return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
@@ -219,6 +222,8 @@ export const create = (req, res, next) => {
                 savedSubscription.stripeStatus = 'FAILED';
                 return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
               });
+            }).catch((err) => {
+              return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
             });
           }).catch(e => next(e));
 
@@ -524,9 +529,9 @@ var processPayment = function (subscription) {
             nextTsApplyUpgrade = subscriptionData.expiryDate > curentTs ? subscriptionData.expiryDate : curentTs;
           if (subscriptionData.expirationType === 'annually' || upgradePlan === 1) {
             planFee = parseInt(subscriptionData.fee) * 12 * 100;
-            planSubscription = 'subscription-asls-yearly-fee-' + (planFee/100) + '-SGD';
-            planName = 'ASLS Subscription Yearly Fee ' + (planFee/100) + ' SGD',
-            planInterval = 'year';
+            planSubscription = 'subscription-asls-yearly-fee-' + (planFee / 100) + '-SGD';
+            planName = 'ASLS Subscription Yearly Fee ' + (planFee / 100) + ' SGD',
+              planInterval = 'year';
           };
 
           /* check if plans do not exists then create */
@@ -829,7 +834,8 @@ export const stripeConfirmation = (req, res, next) => {
               status: 'active',
               expiryDateFrom,
               expiryDate,
-              stripeChargeId: invoice.id
+              stripeChargeId: invoice.id,
+              expirationType: subscription.nextExpirationType || subscription.expirationType
             }
             return new SubscriptionModel().where('t1._id::varchar=$1').update(dataUpdate, [subscription._id]).then(savedDataUpdated => {
               console.log("=======================> stripeConfirmation => savedDataUpdated ==> Payment success: ", savedDataUpdated)

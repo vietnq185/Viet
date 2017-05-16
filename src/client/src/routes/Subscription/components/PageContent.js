@@ -102,7 +102,7 @@ class PageContent extends React.Component {
                       _refid = zpad(item.refid, 6)
                     }
                     if (item.status === 'active' || item.status === 'trial') {
-                      if (!isAnnually && parseInt(item.expiryDate) >= parseInt(item.nextPeriodEnd)) {
+                      if (!isAnnually && cancelMetadata.chk1 === undefined && parseInt(item.expiryDate) >= parseInt(item.nextPeriodEnd)) {
                         buttonsPanel.push(<a key={Utils.guid()} className='link-upgrade-subscription' href='javascript: void(0);' onClick={() => this.updateSubscription(item._id)}>Upgrade</a>)
                       }
                       if (cancelMetadata.chk1 === undefined && parseInt(item.nextPeriodEnd) <= parseInt(item.expiryDate)) {
