@@ -25,7 +25,7 @@
     width: 95%
 }
 .banner-discount-container .banner-discount span.banner-discount-info .banner-discount-text{
-    width: 97%;
+    width: 95%;
     display: inline-block;
 }
 .banner-discount-container .banner-discount .left-bg-special-offer{
@@ -62,10 +62,14 @@
 		line-height: normal;
 		font-size: 15px;
 	}
+    .banner-discount-container .banner-discount span.banner-discount-info{
+        padding-left: 10px;
+        width: 100%;
+    }
     .banner-discount-container .banner-discount .banner-discount-text{
 		display: inline-block;
         padding: 5px 0 5px;
-        width: 90%;
+        width: 95%;
 	}
 }
 @media (max-width: 479px){

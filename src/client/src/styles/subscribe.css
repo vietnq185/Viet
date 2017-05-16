@@ -76,7 +76,7 @@ a{
 	padding: 8px 20px;
 }
 .subscribe-header .navbar{
-	margin-bottom: 10px;
+	margin-bottom: 0;
 }
 .subscribe-header a .side-nav-item{
 	color: #000000;
@@ -942,6 +942,9 @@ color: #007fff;
 	}
 }
 @media (max-width: 767px){
+	.dk-navbar{
+		padding: 0 20px;
+	}
 	.subscribe-wrapper .subscribe-details .upgrade-plan-container .table-responsive{
 		border: none;
 	}
