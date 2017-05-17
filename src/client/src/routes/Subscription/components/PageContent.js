@@ -59,7 +59,7 @@ class PageContent extends React.Component {
 
   render() {
     console.info('Subscription => PageContent component => props: ', this.props)
-
+    var zpad = require('zpad')
     return (
       <div className='subscribe-wrapper'>
         <div className='breadcrumb'>
@@ -96,12 +96,16 @@ class PageContent extends React.Component {
                     let theRate = isAnnually ? 12 : 1
                     let theLabel = isAnnually ? 'year' : 'month'
                     let buttonsPanel = []
-                    let cancelMetadata = item.cancelMetadata || ''
-                    if (item.status === 'active' || item.status === 'trialing') {
-                      if (!isAnnually && parseInt(item.expiryDate) >= parseInt(item.nextPeriodEnd)) {
+                    let cancelMetadata = item.cancelMetadata || {}
+                    let _refid = (item._id.substring(0, 7) + '...')
+                    if (item.refid !== '') {
+                      _refid = zpad(item.refid, 6)
+                    }
+                    if (item.status === 'active' || item.status === 'trial') {
+                      if (!isAnnually && cancelMetadata.chk1 === undefined && parseInt(item.expiryDate) >= parseInt(item.nextPeriodEnd)) {
                         buttonsPanel.push(<a key={Utils.guid()} className='link-upgrade-subscription' href='javascript: void(0);' onClick={() => this.updateSubscription(item._id)}>Upgrade</a>)
                       }
-                      if (cancelMetadata === '') {
+                      if (cancelMetadata.chk1 === undefined && parseInt(item.nextPeriodEnd) <= parseInt(item.expiryDate)) {
                         buttonsPanel.push(<a key={Utils.guid()} className='link-cancel-subscription' href='javascript: void(0);' onClick={() => this.cancelSubscription(item._id)}>Cancel</a>)
                       }
                       if ((item.studentId || '').length === 0) {
@@ -110,7 +114,7 @@ class PageContent extends React.Component {
                     }
                     return (
                       <tr key={item._id}>
-                        <td className={'dk-blue-text'}><a className={'dk-blue-text'} href='javascript: void(0);' onClick={() => Utils.redirect(`/subscription-details/${item._id}`)}>#{item.refid || (item._id.substring(0, 7) + '...')}</a></td>
+                        <td className={'dk-blue-text'}><a className={'dk-blue-text'} href='javascript: void(0);' onClick={() => Utils.redirect(`/subscription-details/${item._id}`)}>{_refid}</a></td>
                         <td>{item.courseTitles.join(' & ')}</td>
                         <td>${item.fee * theRate}/{theLabel} <span className='payment-method'>via {item.channel === constants.paymentMethod.creditCard ? 'Credit Card' : (item.channel === 'bank' ? 'Bank Transfer' : item.channel)}</span></td>
                         <td>{moment.unix(item.dateCreated / 1000).format('MMM D, YYYY')}</td>

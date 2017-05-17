@@ -76,7 +76,7 @@ a{
 	padding: 8px 20px;
 }
 .subscribe-header .navbar{
-	margin-bottom: 10px;
+	margin-bottom: 0;
 }
 .subscribe-header a .side-nav-item{
 	color: #000000;
@@ -95,20 +95,26 @@ a{
 .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus{
 	background-color: transparent;
 }
-.navbar-nav li.side-nav-item .dropdown-menu li a{
-	color: #007FFF !important;
-}
-
 .subscribe-header .navbar-nav li.side-nav-item a{
 	color: #000 !important;
 }
 .subscribe-header .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus{
 	background-color: transparent;
 }
-.subscribe-header .navbar-nav li.side-nav-item .dropdown-menu li a{
-	color: #007FFF !important;
+.navbar-default .dropdown-menu{
+	border: 1px solid #ccc;
 }
-
+.navbar-default .dropdown-menu li{
+	border-bottom: 1px solid #ccc;
+	padding: 5px 0;
+}
+.navbar-default .dropdown-menu li:last-child{
+	border-bottom: none;
+}
+.navbar-default .dropdown-menu li a{
+	color: #000 !important;
+	padding-bottom: 0;
+}
 .page-footer{
 	background-color: #FFFFFF;
 	border-top: 1px solid #ddd;
@@ -464,7 +470,7 @@ a{
 }
 .subscribe-content-container .subscription-assign-student .subscription-assign-student-form .linkcode-info{
 	display: inline-block;
-	padding-left: 15px;
+	padding-left: 5px;
 }
 .subscribe-content-container .subscription-assign-student .subscription-assign-student-form .linkcode-info a{
 	color: #000;
@@ -476,6 +482,7 @@ a{
 .subscribe-wrapper .subscribe-success-content{
 	text-align: center;
 	padding: 15px 0;
+	font-size: 16px;
 }
 .subscribe-wrapper .subscribe-success-content .thank-you-msg{
 	font-size: 16px;
@@ -529,7 +536,7 @@ a{
 .subscribe-wrapper .my-subscription .tbl-subscriptions .subscribe-status.subscribe-status-pending{
 	color: #ff9900;
 }
-.subscribe-wrapper .my-subscription .tbl-subscriptions .subscribe-status.subscribe-status-trialing{
+.subscribe-wrapper .my-subscription .tbl-subscriptions .subscribe-status.subscribe-status-trial{
 	color: #5578ed;
 }
 .subscribe-wrapper .my-subscription .tbl-subscriptions .subscribe-status.subscribe-status-overdue{
@@ -673,7 +680,7 @@ a{
 	background: #ff9900;
 	color: #fff;
 }
-.subscribe-wrapper .subscribe-details h1 span.status-trialing{
+.subscribe-wrapper .subscribe-details h1 span.status-trial{
 	background: #2b78e4;
 	color: #fff;
 }
@@ -861,12 +868,30 @@ color: #007fff;
 .right-testimonial-container{
 	height: 216px;
 }
-#modalFreeTrialConfirm .btn{
+#modalFreeTrialConfirm .btn,
+#modalFreeTrialConfirmSignin .btn{
 	margin: 0 10px;
 }
 .form-profile-container{
 	width: 60%;
 	margin: 0 auto;
+}
+
+.cvv-info{
+	display: inline-block;
+	padding-left: 5px;
+}
+.cvv-info a{
+	color: #000;
+}
+.cvv-info i.fa{
+	font-size: 18px;
+	cursor: pointer;
+}
+.linkcode-info-tooltip,
+.cvv-info-tooltip{
+	max-width: 200px;
+	font-weight: normal;
 }
 .form-profile-container .form-title{
 	font-size: 22px;
@@ -874,6 +899,18 @@ color: #007fff;
     margin: 20px 0;
     text-align: center;
     text-transform: uppercase;
+}
+.intl-phone-input .btn{
+	height: 34px;
+    line-height: 25px;
+}
+.subscribe-header .route--link--active{
+	text-decoration: none !important;
+}
+.phone-info{
+	font-size: 12px;
+	padding-left: 55px;
+	font-style: italic;
 }
 @media (max-width: 1199px){
 	.subscription-plan .subscription-plan-item{
@@ -905,6 +942,9 @@ color: #007fff;
 	}
 }
 @media (max-width: 767px){
+	.dk-navbar{
+		padding: 0 20px;
+	}
 	.subscribe-wrapper .subscribe-details .upgrade-plan-container .table-responsive{
 		border: none;
 	}
@@ -914,6 +954,9 @@ color: #007fff;
 	}
 	.form-profile-container{
 		width: 95%;
+	}
+	.navbar-default .dropdown-menu li a{
+		color: #fff !important;
 	}
 }
 @media (max-width: 659px){
@@ -961,7 +1004,8 @@ color: #007fff;
 	.btn{
 		font-size: 15px;
 	}
-	#modalFreeTrialConfirm .btn{
+	#modalFreeTrialConfirm .btn,
+	#modalFreeTrialConfirmSignin .btn{
 		margin: 5px 0;
 		display: block;
 	}

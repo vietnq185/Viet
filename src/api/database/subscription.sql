@@ -123,7 +123,8 @@ INSERT INTO "options" ("foreign_id", "key", "tab_id", "value", "label", "descrip
 (1, 'o_admin_email', 1, NULL, NULL, 'Admin email', 'string', 9, 1, NULL, 'F'),
 (1, 'o_trial_days', 1, '14', NULL, 'Number of trial days', 'float', 10, 1, NULL, 'T'),
 (1, 'o_website_url', 1, 'http://domain.com', NULL, 'Website URL', 'string', 11, 1, NULL, 'T'),
-(1, 'o_admin_fee', 1, 10.7, NULL, 'Admin fee for refund', 'float', 12, 2, NULL, 'F');
+(1, 'o_admin_fee', 1, 10.7, NULL, 'Admin fee for refund', 'float', 12, 1, NULL, 'F'),
+(1, 'o_message_promotion_banner', 1, 'Discount {discount}% for the first {numberOfPeople} subscriptions', NULL, 'Message on promotion banner', 'text', 13, 12, NULL, 'T');
 
 
 INSERT INTO "options" ("foreign_id", "key", "tab_id", "value", "label", "description", "type", "order", "is_visible", "style", "is_public") VALUES
@@ -221,6 +222,8 @@ WHERE _id::uuid='55148ffa-6ca0-4930-bb09-cd2a1158d655';
 
 
 INSERT INTO "options" ("foreign_id", "key", "tab_id", "value", "label", "description", "type", "order", "is_visible", "style", "is_public") VALUES
-(1, 'o_remaining_discount_subscription', 1, 200, NULL, 'Remaining discount subscription', 'float', 4, 2, NULL, 'F');
+(1, 'o_remaining_discount_subscription', 1, 200, NULL, 'Remaining discount subscription', 'float', 4, 2, NULL, 'T');
 
 INSERT INTO users (_id, email, role, salt, "firstName", "lastName", phone, "profilePicture", "coverPicture", "userQuote", "hashedPassword", "userToken", provider, facebook, "facebookId", "facebookToken", google, "googleId", "googleToken", username, status, "lastLoginDate", "lastActivityDate", metadata, "dateCreated", "linkCode") VALUES ('c5ec6dfc-6aaf-4a51-970e-1031ae56a930', 'admin@admin.com', 'admin', 'v9gx/S9pLff95exkQS8rzQ==', 'Super', 'Administrator', '84909091101', '', '', '', 'VeiPU5lNvEjfwOIQl6PqwnxWaqORcIQLyc1CnVeXcLuBhCnPxpYQketTG+FGuRR+qCINCXJ8WlBcZ2/lybD7FA==', 'b6af34ad5be7c7198972aa189833dca7e0d6e00c3e16d24e3f0949fc64dba904', 'local', NULL, NULL, NULL, NULL, NULL, NULL, 'c5ec6dfc-6aaf-4a51-970e-1031ae56a930', '{parent}', NULL, NULL, NULL, 1493637306162, 546);
+
+UPDATE subscriptions SET status='trial' WHERE status='trialing';

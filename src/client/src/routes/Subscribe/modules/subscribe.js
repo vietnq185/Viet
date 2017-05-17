@@ -178,8 +178,12 @@ export const completeSubscription = (data) => (dispatch, getState) => {
         console.info('createSubscription => result: ', result)
         dispatch(restart())
         dispatch(updateSubscriptionResult({ success: true, result, error: null }))
-        dispatch(assignStudent({ subscriptionId: result._id }))
-        dispatch(changeStep(STEPS.linkStudent))
+        if (subData.channel === 'bank') {
+          dispatch(changeStep(STEPS.success))
+        } else {
+          dispatch(assignStudent({ subscriptionId: result._id }))
+          dispatch(changeStep(STEPS.linkStudent))
+        }
       }).catch((error) => {
         dispatch(updateSubscriptionResult({ success: false, result: null, error }))
         console.info('createSubscription => error: ', error)

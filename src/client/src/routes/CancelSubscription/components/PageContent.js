@@ -22,7 +22,6 @@ class PageContent extends React.Component {
   }
 
   changeStep(step, data) {
-    console.log('data: ', data)
     this.setState({
       step,
       stepData: Object.assign({}, this.state.stepData, data)

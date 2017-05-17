@@ -50,7 +50,10 @@ class Step2Plan extends React.Component {
     console.info('Subscribe => PageContent => Plan component => state: ', this.state)
 
     const { applyDiscount, discountPercent, discountLimit, auth: { option_arr } } = this.props // eslint-disable-line
-
+    let isApplyDiscount = applyDiscount
+    if (parseInt(option_arr.o_remaining_discount_subscription) <= 0) {
+      isApplyDiscount = false
+    }
     const planList = []
 
     for (let i = 0; i < this.props.plans.length; i++) { // eslint-disable-line
@@ -58,7 +61,7 @@ class Step2Plan extends React.Component {
       const frequency = this.state.plans[item._id].frequency
       const fee = (frequency === MONTHLY ? item.fee : (item.fee * 12))
       let pricingContent = (<div className='subscription-price'><sup>$</sup><span className='price'>{fee}</span></div>)
-      if (applyDiscount) {
+      if (isApplyDiscount) {
         pricingContent = (
           <div>
             <div className='subscription-price'><sup>$</sup><span className='price'>{fee - fee * discountPercent / 100}</span></div>
@@ -90,7 +93,7 @@ class Step2Plan extends React.Component {
       )
     }
 
-    const discountPanel = applyDiscount ? (<div className='discount-info'>DISCOUNT {discountPercent}% for the first {discountLimit} subscriptions</div>) : ''
+    const discountPanel = isApplyDiscount ? (<div className='discount-info'>{option_arr.o_message_promotion_banner.replace(/{discount}/g, discountPercent).replace(/{numberOfPeople}/g, discountLimit)}</div>) : ''
 
     return (
       <div className='subscription-plan'>

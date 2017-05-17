@@ -35,22 +35,37 @@ const createCard = (req) => {
       dateCreated: new Date().getTime()
     };
 
-    return new OptionModel().getPairs(1).then((dataResp) => {
-      var stripe = require("stripe")(dataResp.o_stripe_secret)
-      stripe.tokens.create({
-        card: {
-          "number": req.body.ccnum,
-          "exp_month": req.body.ccmonth,
-          "exp_year": req.body.ccyear,
-          "cvc": req.body.cvv
+    return new CCListModel().where('t1."userId"::varchar=$1').findAll([parentId]).then((cards) => {
+      var isExisted = false;
+      for (var i = 0; i < cards.length; i++) {
+        var _ccnum = Utils.aesDecrypt(cards[i].ccnum, constants.ccSecret);
+        if (_ccnum === req.body.ccnum) {
+          isExisted = true;
         }
-      }, function (err, token) {
-        if (token) return new CCListModel().insert(cardData).then(resolve).catch(reject);
-        return reject(new APIError(constants.errors.invalidCard, httpStatus.OK, true));
+      }
+      if (isExisted) {
+        return reject(new APIError(constants.errors.cardNumberExisted, httpStatus.OK, true));
+      }
+      return new OptionModel().getPairs(1).then((dataResp) => {
+        var stripe = require("stripe")(dataResp.o_stripe_secret)
+        stripe.tokens.create({
+          card: {
+            "number": req.body.ccnum,
+            "exp_month": req.body.ccmonth,
+            "exp_year": req.body.ccyear,
+            "cvc": req.body.cvv
+          }
+        }, function (err, token) {
+          if (token) return new CCListModel().reset().insert(cardData).then(resolve).catch(reject);
+          return reject(new APIError(err.message, httpStatus.OK, true));
+        });
+      }).catch((err) => {
+        return reject(new APIError(constants.errors.cannotRetrieveOptions, httpStatus.OK, true));
       });
     }).catch((err) => {
-      return res.json(new APIResponse({ status: 'FAILED', msg: 'Can not get Options' }));
+      return reject(new APIError(constants.errors.cannotRetrieveOptions, httpStatus.OK, true));
     });
+
   });
 }
 
@@ -127,7 +142,7 @@ export const create = (req, res, next) => {
         channel,
         fee,
         discount: discountValue,
-        status: (channel === 'bank' ? 'pending' : 'trialing')
+        status: (channel === 'bank' ? 'pending' : 'trial')
       };
       if (cardId !== '') {
         data.cardId = cardId;
@@ -188,23 +203,27 @@ export const create = (req, res, next) => {
               });
             }
 
+            savedSubscription.numberOfSubscriptions = 0;
             if (!savedSubscription.cardId) {
-              return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
+              return new SubscriptionModel().reset().where('t1."parentId"::varchar=$1').findCount([parentId]).then((total) => {
+                savedSubscription.numberOfSubscriptions = total;
+                return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
+              }).catch((err) => {
+                return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
+              });
             }
-            if (oRemainingDiscountSubscription > 0) {
-              oRemainingDiscountSubscription -= 1;
-            } else {
-              oRemainingDiscountSubscription = 0;
-            }
-            return new OptionModel().reset().where('t1.key::varchar=$1').update({ value: oRemainingDiscountSubscription }, ['o_remaining_discount_subscription']).then((updateOptions) => {
+
+            return new SubscriptionModel().reset().where('t1."parentId"::varchar=$1').findCount([parentId]).then((total) => {
+              savedSubscription.numberOfSubscriptions = total;
               return processPayment(savedSubscription).then((dataResp) => {
                 savedSubscription.stripeStatus = dataResp.status;
-                savedSubscription.stripeMsg = data.msg;
                 return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
               }).catch((err) => {
                 savedSubscription.stripeStatus = 'FAILED';
                 return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
               });
+            }).catch((err) => {
+              return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
             });
           }).catch(e => next(e));
 
@@ -279,7 +298,6 @@ export const upgrade = (req, res, next) => {
         savedSubscription = savedSubscription[0];
         return processPayment(Object.assign({}, savedSubscription, paymentMeta)).then((dataResp) => {
           savedSubscription.stripeStatus = dataResp.status;
-          savedSubscription.stripeMsg = dataResp.msg;
           return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
         }).catch((err) => {
           savedSubscription.stripeStatus = 'FAILED';
@@ -395,7 +413,7 @@ export const changeStatus = (req, res, next) => {
       if (subscriptionData === null) {
         return next(new APIError('SUBSCRIPTION_NOT_FOUND', httpStatus.OK, true));
       }
-      const allowList = ['pending', 'trialing', 'active', 'overdue', 'cancelled'];
+      const allowList = ['pending', 'trial', 'active', 'overdue', 'cancelled'];
       if (allowList.indexOf(status) === -1) {
         return next(new APIError('NOT_ALLOW_STATUS', httpStatus.OK, true));
       }
@@ -413,6 +431,7 @@ export const changeStatus = (req, res, next) => {
           expiryDate = moment(tsExpiryDateFrom.add(moment.duration(1, period))).unix() * 1000;
         dataUpdate.expiryDateFrom = expiryDateFrom;
         dataUpdate.expiryDate = expiryDate;
+        dataUpdate.cancelMetadata = {};
       }
       return sModel.reset().where('t1._id::varchar=$1').update(dataUpdate, [id]).then(result => {
         if (result === null) {
@@ -428,7 +447,7 @@ export const changeStatus = (req, res, next) => {
           .findOne([id]).then((subscription) => { // eslint-disable-line
             if (subscription !== null) {
               if (authData.isAdmin && subscription.channel === 'bank') {
-                if (status === 'trialing') {
+                if (status === 'trial') {
                   Utils.sendMail({
                     to: subscription.email,
                     template: 'mail_bank_transfer_activation',
@@ -503,12 +522,16 @@ var processPayment = function (subscription) {
           var upgradePlan = subscription.isUpgradePlan || '',
             stripe = require("stripe")(dataResp.o_stripe_secret),
             planFee = parseInt(subscriptionData.fee) * 100,
-            planSubscription = "subscription-asls-monthly-fee-" + planFee,
-            planInterval = 'month';
+            planSubscription = "subscription-asls-monthly-fee-" + planFee + '-SGD',
+            planName = 'ASLS Subscription Monthly Fee ' + planFee + ' SGD',
+            planInterval = 'month',
+            curentTs = new Date().getTime(),
+            nextTsApplyUpgrade = subscriptionData.expiryDate > curentTs ? subscriptionData.expiryDate : curentTs;
           if (subscriptionData.expirationType === 'annually' || upgradePlan === 1) {
             planFee = parseInt(subscriptionData.fee) * 12 * 100;
-            planSubscription = 'subscription-asls-yearly-fee' + planFee;
-            planInterval = 'year';
+            planSubscription = 'subscription-asls-yearly-fee-' + (planFee / 100) + '-SGD';
+            planName = 'ASLS Subscription Yearly Fee ' + (planFee / 100) + ' SGD',
+              planInterval = 'year';
           };
 
           /* check if plans do not exists then create */
@@ -517,10 +540,10 @@ var processPayment = function (subscription) {
             function (err, plan) {
               if (!plan) {
                 var planMonthly = stripe.plans.create({
-                  name: "ASLS Subscription Fee",
+                  name: planName,
                   id: planSubscription,
                   interval: planInterval,
-                  currency: "usd",
+                  currency: "SGD",
                   amount: planFee,
                 }, function (err, plan) {
 
@@ -610,7 +633,7 @@ var processPayment = function (subscription) {
                                 stripeSubscriptionId,
                                 {
                                   plan: planSubscription,
-                                  trial_end: moment.unix(subscriptionData.expiryDate / 1000).unix(),
+                                  //trial_end: moment.unix(nextTsApplyUpgrade / 1000).unix(),
                                   prorate: false
                                 },
                                 function (err, subscriptionResp) {
@@ -679,7 +702,7 @@ var processPayment = function (subscription) {
                                 stripeSubscriptionId,
                                 {
                                   plan: planSubscription,
-                                  trial_end: moment.unix(subscriptionData.expiryDate / 1000).unix(),
+                                  //trial_end: moment.unix(nextTsApplyUpgrade / 1000).unix(),
                                   prorate: false
                                 },
                                 function (err, subscriptionResp) {
@@ -726,7 +749,7 @@ var processPayment = function (subscription) {
                 customer: source.customer,
                 plan: planSubscription,
                 //trial_period_days: dataResp.o_trial_days,
-                trial_end: moment.unix(subscriptionData.expiryDate / 1000).unix()
+                trial_end: moment.unix(nextTsApplyUpgrade / 1000).unix()
               }, function (err, subscriptionResp) {
                 if (subscriptionResp) {
                   return new SubscriptionModel().where('t1._id::varchar=$1').update({ stripeCustomerId: subscriptionResp.customer, stripeSubscriptionId: subscriptionResp.id }, [subscriptionData._id]).then(dataUpdated => {
@@ -811,7 +834,9 @@ export const stripeConfirmation = (req, res, next) => {
               status: 'active',
               expiryDateFrom,
               expiryDate,
-              stripeChargeId: invoice.id
+              stripeChargeId: invoice.id,
+              expirationType: subscription.nextExpirationType || subscription.expirationType,
+              cancelMetadata: {}
             }
             return new SubscriptionModel().where('t1._id::varchar=$1').update(dataUpdate, [subscription._id]).then(savedDataUpdated => {
               console.log("=======================> stripeConfirmation => savedDataUpdated ==> Payment success: ", savedDataUpdated)
@@ -887,12 +912,12 @@ export const checkToShowBannerDiscount = (req, res, next) => {
     var isDisabled = parseInt(dataResp.o_allow_discount) === 1 ? true : false,
       limit = dataResp.o_discount_limit || 0,
       remaining_discount_subscription = dataResp.o_remaining_discount_subscription || 0,
-      discount = dataResp.o_discount_percent || 0;
-
-    if (!isDisabled || remaining_discount_subscription <= 0) {
-      return res.json(new APIResponse({ showBanner: 0, discount: 0, limit: 0 }));
+      discount = dataResp.o_discount_percent || 0,
+      msgPromotion = dataResp.o_message_promotion_banner.replace(/{discount}/g, discount).replace(/{numberOfPeople}/g, limit);
+    if (!isDisabled || remaining_discount_subscription <= 1) {
+      return res.json(new APIResponse({ showBanner: 0, discount: 0, limit: 0, msgPromotion: msgPromotion }));
     } else {
-      return res.json(new APIResponse({ showBanner: 1, discount: discount, limit: limit }));
+      return res.json(new APIResponse({ showBanner: 1, discount: discount, limit: limit, msgPromotion: msgPromotion }));
     }
   }).catch((err) => {
     return res.json(new APIResponse({ status: 'FAILED', msg: 'Can not get Options' }));
@@ -938,15 +963,15 @@ export const cancelSubscription = (req, res, next) => {
   return new OptionModel().getPairs().then((dataResp) => {
     return new UserModel().where('t1._id::varchar=$1').findOne([authData.userId]).then((user) => {
       if (user === null) {
-        return res.json(new APIResponse({ status: 'ERR', msg: 'UNREGISTERED_USER' }));
+        return next(new APIError('UNREGISTERED_USER', httpStatus.OK, true));
       }
       if (user.hashedPassword !== Utils.encrypt(req.body.password, user.salt)) {
-        return res.json(new APIResponse({ status: 'ERR', msg: 'WRONG_PASSWORD' }));
+        return next(new APIError('WRONG_PASSWORD', httpStatus.OK, true));
       }
 
       return new SubscriptionModel().where('t1._id::varchar=$1').findOne([req.body.subscriptionId]).then((subscription) => {
         if (subscription === null) {
-          return res.json(new APIResponse({ status: 'ERR', msg: 'SUBSCRIPTION_NOT_FOUND' }));
+          return next(new APIError('SUBSCRIPTION_NOT_FOUND', httpStatus.OK, true));
         }
 
         var refundCharge = false,
@@ -954,7 +979,7 @@ export const cancelSubscription = (req, res, next) => {
         const dataUpdate = {
           cancelMetadata: req.body.cancellationData
         }
-        if (subscription.status === 'trialing') {
+        if (subscription.status === 'trial') {
           dataUpdate.status = 'cancelled';
         } else if (subscription.status === 'active') {
           var date = new Date(),
@@ -970,10 +995,10 @@ export const cancelSubscription = (req, res, next) => {
         }
         return new SubscriptionModel().reset().where('t1._id::varchar=$1').update(dataUpdate, [req.body.subscriptionId]).then(result => {
           if (result === null) {
-            return res.json(new APIResponse({ status: 'ERR', msg: 'UPDATE_FAILED' }));
+            return next(new APIError('UPDATE_FAILED', httpStatus.OK, true));
           }
 
-          if (subscription.status === 'trialing') {
+          if (subscription.status === 'trial') {
             Utils.sendMail({
               to: user.email,
               template: 'mail_sorry_for_cancellation',
@@ -985,47 +1010,79 @@ export const cancelSubscription = (req, res, next) => {
             });
           }
 
-          if (req.body.stripeSubscriptionId !== null) {
+          if (subscription.stripeSubscriptionId !== null) {
             var stripe = require("stripe")(dataResp.o_stripe_secret);
-            stripe.subscriptions.del(req.body.stripeSubscriptionId,
-              function (err, confirmation) {
-                var amountRefund = (subscription.fee * 12) - (monthsUsed * subscription.fee) - dataResp.o_admin_fee;
-                if (refundCharge && amountRefund > 0 && subscription.stripeChargeId !== '') {
-                  stripe.charges.refund(subscription.stripeChargeId,
-                    {
-                      amount: amountRefund * 100
-                    }, function (err, refund) {
-                      // asynchronously called
-                    });
-                }
-                if (subscription.status !== 'trialing') {
-                  if (result.channel === 'annually') {
-                    Utils.sendMail({
-                      to: user.email,
-                      template: 'mail_cancel_annually_subscription',
-                      data: {
-                        firstName: user.firstName,
-                        lastName: user.lastName,
-                        signUpLink: dataResp.o_website_url + '/subscribe'
+            var o_admin_fee = dataResp.o_admin_fee;
+            if (monthsUsed === 1) {
+              o_admin_fee = 0;
+            }
+            var amountRefund = (subscription.fee * 12) - (monthsUsed * subscription.fee) - o_admin_fee;
+            if (refundCharge && amountRefund > 0 && subscription.stripeChargeId !== '') {
+              stripe.charges.refund(subscription.stripeChargeId,
+                {
+                  amount: amountRefund * 100
+                }, function (err, refund) {
+                  // asynchronously called
+                  if (refund) {
+                    if (subscription.status !== 'trial') {
+                      if (result.channel === 'annually') {
+                        Utils.sendMail({
+                          to: user.email,
+                          template: 'mail_cancel_annually_subscription',
+                          data: {
+                            firstName: user.firstName,
+                            lastName: user.lastName,
+                            signUpLink: dataResp.o_website_url + '/subscribe'
+                          }
+                        });
+                      } else {
+                        Utils.sendMail({
+                          to: user.email,
+                          template: 'mail_cancel_monthly_subscription',
+                          data: {
+                            firstName: user.firstName,
+                            lastName: user.lastName,
+                            signUpLink: dataResp.o_website_url + '/subscribe'
+                          }
+                        });
                       }
-                    });
-                  } else {
-                    Utils.sendMail({
-                      to: user.email,
-                      template: 'mail_cancel_monthly_subscription',
-                      data: {
-                        firstName: user.firstName,
-                        lastName: user.lastName,
-                        signUpLink: dataResp.o_website_url + '/subscribe'
-                      }
-                    });
+                    }
+                    return next(new APIError('UPDATE_SUCCESSFUL', httpStatus.OK, true));
                   }
+                  return next(new APIError('UPDATE_SUCCESSFUL', httpStatus.OK, true));
+                });
+            } else {
+              stripe.subscriptions.del(subscription.stripeSubscriptionId,
+                function (err, confirmation) {
+                  if (subscription.status !== 'trial') {
+                    if (result.channel === 'annually') {
+                      Utils.sendMail({
+                        to: user.email,
+                        template: 'mail_cancel_annually_subscription',
+                        data: {
+                          firstName: user.firstName,
+                          lastName: user.lastName,
+                          signUpLink: dataResp.o_website_url + '/subscribe'
+                        }
+                      });
+                    } else {
+                      Utils.sendMail({
+                        to: user.email,
+                        template: 'mail_cancel_monthly_subscription',
+                        data: {
+                          firstName: user.firstName,
+                          lastName: user.lastName,
+                          signUpLink: dataResp.o_website_url + '/subscribe'
+                        }
+                      });
+                    }
+                  }
+                  return next(new APIError('UPDATE_SUCCESSFUL', httpStatus.OK, true));
                 }
-                return res.json(new APIResponse({ status: 'OK', msg: 'UPDATE_SUCCESSFUL' }));
-              }
-            );
+              );
+            }
           }
-          return res.json(new APIResponse({ status: 'OK', msg: 'UPDATE_SUCCESSFUL' }));
+          return next(new APIError('UPDATE_SUCCESSFUL', httpStatus.OK, true));
         }).catch(e => next(e));
       }).catch(e => next(e));
     }).catch(e => next(e));
@@ -1202,7 +1259,7 @@ export const cronSendTrialReminderEmail = (req) => {
       .select('t1.*, t2."firstName", t2."lastName", t2."email"')
       .where('t1.status = $1')
       .join(`${uModel.getTable()} AS t2`, 't1."parentId"=t2."_id"', 'left outer') // eslint-disable-line
-      .findAll(['trialing'])
+      .findAll(['trial'])
       .then((subscriptions) => {
         if (subscriptions.length > 0) {
           for (var i = 0; i < subscriptions.length; i++) {

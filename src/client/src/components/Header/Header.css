@@ -10,3 +10,8 @@
 .topmost {
   z-index: 500 !important;
 }
+@media (max-width: 479px){
+  .navbar-default .navbar-nav > li > a{
+    color: #fff;
+  }
+}

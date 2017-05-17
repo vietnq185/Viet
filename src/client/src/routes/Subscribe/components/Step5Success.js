@@ -3,8 +3,9 @@ import React from 'react'
 import { IndexLink, Link } from 'react-router'
 
 import constants from '../../../constants'
+import API from '../../../helpers/api'
 import Utils from '../../../helpers/utils'
-
+import * as authActions from '../../../store/auth'
 import successImage from '../../../styles/images/icon-success.png'
 import appleImage from '../../../styles/images/ico-app-store.png'
 import androidImage from '../../../styles/images/ico-google-play.png'
@@ -13,6 +14,7 @@ class Step1SignIn extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      
     }
   }
 
@@ -38,11 +40,18 @@ class Step1SignIn extends React.Component {
           <br /><br /><a href='https://app.a-smartlearning.com/en/sml/login' className='btn dk-bg-blue dk-white'>Sign into student account</a>
       </span>
     )
-
+    var zpad = require('zpad')
+    let _refid = (objSubscription._id.substring(0, 7) + '...')
+    if (objSubscription.refid !== '') {
+      _refid = zpad(objSubscription.refid, 6)
+    }
     // const studentLogin = this.props.assignment && this.props.assignment.success ? studentLoginLink : ''
     const studentLogin = studentLoginLink
 
-    const detailsLink = (<p>Thanks for signing up with us, your subscription ID is: <Link to={`/subscription-details/${objSubscription._id}`}>#{objSubscription.refid}</Link>.</p>)
+    let detailsLink = (<p>Thanks for signing up with us.</p>)
+    if (objSubscription.numberOfSubscriptions > 1) {
+      detailsLink = ''
+    }
 
     let channelStripe = (
       <div className='thank-you-msg'>
@@ -91,7 +100,7 @@ class Step1SignIn extends React.Component {
         <p><img src={successImage} /></p>
         <h1>SUCCESS!</h1>
         {channelMsg}
-        <br /><a href='javascript: void(0);' className='btn dk-bg-green dk-white' onClick={() => this.showSubscription()}>See your subscription</a>
+        <br /><a href='/subscription' className='btn dk-bg-green dk-white' /*onClick={() => this.showSubscription()}*/>See your subscription</a>
         {studentLogin}
         <br /><br /><br />Download <strong>Parent App</strong> for iOS or Android and enjoy the learning journey with your child
         <br /><br />

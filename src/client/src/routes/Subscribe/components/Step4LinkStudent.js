@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React from 'react'
-
+import ReactTooltip from 'react-tooltip'
 import API from '../../../helpers/api'
 import Utils from '../../../helpers/utils'
 import validate from '../../../helpers/validate'
@@ -72,7 +72,7 @@ class Step1SignIn extends React.Component {
         }).catch((errMsg) => {
           // this.setState({ errMsg })
           self.setState({ errMsg: 'Cannot link student. Please try again later' })
-          self.linkFailed()
+          //self.linkFailed()
         })
         // END - do login
       }).catch((errMsg) => {
@@ -85,7 +85,7 @@ class Step1SignIn extends React.Component {
           ALREADY_LINKED_TO_ANOTHER_PARENT: 'The student has been already linked to another parent account before'
         };
         self.setState({ errMsg: (typeof predefinedMsg[errMsg] !== 'undefined' ? predefinedMsg[errMsg] : errMsg) })
-        self.linkFailed()
+        //self.linkFailed()
       })
       //
     } else {
@@ -141,7 +141,7 @@ class Step1SignIn extends React.Component {
                 </div>
                 <div className='col-sm-6 col-xs-12'>
                   <div className={['form-group', this.errors.linkCode ? 'has-error' : ''].join(' ')}>
-                    <label htmlFor='contact-name'>Linkcode{requiredLabel} <span className='linkcode-info'><a href='javascript:void(0);' data-toggle='tooltip' data-placement='top' title="Please log in to YOUR CHILD's student account then go to 'My Profile' to get the 6-character linkcode"><i className='fa fa-info-circle' /></a></span></label>
+                    <label htmlFor='contact-name'>Linkcode{requiredLabel} <span className='linkcode-info'><a href='javascript:void(0);' data-tip="Please log in to YOUR CHILD's student account then go to 'My Profile' to get the 6-character linkcode" data-html={true}><i className='fa fa-info-circle' /></a><ReactTooltip className="linkcode-info-tooltip" place="top" type="dark" html={true} /></span></label>
                     <input className='form-control' name='linkCode' id='linkCode' required='' type='text' ref='linkCode' />
                     <span className={[this.errors.linkCode ? 'help-block' : 'hide'].join(' ')}>{this.errors.linkCode}</span>
                   </div>

@@ -1364,6 +1364,13 @@ cosmiconfig@^2.1.0, cosmiconfig@^2.1.1:
     parse-json "^2.2.0"
     require-from-string "^1.1.0"
 
+country-data@0.0.31:
+  version "0.0.31"
+  resolved "https://registry.yarnpkg.com/country-data/-/country-data-0.0.31.tgz#80966b8e1d147fa6d6a589d32933f8793774956d"
+  dependencies:
+    currency-symbol-map "~2"
+    underscore ">1.4.4"
+
 create-react-class@^15.5.1, create-react-class@^15.5.2:
   version "15.5.2"
   resolved "https://registry.yarnpkg.com/create-react-class/-/create-react-class-15.5.2.tgz#6a8758348df660b88326a0e764d569f274aad681"
@@ -1506,6 +1513,10 @@ cssom@0.3.x, "cssom@>= 0.3.2 < 0.4.0":
   resolved "https://registry.yarnpkg.com/cssstyle/-/cssstyle-0.2.37.tgz#541097234cb2513c83ceed3acddc27ff27987d54"
   dependencies:
     cssom "0.3.x"
+
+currency-symbol-map@~2:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/currency-symbol-map/-/currency-symbol-map-2.2.0.tgz#2b3c1872ff1ac2ce595d8273e58e1fff0272aea2"
 
 d@1:
   version "1.0.0"
@@ -2368,6 +2379,10 @@ globby@^5.0.0:
     object-assign "^4.0.1"
     pify "^2.0.0"
     pinkie-promise "^2.0.0"
+
+google-libphonenumber@^2.0.10:
+  version "2.0.15"
+  resolved "https://registry.yarnpkg.com/google-libphonenumber/-/google-libphonenumber-2.0.15.tgz#d890959d2f7e374ff901296bc76d07f1e24adabe"
 
 graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.1.9:
   version "4.1.11"
@@ -4272,6 +4287,17 @@ react-animations@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/react-animations/-/react-animations-0.1.0.tgz#519b6f4fe0f90b49fbfd4fcd73d978c5087130b1"
 
+react-bootstrap-intl-tel-input@0.0.13:
+  version "0.0.13"
+  resolved "https://registry.yarnpkg.com/react-bootstrap-intl-tel-input/-/react-bootstrap-intl-tel-input-0.0.13.tgz#f1a2b589964769373e8e86200bdbf58004c283ea"
+  dependencies:
+    country-data "0.0.31"
+    escape-string-regexp "^1.0.5"
+    google-libphonenumber "^2.0.10"
+    react "^15.4.2"
+    react-flag-kit "0.2.2"
+    uuid "^3.0.1"
+
 react-bootstrap@^0.30.10:
   version "0.30.10"
   resolved "https://registry.yarnpkg.com/react-bootstrap/-/react-bootstrap-0.30.10.tgz#dbba6909595f2af4d91937db0f96ec8c2df2d1a8"
@@ -4310,6 +4336,10 @@ react-dom@^15.5.4:
     loose-envify "^1.1.0"
     object-assign "^4.1.0"
     prop-types "~15.5.7"
+
+react-flag-kit@0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/react-flag-kit/-/react-flag-kit-0.2.2.tgz#991d703199114f87147d3c7f8719c62c88a939da"
 
 react-helmet@^5.0.3:
   version "5.0.3"
@@ -4439,7 +4469,7 @@ react-tooltip@^3.3.0:
     classnames "^2.2.0"
     prop-types "^15.5.8"
 
-react@^15.5.4:
+react@^15.4.2, react@^15.5.4:
   version "15.5.4"
   resolved "https://registry.yarnpkg.com/react/-/react-15.5.4.tgz#fa83eb01506ab237cdc1c8c3b1cea8de012bf047"
   dependencies:
@@ -5252,6 +5282,10 @@ uncontrollable@^4.0.1:
   dependencies:
     invariant "^2.1.0"
 
+underscore@>1.4.4:
+  version "1.8.3"
+  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.8.3.tgz#4f3fb53b106e6097fcf9cb4109f2a5e9bdfa5022"
+
 uniq@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/uniq/-/uniq-1.0.1.tgz#b31c5ae8254844a3a8281541ce2b04b865a734ff"
@@ -5608,3 +5642,7 @@ yargs@~3.10.0:
     cliui "^2.1.0"
     decamelize "^1.0.0"
     window-size "0.1.0"
+
+zpad@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/zpad/-/zpad-0.5.0.tgz#e3255b3f0c2d5338514a644dedfa5b844779edc4"

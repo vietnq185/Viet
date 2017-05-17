@@ -8,15 +8,6 @@ export default {
       password: Joi.string().required().min(6).max(32),
       firstName: Joi.string().required().max(20),
       lastName: Joi.string().required().max(20),
-      phone: Joi.string().regex(/[0-9]+/).min(10).max(12).options({// eslint-disable-line
-        language: {
-          string: {
-            regex: {
-              base: 'must be number only'
-            }
-          }
-        }
-      }),
       // in case admin, editor or parent create a teacher or student,
       // the parentId field will refer to user field in user_roles table.
       parentId: Joi.string().guid(),

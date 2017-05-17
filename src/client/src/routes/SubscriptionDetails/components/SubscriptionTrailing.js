@@ -55,22 +55,25 @@ class SubscriptionTrailing extends React.Component {
     let upgradedInfo = ''
     let buttonCancel = ''
     let cancelledInfo = ''
-    let cancelMetadata = objSubscription.cancelMetadata || ''
-    if (parseInt(objSubscription.nextPeriodEnd) > parseInt(objSubscription.expiryDate)) {
-      upgradedInfo = (
-        <div className='alert alert-danger'>
-          <p>Your plan will be upgraded to annual plan on {moment.unix(objSubscription.nextPeriodStart / 1000).format('MMM D, YYYY')}</p>
-        </div>
-      )
-    } else if (objSubscription.expirationType !== 'annually') {
-      buttonUpgrade = (
-        <a href={['/upgrade-subscription/', objSubscription._id].join('')} className='upgrade-link'>Upgrade</a>
-      )
+    let cancelMetadata = objSubscription.cancelMetadata || {}
+
+    if (cancelMetadata.chk1 === undefined) {
+      if (parseInt(objSubscription.nextPeriodEnd) > parseInt(objSubscription.expiryDate)) {
+        upgradedInfo = (
+          <div className='alert alert-danger'>
+            <p>Your plan will be upgraded to annual plan on {moment.unix(objSubscription.nextPeriodStart / 1000).format('MMM D, YYYY')}</p>
+          </div>
+        )
+      } else if (objSubscription.expirationType !== 'annually') {
+        buttonUpgrade = (
+          <a href={['/upgrade-subscription/', objSubscription._id].join('')} className='upgrade-link'>Upgrade</a>
+        )
+      }
     }
 
-    if (cancelMetadata === '') {
+    if (cancelMetadata.chk1 === undefined && parseInt(objSubscription.nextPeriodEnd) <= parseInt(objSubscription.expiryDate)) {
       buttonCancel = (<a href={['/cancel-subscription/', objSubscription._id].join('')} className='cancel-link'>Cancel</a>)
-    } else {
+    } else if (cancelMetadata.chk1 !== undefined) {
       upgradedInfo = ''
       cancelledInfo = (
         <div className='alert alert-danger'>
@@ -78,13 +81,17 @@ class SubscriptionTrailing extends React.Component {
         </div>
       )
     }
-
+    var zpad = require('zpad')
+    let _refid = (objSubscription._id.substring(0, 7) + '...')
+    if (objSubscription.refid !== '') {
+      _refid = zpad(objSubscription.refid, 6)
+    }
     return (
       <div className='subscribe-details'>
         <h1>
           <div className='row'>
             <div className='col-sm-6 col-xs-12'>
-              {objSubscription.courseTitles.join(' & ')} <span className='status status-trialing'>Trialing</span>{trialExpiryTxt}
+              {objSubscription.courseTitles.join(' & ')} <span className='status status-trial'>Trial</span>{trialExpiryTxt}
             </div>
             <div className='col-sm-6 col-xs-12'>
               {buttonCancel}
@@ -96,7 +103,7 @@ class SubscriptionTrailing extends React.Component {
         <div className='info'>
           <div className='row'>
             <div className='col-sm-6 col-xs-12'>
-              <div>ID: #{objSubscription.refid || objSubscription._id}</div>
+              <div>ID: #{_refid}</div>
               <div>Plan: <span className='dk-blue'>{objSubscription.courseTitles.join(' & ')} (${parseFloat(objSubscription.fee * theRate).toFixed(2)}/{objSubscription.expirationType == 'annually' ? 'year' : 'month'})</span></div>
               <div>Payment method: {objSubscription.channel == 'bank' ? 'Bank Transfer' : 'VISA ******' + objSubscription.ccnum}</div>
             </div>

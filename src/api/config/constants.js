@@ -31,13 +31,15 @@ export default {
     subscriptionUpgradeSuccessful: 'SUBSCRIPTION_UPGRADE_SUCCESSFUL',
     subscriptionUpgradeUnSuccessful: 'SUBSCRIPTION_UPGRADE_UNSUCCESSFUL',
     invalidCard: 'INVALID_CARD',
+    cardNumberExisted: 'CARD_NUMBER_EXISTED',
     notParent: 'YOU_ARE_NOT_PARENT',
     studentEmailNotFound: 'UNREGISTERED_STUDENT',
     linkCodeNotFound: 'LINK_CODE_NOT_FOUND',
     alreadyLinked: 'ALREADY_LINKED_BEFORE',
     alreadyLinkedToAnotherParent: 'ALREADY_LINKED_TO_ANOTHER_PARENT',
     alreadyIsAnnually: 'ALREADY_IS_ANNUALL',
-    cannotUpgrade: 'CANNOT_UPGRADE_SUBSCRIPTION'
+    cannotUpgrade: 'CANNOT_UPGRADE_SUBSCRIPTION',
+    cannotRetrieveOptions: 'CANNOT_RETRIEVE_OPTIONS'
   },
   emailTokens: {
     mail_forgot_password: ['{firstName}', '{lastName}', '{email}', '{resetPasswordUrl}'],  // DONE

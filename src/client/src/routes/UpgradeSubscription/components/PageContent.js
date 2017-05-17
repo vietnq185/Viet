@@ -4,7 +4,7 @@ import Utils from '../../../helpers/utils'
 import API from '../../../helpers/api'
 import * as authActions from '../../../store/auth'
 import UpgradeSubscriptionDetails from './UpgradeSubscriptionDetails'
-
+const moment = require('moment')
 class PageContent extends React.Component {
   constructor(props) {
     super(props)
@@ -34,6 +34,12 @@ class PageContent extends React.Component {
       if (objSubscription.msg !== undefined && objSubscription.msg === 'SUBSCRIPTION_NOT_FOUND') {
         subscriptionDetails = (
           <div className='subscribe-details'><h3>Subscription not found!</h3></div>
+        )
+      } else if (parseInt(objSubscription.nextPeriodEnd) > parseInt(objSubscription.expiryDate)) {
+        subscriptionDetails = (
+          <div className='alert alert-danger'>
+            <p>Your plan will be upgraded to annual plan on {moment.unix(objSubscription.nextPeriodStart / 1000).format('MMM D, YYYY')}</p>
+          </div>
         )
       } else {
         subscriptionDetails = (<UpgradeSubscriptionDetails key={Utils.guid()} {...this.props} objSubscription={objSubscription} />)

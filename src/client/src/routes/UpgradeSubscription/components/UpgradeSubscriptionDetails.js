@@ -2,7 +2,7 @@
 import React from 'react'
 import { fadeIn } from 'react-animations'
 import { StyleSheet, css } from 'aphrodite'
-
+import ReactTooltip from 'react-tooltip'
 import constants from '../../../constants'
 import Utils from '../../../helpers/utils'
 import API from '../../../helpers/api'
@@ -46,6 +46,7 @@ class UpgradeSubscriptionDetails extends React.Component {
       errMsg: '',
       showFailedDialog: false,
       showSuccessDialog: false,
+      msgFailed: 'Sorry, an error has occured. Please check your payment detail and try again. Thank you!'
     }
   }
 
@@ -110,9 +111,13 @@ class UpgradeSubscriptionDetails extends React.Component {
 
     }).catch(errMsg => {
       console.info('upgrade error: ', errMsg);
+      if (errMsg === 'CARD_NUMBER_EXISTED') {
+        errMsg = 'Your card has been existed. Please select from your list.'
+      }
       this.setState({
         showFailedDialog: true,
-        showSuccessDialog: false
+        showSuccessDialog: false,
+        msgFailed: errMsg
       })
     });
   }
@@ -324,7 +329,7 @@ class UpgradeSubscriptionDetails extends React.Component {
                   </div>
                   <div className='col-sm-4 col-xs-12'>
                     <div className={['form-group', this.errors.cvv ? 'has-error' : ''].join(' ')}>
-                      <label htmlFor='contact-name'>CVV{requiredLabel}</label>
+                      <label htmlFor='contact-name'>CVV{requiredLabel}<span className='cvv-info'><a href='javascript:void(0);' data-tip="The last 3 digits displayed on the back of your card" data-html={true}><i className='fa fa-question-circle' /></a><ReactTooltip className="cvv-info-tooltip" place="top" type="dark" html={true} /></span></label>
                       <input className='form-control' name='cvv' id='cvv' required='' type='text' value={this.state.newCC.cvv} ref='cvv' onChange={(e) => this.setNewCC('cvv', e.target.value)} />
                       <span className={[this.errors.cvv ? 'help-block' : 'hide'].join(' ')}>{this.errors.cvv}</span>
                     </div>
@@ -352,7 +357,7 @@ class UpgradeSubscriptionDetails extends React.Component {
                 <div className='modal-body text-center'>
                   <div><img src={FailImage} /></div>
                   <h1>FAILED!</h1>
-                  <p>Sorry, an error has occured.<br />Please check your payment detail and try again. Thank you!</p>
+                  <p>{this.state.msgFailed}</p>
                   <div><button className='btn dk-bg-green dk-white btn-close-modal' type='button' data-dismiss='modal' onClick={() => this.setState({ showFailedDialog: false })}>Try Again</button></div>
                 </div>
               </div>
