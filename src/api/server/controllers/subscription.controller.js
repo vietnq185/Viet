@@ -1091,7 +1091,7 @@ export const cancelSubscription = (req, res, next) => {
 
 
 export const getOptions = (req, res, next) => {
-  return new OptionModel().getPairs(1, true).then((dataResp) => {
+  return new OptionModel().getPairs(1).then((dataResp) => {
     return res.json(new APIResponse(dataResp))
   }).catch(e => next(e));
 }
