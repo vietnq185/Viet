@@ -80,7 +80,10 @@ class PageContent extends React.Component {
             })
             break
           case 'PASSWORD_WAS_RESET_AND_EMAIL_NOT_SENT':
-            self.setState({ errMsg: 'Your password has been reset but failed to send email. You can login now with the new password' })
+            self.setState({
+              resetSuccess: true,
+              errMsg: 'Your password has been reset but failed to send email. You can login now with the new password'
+            })
             break
           case 'PASSWORD_WAS_NOT_RESET':
             self.setState({ errMsg: 'Failed to reset password. Please try again' })
@@ -137,9 +140,8 @@ class PageContent extends React.Component {
           <div className='subscribe-wrapper'>
             <div className='subscribe-success-content'>
               <p><img src={successImage} /></p>
-              <p>Password Reset Email Sent.</p>
-              <p>An instruction has been sent to your email address.</p>
-              <p>Follow the instruction in the email to reset your password.</p>
+              <p>Reset password successfully.</p>
+              <p>Your password has been reset successfully.</p>
               <a href='javascript: void(0);' className='btn dk-bg-green dk-white' onClick={() => this.onParentLogin()}>Sign In</a>
             </div>
           </div>
