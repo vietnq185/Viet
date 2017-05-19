@@ -1,3 +1,4 @@
+/* eslint-disable */
 // config should be imported before importing any other file
 import config from './config/config';
 import app from './config/express';
@@ -30,7 +31,7 @@ if (!module.parent) {
         subscriptionCtrl.cronUpdateSubscriptionStatus();
       },
       start: false,
-      timeZone: 'America/Los_Angeles'
+      timeZone: process.env.TZ
     });
 
     var job2 = new cron.CronJob({
@@ -40,7 +41,7 @@ if (!module.parent) {
         subscriptionCtrl.cronSendTrialReminderEmail();
       },
       start: false,
-      timeZone: 'America/Los_Angeles'
+      timeZone: process.env.TZ
     });
 
     job1.start(); // job 1 started
@@ -48,5 +49,9 @@ if (!module.parent) {
 
   });
 }
+
+console.log('==============> process.env.TZ: ', process.env.TZ);
+console.log('==============> new Date(): ', new Date());
+console.log('==============> new Date().toString(): ', new Date().toString());
 
 export default app;
