@@ -112,6 +112,26 @@ class PageContent extends React.Component {
                         buttonsPanel.push(<a key={Utils.guid()} className='link-assign-student' href='javascript: void(0);' onClick={() => this.assignSubscription(item)}>Assign</a>)
                       }
                     }
+
+                    var expiryDate = moment(moment.unix(item.expiryDate / 1000).format('YYYY-MM-DD HH:mm:ss')),
+                      expiryDateFrom = moment(moment.unix(item.expiryDateFrom / 1000).format('YYYY-MM-DD HH:mm:ss')),
+                      nowTs = new Date().getTime(),
+                      now = moment(moment.unix(nowTs/1000).format('YYYY-MM-DD HH:mm:ss')),
+                      duration = moment.duration(moment(expiryDate).diff(now)),
+                      trialExpiryTxt = '';
+                    if (item.status === 'trial') {
+                      if (expiryDate.diff(expiryDateFrom, 'days') > 1) {
+                        trialExpiryTxt = (
+                          <span className={expiryDate.diff(expiryDateFrom, 'days') > 5 ? 'trail-days-left' : 'trail-days-left near-expire'}>{expiryDate.diff(expiryDateFrom, 'days')} days left</span>
+                        )
+                      } else {
+                        let hourLeft = zpad(duration._data.hours, 2) + ':' + zpad(duration._data.minutes, 2) + ':' + zpad(duration._data.seconds, 2)
+                        trialExpiryTxt = (
+                          <span className='trail-days-left near-expire'>{hourLeft} left</span>
+                        )
+                      }
+                    }
+
                     return (
                       <tr key={item._id}>
                         <td className={'dk-blue-text'}><a className={'dk-blue-text'} href='javascript: void(0);' onClick={() => Utils.redirect(`/subscription-details/${item._id}`)}>{_refid}</a></td>
@@ -119,7 +139,7 @@ class PageContent extends React.Component {
                         <td>${item.fee * theRate}/{theLabel} <span className='payment-method'>via {item.channel === constants.paymentMethod.creditCard ? 'Credit Card' : (item.channel === 'bank' ? 'Bank Transfer' : item.channel)}</span></td>
                         <td>{moment.unix(item.dateCreated / 1000).format('MMM D, YYYY')}</td>
                         <td>{moment.unix(item.expiryDate / 1000).format('MMM D, YYYY')}</td>
-                        <td><span className={`subscribe-status subscribe-status-${item.status}`}>{Utils.ucfirst(item.status)}</span></td>
+                        <td><span className={`subscribe-status subscribe-status-${item.status}`}>{Utils.ucfirst(item.status)}</span>{trialExpiryTxt}</td>
                         <td>{buttonsPanel}</td>
                       </tr>
                     )

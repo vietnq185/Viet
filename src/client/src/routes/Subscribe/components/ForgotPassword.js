@@ -60,7 +60,10 @@ class ForgotPassword extends React.Component {
             })
             break
           case 'EMAIL_NOT_SENT':
-            this.setState({ errMsg: 'Failed to send email. Please try again' })
+            this.setState({
+              emailSent: true,
+              errMsg: 'Failed to send email. Please try again'
+            })
             break
           case 'EMAIL_NOT_EXISTS':
             this.setState({ errMsg: 'Email does not exists in our system' })
@@ -106,16 +109,17 @@ class ForgotPassword extends React.Component {
       </div>
     )
 
-    /*if (this.state.emailSent) {
+    if (this.state.emailSent) {
       resetForm = (
         <div className='subscribe-success-content'>
           <p><img src={successImage} /></p>
           <p>Request for Password Reset Email Sent.</p>
           <p>An instruction has been sent to your email address.</p>
           <p>Follow the instruction in the email to reset your password.</p>
+          <p><button type='button' className='btn dk-bg-green dk-white' onClick={() => this.props.changeStep(this.props.steps.signIn)}>Sign In</button></p>
         </div>
       )
-    }*/
+    }
 
     return resetForm;
   }

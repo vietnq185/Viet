@@ -616,6 +616,15 @@ a{
 .subscribe-wrapper .my-subscription .subscriptions-paging li a:hover{
 	text-decoration: none;
 }
+
+.subscribe-wrapper .my-subscription .tbl-subscriptions .trail-days-left{
+	display: block;
+	font-size: 11px;
+}
+.subscribe-wrapper .my-subscription .tbl-subscriptions .trail-days-left.near-expire{
+	color: #cf2a27;
+}
+
 .subscribe-wrapper .subcribe-contact-info{
 	background: #f5f8fd;
 	border-left: 5px solid #8bb4e7;

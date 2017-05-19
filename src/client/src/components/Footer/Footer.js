@@ -32,7 +32,7 @@ export default class Footer extends React.Component {
     if (this.state.showBannerDiscount.showBanner === 1) {
       showPromotionBanner = true;
     }
-    if (this.props.auth.isLoggedIn) {
+    if (this.props.auth.isLoggedIn && this.props.showPromotionBanner === undefined) {
       showPromotionBanner = false;
     }
     

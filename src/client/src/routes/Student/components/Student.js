@@ -17,7 +17,7 @@ class Student extends React.Component {
       <div style={{ margin: '0 auto' }} >
         <PageHeader scrollTo={() => this.scrollTo()} />
         <PageContent ref='pageContent' />
-        <Footer />
+        <Footer showPromotionBanner={true} />
       </div>
     )
   }

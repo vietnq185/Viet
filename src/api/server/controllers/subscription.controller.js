@@ -10,6 +10,7 @@ import CourseModel from '../models/course.model';
 import UserModel from '../models/user.model';
 import PaymentHistory from '../models/paymentHistory.model';
 import OptionModel from '../models/option.model';
+import UserRoleModel from '../models/user.role.model';
 import APIResponse from '../helpers/APIResponse';
 import APIError from '../helpers/APIError';
 import Utils from '../helpers/Utils';
@@ -334,7 +335,7 @@ export const getSubscriptionsByUser = (req, res, next) => {
     const cModel = new CourseModel();
     new SubscriptionModel().where('t1."parentId"::varchar=$1')
       .select(`t1."_id", t1."parentId", t1."planId", t1."expirationType", t1."type", t1.refid,
-        t1."expiryDate", t1.discount, t1.fee, t1.status, t1."dateCreated", t1.channel, t1."cardId", t1."nextPeriodStart", t1."nextPeriodEnd", t1."nextChannel", t1."nextExpirationType", t1."cancelMetadata", 
+        t1."expiryDateFrom", t1."expiryDate", t1.discount, t1.fee, t1.status, t1."dateCreated", t1.channel, t1."cardId", t1."nextPeriodStart", t1."nextPeriodEnd", t1."nextChannel", t1."nextExpirationType", t1."cancelMetadata", 
         ARRAY(SELECT t2.title FROM ${cModel.getTable()} AS t2 
           INNER JOIN ${pModel.getTable()} AS t3 ON t2._id = ANY(ARRAY[t3."courseIds"])
           WHERE t3._id=t1."planId") AS "courseTitles", (SELECT t4.user FROM ${iModel.getTable()} AS t4 WHERE t4.order=t1._id Limit 1) AS "studentId"`)
@@ -1091,7 +1092,7 @@ export const cancelSubscription = (req, res, next) => {
 
 
 export const getOptions = (req, res, next) => {
-  return new OptionModel().getPairs(1, true).then((dataResp) => {
+  return new OptionModel().getPairs(1).then((dataResp) => {
     return res.json(new APIResponse(dataResp))
   }).catch(e => next(e));
 }
@@ -1307,4 +1308,33 @@ export const cronSendTrialReminderEmail = (req) => {
   }).catch(e => next(e));
 }
 
-export default { getSubscriptionsByUser, create, assignStudent, upgrade, countSubscriptions, getSubscriptionById, paySubscription, stripeConfirmation, checkToShowBannerDiscount, cancelSubscription, getOptions, forgotPassword, getUserForgotPassword, resetPassword };
+
+/**
+ * Get assigned students list.
+ * @returns {UserModel[]}
+ */
+export const getAssignedStudents = (req, res, next) => {
+  const iModel = new ItemModel();
+  const pModel = new PlanModel();
+  const cModel = new CourseModel();
+  const urModel = new UserRoleModel();
+  const sModel = new SubscriptionModel();
+  const jwtInfo = authCtrl.getJwtInfo(req);
+
+  new UserModel().select(`t1.*,
+    ARRAY(SELECT t3.title FROM ${cModel.getTable()} AS t3
+          INNER JOIN ${iModel.getTable()} AS t4 ON t3._id = t4.course
+          WHERE t4.user::varchar=t1._id::varchar GROUP BY t3.title) AS "courseTitles"
+  `)
+    .join(`${urModel.getTable()} AS t2`, 't2."targetRef"::varchar=t1."_id"::varchar') // eslint-disable-line
+    .where('t2."user"::varchar=$1')
+    .where('t1."_id"::varchar IN (SELECT t3."user"::varchar from ' + `${iModel.getTable()}` + ' AS t3 inner join ' + `${sModel.getTable()}` + ' as t4 on t3.order=t4._id)')
+    .orderBy('t1."firstName" ASC, t1."lastName" ASC')
+    .findAll([jwtInfo.userId])
+    .then((students) => {
+      return res.json(new APIResponse(students));
+    })
+    .catch(e => next(e));
+};
+
+export default { getSubscriptionsByUser, create, assignStudent, upgrade, countSubscriptions, getSubscriptionById, paySubscription, stripeConfirmation, checkToShowBannerDiscount, cancelSubscription, getOptions, forgotPassword, getUserForgotPassword, resetPassword, getAssignedStudents };

@@ -72,4 +72,8 @@ router.route('/list-all')
   /** POST /api/subscriptions/list-all - Get (search) subscriptions - for Admin */
   .post(authCtrl.verifyAccessToken, authCtrl.adminAuth, subscriptionCtrl.getSubscriptions);
 
+router.route('/getAssignedStudents')
+  /** GET /api/subscriptions/getAssignedStudents */
+  .get(authCtrl.verifyAccessToken, subscriptionCtrl.getAssignedStudents);
+
 export default router;
