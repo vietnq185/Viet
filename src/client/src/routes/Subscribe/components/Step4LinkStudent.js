@@ -151,7 +151,7 @@ class Step1SignIn extends React.Component {
                   <div className='row' key={`add_student_account_${item._id}`}>
                     <div className='col-xs-12'>
                       <div className='form-group add-student-account'>
-                        <input type='radio' name='add_student_account' id={`add_student_account_${item._id}`} value='1' defaultChecked={item._id === self.props.assignment.studentId} onChange={() => self.setState({ selectedStudentId: item._id })} disabled />
+                        <input type='radio' name='add_student_account' id={`add_student_account_${item._id}`} value='1' defaultChecked={item._id === self.props.assignment.studentId} onChange={() => self.setState({ selectedStudentId: item._id })} />
                         <label htmlFor={`add_student_account_${item._id}`}>&nbsp;{item.email}&nbsp;({Utils.isNotEmptyArray(item.courseTitles || []) ? item.courseTitles.join(', ') : ''})</label>
                       </div>
                     </div>
