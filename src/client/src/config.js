@@ -53,6 +53,7 @@ config.api = {
   resetPassword: '/api/subscriptions/resetPassword', // POST
   getOptionPairs: '/api/auth/getOptionPairs', // GET
   updateProfile: '/api/users/:userId',  // POST
+  getAssignedStudents: '/api/subscriptions/getAssignedStudents'  // GET
 }
 config.api = concatHost(config.apiServer, config.api)
 

@@ -31,6 +31,9 @@ export const stepResult = (step) => {
 
 export const changeStep = (step) => (dispatch, getState) => {
   return new Promise((resolve, reject) => {
+    if (step === STEPS.linkStudent) {
+      dispatch(getAssignedStudents())
+    }
     if (step === STEPS.plan) {
       dispatch(getPlans())
     }
@@ -39,6 +42,26 @@ export const changeStep = (step) => (dispatch, getState) => {
     }
     dispatch(stepResult(step))
     resolve()
+  })
+}
+
+// ------------------------------------
+
+const ASSIGNED_LIST = 'ASSIGNED_LIST'
+
+const updateAssignedList = (result) => {
+  return {
+    type: ASSIGNED_LIST,
+    result
+  }
+}
+
+export const getAssignedStudents = () => (dispatch, getState) => {
+  const { auth } = getState()
+  return API.getAssignedStudents(auth.jwt.accessToken || '').then((assignedList) => {
+    dispatch(updateAssignedList(assignedList))
+  }).catch(() => {
+    dispatch(updateAssignedList([]))
   })
 }
 
@@ -234,7 +257,8 @@ export const initialState = {
     studentId: '',
     success: false,
     isFromListPage: false
-  }
+  },
+  assignedList: []
 }
 
 export default (state = initialState, action) => {
@@ -268,6 +292,9 @@ export default (state = initialState, action) => {
     case ASSIGN_STUDENT:
       return Utils.merge(state, { assignment: { ...state.assignment, ...action.result } })
       break // eslint-disable-line
+    case ASSIGNED_LIST:
+      return Utils.merge(state, { assignedList: action.result })
+      break;
     default:
       return state
   }

@@ -15,7 +15,8 @@ class Step1SignIn extends React.Component {
     this.errors = Utils.copy(this.initialErrors)
     this.state = {
       hasError: false,
-      errMsg: ''
+      errMsg: '',
+      selectedStudentId: ''
     }
   }
 
@@ -43,6 +44,24 @@ class Step1SignIn extends React.Component {
     const self = this
 
     this.resetErrors()
+
+    //
+    if (self.state.selectedStudentId.length > 0) {
+      const { accessToken, userId } = self.props.auth.jwt // eslint-disable-line
+      // do assignment
+      return API.assignStudent(accessToken, {
+        subscriptionId: self.props.assignment.subscriptionId,
+        studentId: self.state.selectedStudentId
+      }).then((result) => {
+        self.props.assignStudent({ studentId: self.state.selectedStudentId, success: true })
+        self.props.changeStep(self.props.steps.success)
+      }).catch((errMsg) => {
+        // this.setState({ errMsg })
+        self.setState({ errMsg: 'Cannot link student. Please try again later' })
+        //self.linkFailed()
+      })
+    }
+    //
 
     const rules = {
       email: {
@@ -103,7 +122,9 @@ class Step1SignIn extends React.Component {
   }
 
   render() {
+    var self = this;
     console.info('Subscribe => PageContent => LinkStudent component => props: ', this.props)
+    console.info('Subscribe => PageContent => LinkStudent component => state: ', this.state)
     const requiredLabel = (<abbr className='dk-red-text'>&nbsp;*</abbr>)
     return (
       <div className='subscription-assign-student-container'>
@@ -123,11 +144,26 @@ class Step1SignIn extends React.Component {
             <p>Please select an already-linked student account or enter student's Email Address and Linkcode into the form below.</p>
             <p>Do not have a student account? <a href='javascript: void(0);' onClick={() => this.props.changeStep(this.props.steps.createStudent)}>Create a new student</a></p>
             <form action='' method='post'>
+
+              {this.props.assignedList.map((item) => {
+                {/*if (!Utils.isNotEmptyArray(item.courseTitles)) return '';*/ }
+                return (
+                  <div className='row' key={`add_student_account_${item._id}`}>
+                    <div className='col-xs-12'>
+                      <div className='form-group add-student-account'>
+                        <input type='radio' name='add_student_account' id={`add_student_account_${item._id}`} value='1' defaultChecked={item._id === self.props.assignment.studentId} onChange={() => self.setState({ selectedStudentId: item._id })} />
+                        <label htmlFor={`add_student_account_${item._id}`}>&nbsp;{item.email}&nbsp;({Utils.isNotEmptyArray(item.courseTitles || []) ? item.courseTitles.join(', ') : ''})</label>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+
               <div className='row'>
                 <div className='col-xs-12'>
                   <div className='form-group add-student-account'>
-                    <input type='radio' name='add_student_account' id='add_student_account' value='1' defaultChecked />
-                    <label htmlFor='add_student_account'>Add student account</label>
+                    <input type='radio' name='add_student_account' id='add_student_account' value='1' defaultChecked onChange={() => self.setState({ selectedStudentId: '' })} />
+                    <label htmlFor='add_student_account'>&nbsp;Add student account</label>
                   </div>
                 </div>
               </div>
