@@ -113,9 +113,11 @@ class PageContent extends React.Component {
                       }
                     }
 
-                    var expiryDate = moment(moment.unix(item.expiryDate / 1000).format('YYYY-MM-DD')),
-                      expiryDateFrom = moment(moment.unix(item.expiryDateFrom / 1000).format('YYYY-MM-DD')),
+                    var expiryDate = moment(moment.unix(item.expiryDate / 1000).format('YYYY-MM-DD HH:mm:ss')),
+                      expiryDateFrom = moment(moment.unix(item.expiryDateFrom / 1000).format('YYYY-MM-DD HH:mm:ss')),
                       nowTs = new Date().getTime(),
+                      now = moment(moment.unix(nowTs/1000).format('YYYY-MM-DD HH:mm:ss')),
+                      duration = moment.duration(moment(expiryDate).diff(now)),
                       trialExpiryTxt = '';
                     if (item.status === 'trial') {
                       if (expiryDate.diff(expiryDateFrom, 'days') > 1) {
@@ -123,11 +125,13 @@ class PageContent extends React.Component {
                           <span className={expiryDate.diff(expiryDateFrom, 'days') > 5 ? 'trail-days-left' : 'trail-days-left near-expire'}>{expiryDate.diff(expiryDateFrom, 'days')} days left</span>
                         )
                       } else {
+                        let hourLeft = zpad(duration._data.hours, 2) + ':' + zpad(duration._data.minutes, 2) + ':' + zpad(duration._data.seconds, 2)
                         trialExpiryTxt = (
-                          <span className='trail-days-left near-expire'>{moment.unix((item.expiryDate - nowTs / 1000)).format('HH:mm:ss')} left</span>
+                          <span className='trail-days-left near-expire'>{hourLeft} left</span>
                         )
                       }
                     }
+
                     return (
                       <tr key={item._id}>
                         <td className={'dk-blue-text'}><a className={'dk-blue-text'} href='javascript: void(0);' onClick={() => Utils.redirect(`/subscription-details/${item._id}`)}>{_refid}</a></td>
