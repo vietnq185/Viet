@@ -10,6 +10,7 @@ import CourseModel from '../models/course.model';
 import UserModel from '../models/user.model';
 import PaymentHistory from '../models/paymentHistory.model';
 import OptionModel from '../models/option.model';
+import UserRoleModel from '../models/user.role.model';
 import APIResponse from '../helpers/APIResponse';
 import APIError from '../helpers/APIError';
 import Utils from '../helpers/Utils';
@@ -1307,4 +1308,33 @@ export const cronSendTrialReminderEmail = (req) => {
   }).catch(e => next(e));
 }
 
-export default { getSubscriptionsByUser, create, assignStudent, upgrade, countSubscriptions, getSubscriptionById, paySubscription, stripeConfirmation, checkToShowBannerDiscount, cancelSubscription, getOptions, forgotPassword, getUserForgotPassword, resetPassword };
+
+/**
+ * Get assigned students list.
+ * @returns {UserModel[]}
+ */
+export const getAssignedStudents = (req, res, next) => {
+  const iModel = new ItemModel();
+  const pModel = new PlanModel();
+  const cModel = new CourseModel();
+  const urModel = new UserRoleModel();
+  const sModel = new SubscriptionModel();
+  const jwtInfo = authCtrl.getJwtInfo(req);
+
+  new UserModel().select(`t1.*,
+    ARRAY(SELECT t3.title FROM ${cModel.getTable()} AS t3
+          INNER JOIN ${iModel.getTable()} AS t4 ON t3._id = t4.course
+          WHERE t4.user::varchar=t1._id::varchar GROUP BY t3.title) AS "courseTitles"
+  `)
+    .join(`${urModel.getTable()} AS t2`, 't2."targetRef"::varchar=t1."_id"::varchar') // eslint-disable-line
+    .where('t2."user"::varchar=$1')
+    .where('t1."_id"::varchar IN (SELECT t3."user"::varchar from ' + `${iModel.getTable()}` + ' AS t3 inner join ' + `${sModel.getTable()}` + ' as t4 on t3.order=t4._id)')
+    .orderBy('t1."firstName" ASC, t1."lastName" ASC')
+    .findAll([jwtInfo.userId])
+    .then((students) => {
+      return res.json(new APIResponse(students));
+    })
+    .catch(e => next(e));
+};
+
+export default { getSubscriptionsByUser, create, assignStudent, upgrade, countSubscriptions, getSubscriptionById, paySubscription, stripeConfirmation, checkToShowBannerDiscount, cancelSubscription, getOptions, forgotPassword, getUserForgotPassword, resetPassword, getAssignedStudents };
