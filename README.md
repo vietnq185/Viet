@@ -22,13 +22,35 @@
 - WEB server for client will serve on http://localhost:3000
 
 
-### 3. Deployment
+### 3. Prepare database
+
+**Please backup all your current database before continue**
+
+From the file path below, you can find the new database structure and data for this application (the subscription module).
+
+<pre>
+src/api/database/Staging_subscription.sql
+</pre>
+
+The changes (add/remove) from this file based on DB structure from staging server. Please refer to ASLS_Staging_Schema_ONLY.sql to know what the staging server had before this changes.
+
+**Please make sure that you have all queries to be executed successfully before continue.**
+
+### 4. Deployment
+
+**VERY IMPORTANTS:** 
+
+*Follow the steps below will replace all source on the target branch on heroku. So be careful please when you would like to deploy this appication on the same branch that you have already had another application is running. In this case, you just need to complete the **"Prerequisite"** and the **"Step 3: compile (build) source locally"**, then copy whole the **"build"** directory to your server (The "build" directory will appear after you complete the Step 3).*
+
 
 **Prerequisite**
-We MUST run all command in **point 1** above to install build and deploy environtment
+
+We MUST run all command in **point 1** above to install build and deploy environtment. We just need to complete this for the first time of deployment.
 
 
 **Step 1: add upstream**
+
+We just need to complete this for the first time of deployment.
 
 <pre>git remote add heroku https://git.heroku.com/asls.git</pre>
 
