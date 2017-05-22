@@ -64,9 +64,21 @@ Replace https://git.heroku.com/asls.git by your actual git url on heroku
 
 **Step 3: compile (build) source locally**
 
-Before run build command, check and correct the information below from src/api/.env.production file.
-* JWT_SECRET=This is a secret key that will be used to encrypt login token
-* POSTGRES_CONNECTION=This is the connectrion string that will be used to connect postgres database server
+Before run build command
+
+- Check and correct the information below from src/api/.env.production file.
+<pre>
+JWT_SECRET=This is a secret key that will be used to encrypt login token
+POSTGRES_CONNECTION=This is the connectrion string that will be used to connect postgres database server
+</pre>
+- Check and correct the information below from src/admin/.env file.
+<pre>
+REACT_APP_API_URL=The website url that you get when create app on heroku.
+</pre>
+- Check and correct the information below from src/client/.env file.
+<pre>
+REACT_APP_API_URL=The website url that you get when create app on heroku.
+</pre>
 
 Run this command to build source:
 
