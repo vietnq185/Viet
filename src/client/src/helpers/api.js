@@ -191,9 +191,9 @@ export default class API {
     })
   }
 
-  static countSubscriptions = () => {
+  static countSubscriptions = (userId='') => {
     return new Promise((resolve, reject) => {
-      return fetch(config.api.countSubscriptions, {
+      return fetch(config.api.countSubscriptions.replace(/:userId/g, userId), {
         method: 'GET',
         headers: {
           'Content-type': 'application/json'

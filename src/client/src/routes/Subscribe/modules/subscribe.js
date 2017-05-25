@@ -77,13 +77,15 @@ const plansResult = (result) => {
 }
 
 export const getPlans = () => (dispatch, getState) => {
-  const promises = [API.getPlans(), API.countSubscriptions(), API.getOptions()]
+  const state = getState()
+  const jwt = state.auth.jwt
+  const promises = [API.getPlans(), API.countSubscriptions(jwt.userId), API.getOptions()]
   Promise.all(promises).then((results) => {
     const plans = results[0]
     const totalSubscriptions = results[1]
     const options = results[2]
     var remaining_discount_subscription = options.o_remaining_discount_subscription || 0
-    const applyDiscount = parseInt(options.o_allow_discount) === 1 && remaining_discount_subscription > 1 ? true : false
+    const applyDiscount = totalSubscriptions <= 0 && parseInt(options.o_allow_discount) === 1 && remaining_discount_subscription > 1 ? true : false
     const discountPercent = options.o_discount_percent || 0
     const discountLimit = options.o_discount_limit || 0
     dispatch(plansResult({

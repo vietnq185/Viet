@@ -40,7 +40,7 @@ config.api = {
   plans: '/api/plans', // GET
   cclist: '/api/users/cclist/:userId', // GET
   createSubscription: '/api/subscriptions', // POST
-  countSubscriptions: '/api/subscriptions/countSubscriptions', // GET
+  countSubscriptions: '/api/subscriptions/countSubscriptions/:userId', // GET
   assignStudent: '/api/subscriptions/AssignStudent', // POST
   getSubscriptionList: '/api/subscriptions/list/:userId/:page', // GET
   linkStudent: '/api/users/linkStudent', // POST

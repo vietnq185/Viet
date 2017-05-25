@@ -110,7 +110,7 @@ export const create = (req, res, next) => {
       }
       return Promise.resolve(planData);
     });
-  }).then((planData) => new SubscriptionModel().findCount().then((totalSubscriptions) => {
+  }).then((planData) => new SubscriptionModel().where('t1."parentId"::varchar=$1').findCount([parentId]).then((totalSubscriptions) => {
     return new OptionModel().getPairs(1).then((optionResp) => {
       var discountValue = 0,
         oAllowDiscount = optionResp.o_allow_discount || 0,
@@ -118,7 +118,7 @@ export const create = (req, res, next) => {
         oDiscountLimit = optionResp.o_discount_limit | 0,
         oRemainingDiscountSubscription = optionResp.o_remaining_discount_subscription | 0,
         fee = planData.fee;
-      if (parseInt(oAllowDiscount) === 1 && parseFloat(oDiscountPercent) > 0 && oRemainingDiscountSubscription > 0) {
+      if (totalSubscriptions <= 0 && parseInt(oAllowDiscount) === 1 && parseFloat(oDiscountPercent) > 0 && oRemainingDiscountSubscription > 0) {
         discountValue = (fee * oDiscountPercent) / 100;
       }
       fee = fee - discountValue;
@@ -354,9 +354,15 @@ export const getSubscriptionsByUser = (req, res, next) => {
   });
 };
 
-export const countSubscriptions = (req, res, next) => new SubscriptionModel().findCount().then((total) => {
-  return res.json(new APIResponse(total))
-}).catch(e => next(e));
+export const countSubscriptions = (req, res, next) => {
+  let cond = '1=1';
+  if (req.params.userId !== undefined && req.params.userId !== '') {
+    cond = `t1."parentId" = '${req.params.userId}'`
+  }
+  return new SubscriptionModel().where(cond).findCount().then((total) => {
+    return res.json(new APIResponse(total))
+  }).catch(e => next(e));
+};
 
 export const getSubscriptionById = (req, res, next) => {
   const cModel = new CourseModel();

@@ -24,8 +24,8 @@ router.route('/list/:userId/:page')
   /** GET /api/subscriptions/:userId - Get subscriptions */
   .get(authCtrl.verifyAccessToken, subscriptionCtrl.getSubscriptionsByUser);
 
-router.route('/countSubscriptions')
-  /** GET /api/subscriptions/countSubscriptions - Count subscriptions */
+router.route('/countSubscriptions/:userId')
+  /** GET /api/subscriptions/countSubscriptions/:userId - Count subscriptions */
   .get(subscriptionCtrl.countSubscriptions);
 
 router.route('/details/:subscriptionId')
