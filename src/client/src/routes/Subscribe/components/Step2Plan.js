@@ -61,6 +61,7 @@ class Step2Plan extends React.Component {
       const frequency = this.state.plans[item._id].frequency
       const fee = (frequency === MONTHLY ? item.fee : (item.fee * 12))
       let pricingContent = (<div className='subscription-price'><sup>$</sup><span className='price'>{fee}</span></div>)
+      let buttonSubmitContent = (<a href='javascript: void(0);' className='start-your-trial' onClick={() => this.onSubmit(item._id)}>Start your free {option_arr.o_trial_days} day trial</a>)
       if (isApplyDiscount) {
         pricingContent = (
           <div>
@@ -68,6 +69,9 @@ class Step2Plan extends React.Component {
             <div className='subscription-price-before-discount'>${fee}</div>
           </div>
         )
+      }
+      if (this.props.totalSubscriptions > 0) {
+        buttonSubmitContent = (<a href='javascript: void(0);' className='start-your-trial' onClick={() => this.onSubmit(item._id)}>Start your plan</a>)
       }
       planList.push(
         <div className='col-md-4 col-sm-6 col-xs-12' key={item._id}>
@@ -86,7 +90,7 @@ class Step2Plan extends React.Component {
               <div className='subscription-payment-type'>Monthly <span className='fa-toggle'><img src={frequency === MONTHLY ? ToggleLeftImage : ToggleRightImage} onClick={() => this.changeFrequency(item._id)} /></span> Annually</div>
               {pricingContent}
               <div className='subscription-price-per'>{frequency === MONTHLY ? 'per month' : 'per year'}</div>
-              <a href='javascript: void(0);' className='start-your-trial' onClick={() => this.onSubmit(item._id)}>Start your free {option_arr.o_trial_days} day trial</a>
+              {buttonSubmitContent}
             </div>
           </div>
         </div>

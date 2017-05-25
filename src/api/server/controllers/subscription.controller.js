@@ -117,14 +117,17 @@ export const create = (req, res, next) => {
         oDiscountPercent = optionResp.o_discount_percent || 0,
         oDiscountLimit = optionResp.o_discount_limit | 0,
         oRemainingDiscountSubscription = optionResp.o_remaining_discount_subscription | 0,
-        fee = planData.fee;
-      if (totalSubscriptions <= 0 && parseInt(oAllowDiscount) === 1 && parseFloat(oDiscountPercent) > 0 && oRemainingDiscountSubscription > 0) {
+        fee = planData.fee,
+        oTrialDays = optionResp.o_trial_days;
+      if (parseInt(oAllowDiscount) === 1 && parseFloat(oDiscountPercent) > 0 && oRemainingDiscountSubscription > 0) {
         discountValue = (fee * oDiscountPercent) / 100;
       }
       fee = fee - discountValue;
-
+      if (totalSubscriptions > 0) {
+        oTrialDays = 0;
+      }
       // create data
-      var expiryDate = new Date().getTime() + (optionResp.o_trial_days * 86400 * 1000),
+      var expiryDate = new Date().getTime() + (oTrialDays * 86400 * 1000),
         dateCreated = new Date().getTime(); //14 days trial
       var data = { // eslint-disable-line
         _id: id,
@@ -204,26 +207,16 @@ export const create = (req, res, next) => {
               });
             }
 
-            savedSubscription.numberOfSubscriptions = 0;
+            savedSubscription.numberOfSubscriptions = totalSubscriptions;
             if (!savedSubscription.cardId) {
-              return new SubscriptionModel().reset().where('t1."parentId"::varchar=$1').findCount([parentId]).then((total) => {
-                savedSubscription.numberOfSubscriptions = total;
-                return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
-              }).catch((err) => {
-                return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
-              });
+              return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
             }
 
-            return new SubscriptionModel().reset().where('t1."parentId"::varchar=$1').findCount([parentId]).then((total) => {
-              savedSubscription.numberOfSubscriptions = total;
-              return processPayment(savedSubscription).then((dataResp) => {
-                savedSubscription.stripeStatus = dataResp.status;
-                return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
-              }).catch((err) => {
-                savedSubscription.stripeStatus = 'FAILED';
-                return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
-              });
+            return processPayment(savedSubscription).then((dataResp) => {
+              savedSubscription.stripeStatus = dataResp.status;
+              return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
             }).catch((err) => {
+              savedSubscription.stripeStatus = 'FAILED';
               return res.json(new APIResponse(SubscriptionModel.extractData(savedSubscription)));
             });
           }).catch(e => next(e));
@@ -752,17 +745,35 @@ var processPayment = function (subscription) {
                 }
               });
             }).then(function (source) {
-              stripe.subscriptions.create({
+              var dataSubscription = {
                 customer: source.customer,
                 plan: planSubscription,
                 //trial_period_days: dataResp.o_trial_days,
-                trial_end: moment.unix(nextTsApplyUpgrade / 1000).unix()
-              }, function (err, subscriptionResp) {
+              }
+
+              if (subscription.numberOfSubscriptions <= 0) {
+                dataSubscription.trial_end = moment.unix(nextTsApplyUpgrade / 1000).unix();
+              }
+
+              stripe.subscriptions.create(dataSubscription, function (err, subscriptionResp) {
                 if (subscriptionResp) {
-                  return new SubscriptionModel().where('t1._id::varchar=$1').update({ stripeCustomerId: subscriptionResp.customer, stripeSubscriptionId: subscriptionResp.id }, [subscriptionData._id]).then(dataUpdated => {
+                  var dataUpdateSubscription = {
+                    stripeCustomerId: subscriptionResp.customer,
+                    stripeSubscriptionId: subscriptionResp.id
+                  }
+                  if (subscription.numberOfSubscriptions > 0) {
+                    var period = subscriptionData.expirationType == 'monthly' ? 'month' : 'year',
+                      tsExpiryDateFrom = moment.unix(subscriptionData.expiryDateFrom / 1000),
+                      expiryDate = moment(tsExpiryDateFrom.add(moment.duration(1, period))).unix() * 1000;
+                    dataUpdateSubscription.expiryDate = expiryDate;
+                    dataUpdateSubscription.status = 'active';
+                  }
+                  return new SubscriptionModel().where('t1._id::varchar=$1').update(dataUpdateSubscription, [subscriptionData._id]).then(dataUpdated => {
                     if (!dataUpdated) return resolve({ status: 'FAILED', msg: 'Failed to create subscription on Stripe' });
                     return resolve({ status: 'OK', msg: 'Subscription has been created on Stripe' });
                   });
+                } else {
+                  return resolve({ status: 'FAILED', msg: 'Your subscription has been created but can not create subscription on Stripe' });
                 }
               }
               );

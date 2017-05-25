@@ -85,12 +85,13 @@ export const getPlans = () => (dispatch, getState) => {
     const totalSubscriptions = results[1]
     const options = results[2]
     var remaining_discount_subscription = options.o_remaining_discount_subscription || 0
-    const applyDiscount = totalSubscriptions <= 0 && parseInt(options.o_allow_discount) === 1 && remaining_discount_subscription > 1 ? true : false
+    const applyDiscount = parseInt(options.o_allow_discount) === 1 && remaining_discount_subscription > 1 ? true : false
     const discountPercent = options.o_discount_percent || 0
     const discountLimit = options.o_discount_limit || 0
     dispatch(plansResult({
       plans,
       applyDiscount,
+      totalSubscriptions,
       discountPercent: parseFloat(discountPercent),
       discountLimit: parseInt(discountLimit)
     }))
@@ -99,6 +100,7 @@ export const getPlans = () => (dispatch, getState) => {
     dispatch(plansResult({
       plans: [],
       applyDiscount: false,
+      totalSubscriptions: 0,
       discountPercent: parseFloat(discountPercent),
       discountLimit: parseInt(discountLimit)
     }))
@@ -237,6 +239,7 @@ export const initialState = {
   // so that we should have an async action to check can apply discount or not,
   // and assign to applyDiscount property
   applyDiscount: false,
+  totalSubscriptions: 0,
   discountPercent: 20,
   discountLimit: 200,
   cclist: [],
@@ -270,7 +273,7 @@ export default (state = initialState, action) => {
       return Utils.merge(state, { step: action.step, prevStep })
       break // eslint-disable-line
     case GET_PLANS:
-      return Utils.merge(state, { plans: action.result.plans, applyDiscount: action.result.applyDiscount, discountPercent: action.result.discountPercent, discountLimit: action.result.discountLimit })
+      return Utils.merge(state, { plans: action.result.plans, totalSubscriptions: action.result.totalSubscriptions, applyDiscount: action.result.applyDiscount, discountPercent: action.result.discountPercent, discountLimit: action.result.discountLimit })
       break // eslint-disable-line
     case SELECT_PLAN:
       return Utils.merge(state, { selectedPlan: action.selectedPlan })
